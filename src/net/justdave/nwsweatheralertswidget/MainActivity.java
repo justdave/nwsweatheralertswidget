@@ -1,5 +1,8 @@
 package net.justdave.nwsweatheralertswidget;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -37,7 +40,19 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(NWSBackgroundService.class.getName());
         startService(intent);
         bindService(intent, serviceConnection, 0);
+        timer = new Timer("NWSInitialUpdateTimer");
+        timer.schedule(updateTask, 500L, 1000L);
     }
+
+    private Timer timer;
+
+    private TimerTask updateTask = new TimerTask() {
+        @Override
+        public void run() {
+            Log.i(TAG, "Timer fired");
+            updateMainView();
+        }
+    };
 
     @Override
     protected void onDestroy() {
@@ -51,6 +66,10 @@ public class MainActivity extends Activity {
             // even if we failed to destroy something, we need to continue
             // destroying
             Log.w(TAG, "Failed to unbind from the service", t);
+        }
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
         }
 
         Log.i(TAG, "Activity destroyed");
@@ -84,6 +103,10 @@ public class MainActivity extends Activity {
                     adapter.notifyDataSetChanged();
                     Log.i(TAG, "parsed data updated:");
                     Log.i(TAG, nwsData.toString());
+                    if (timer != null) {
+                        timer.cancel();
+                        timer = null;
+                    }
                 } catch (Throwable t) {
                     Log.w(TAG,
                             "Failed to retrieve updated parsed data from the background service");

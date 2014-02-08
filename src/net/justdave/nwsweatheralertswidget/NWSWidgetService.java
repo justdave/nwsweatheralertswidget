@@ -50,6 +50,35 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
                 R.layout.event_listitem);
         rv.setTextViewText(R.id.alert_title, nwsData.get(position).getEvent());
         rv.setTextViewText(R.id.alert_summary, nwsData.get(position).getTitle());
+        int background = R.drawable.black_button;
+        int icon = R.drawable.nws_logo;
+        if (nwsData.get(position).getEvent().contains("Winter")
+                || nwsData.get(position).getEvent().contains("Wind")) {
+            background = R.drawable.blue_button;
+        }
+        if (nwsData.get(position).getEvent().contains("Watch")) {
+            background = R.drawable.yellow_button;
+        }
+        if (nwsData.get(position).getEvent().contains("Warning")) {
+            background = R.drawable.red_button;
+        }
+        if (nwsData.get(position).getEvent().contains("Winter")) {
+            icon = R.drawable.winter;
+        }
+        if (nwsData.get(position).getEvent().contains("Wind")) {
+            icon = R.drawable.windy;
+        }
+        if (nwsData.get(position).getEvent().contains("Ice")) {
+            icon = R.drawable.ice;
+        }
+        if (nwsData.get(position).getEvent().contains("Thunderstorm")) {
+            icon = R.drawable.thunderstorm;
+        }
+        if (nwsData.get(position).getEvent().contains("Tornado")) {
+            icon = R.drawable.tornado;
+        }
+        rv.setImageViewResource(R.id.icon, icon);
+        rv.setInt(R.id.eventlistitemview, "setBackgroundResource", background);
         Log.i(TAG, nwsData.get(position).toString());
         return rv;
     }
@@ -68,6 +97,23 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     public void onDataSetChanged() {
         // TODO Auto-generated method stub
         Log.i(TAG, "onDataSetChanged() called");
+        // doing this in a Handler allows to call this method safely from any
+        // thread
+        // see Handler docs for more info
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    nwsData = api.getFeedData();
+                    Log.i(TAG, "parsed data updated:");
+                    Log.i(TAG, nwsData.toString());
+                } catch (Throwable t) {
+                    Log.w(TAG,
+                            "Failed to retrieve updated parsed data from the background service");
+                    Log.w(TAG, t);
+                }
+            }
+        });
     }
 
     @Override
@@ -113,26 +159,6 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         return 1;
     }
 
-    private void updateWidgetView() {
-        // doing this in a Handler allows to call this method safely from any
-        // thread
-        // see Handler docs for more info
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    nwsData = api.getFeedData();
-                    Log.i(TAG, "parsed data updated:");
-                    Log.i(TAG, nwsData.toString());
-                } catch (Throwable t) {
-                    Log.w(TAG,
-                            "Failed to retrieve updated parsed data from the background service");
-                    Log.w(TAG, t);
-                }
-            }
-        });
-    }
-
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -145,7 +171,7 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
             } catch (RemoteException e) {
                 Log.e(TAG, "Failed to add listener", e);
             }
-            updateWidgetView();
+            onDataSetChanged();
         }
 
         @Override
@@ -159,7 +185,7 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private NWSServiceListener.Stub serviceListener = new NWSServiceListener.Stub() {
         @Override
         public void handleFeedUpdated() throws RemoteException {
-            updateWidgetView();
+            onDataSetChanged();
         }
     };
 
