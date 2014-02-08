@@ -1,37 +1,60 @@
 package net.justdave.nwsweatheralertswidget;
 
-import java.net.URL;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.util.Log;
 import android.view.Menu;
 import android.widget.TextView;
-import android.util.Xml;
-import java.net.HttpURLConnection;
-import java.util.ArrayList;
+import android.widget.ListView;
 
 public class MainActivity extends Activity {
 
-    private String url = "http://alerts.weather.gov/cap/wwaatmget.php?x=MIC139&y=0";
-    public ArrayList<NWSAlertEntry> nwsData = null;
+    private NWSAlertListViewAdapter adapter;
+    private NWSAlertList nwsData = new NWSAlertList();
+    private static final String TAG = MainActivity.class.getSimpleName();
+
+    private Handler handler;
 
     TextView raw_text;
-    TextView parsed_text;
+    ListView parsed_events;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        handler = new Handler(); // handler will be bound to the current thread
+                                 // (UI)
         raw_text = (TextView) findViewById(R.id.raw_text);
-        parsed_text = (TextView) findViewById(R.id.parsed_text);
-        SendHttpRequestTask task = new SendHttpRequestTask();
-        String[] params = new String[]{url};
-        task.execute(params);
+        parsed_events = (ListView) findViewById(R.id.parsed_events);
+        adapter = new NWSAlertListViewAdapter(getBaseContext(), nwsData);
+        parsed_events.setAdapter(adapter);
+        Intent intent = new Intent(NWSBackgroundService.class.getName());
+        startService(intent);
+        bindService(intent, serviceConnection, 0);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        try {
+            api.removeListener(serviceListener);
+            unbindService(serviceConnection);
+        } catch (Throwable t) {
+            // catch any issues, typical for destroy routines
+            // even if we failed to destroy something, we need to continue
+            // destroying
+            Log.w(TAG, "Failed to unbind from the service", t);
+        }
+
+        Log.i(TAG, "Activity destroyed");
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -40,55 +63,61 @@ public class MainActivity extends Activity {
         return true;
     }
 
-    private class SendHttpRequestTask extends AsyncTask<String, Void, String> {
-
+    private void updateMainView() {
+        // doing this in a Handler allows to call this method safely from any
+        // thread
+        // see Handler docs for more info
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    raw_text.setText(api.getRawData());
+                } catch (Throwable t) {
+                    Log.w(TAG,
+                            "Failed to retrieve updated raw data from the background service");
+                    Log.w(TAG, t);
+                }
+                try {
+                    nwsData = api.getFeedData();
+                    adapter.clear();
+                    adapter.addAll(nwsData);
+                    adapter.notifyDataSetChanged();
+                    Log.i(TAG, "parsed data updated:");
+                    Log.i(TAG, nwsData.toString());
+                } catch (Throwable t) {
+                    Log.w(TAG,
+                            "Failed to retrieve updated parsed data from the background service");
+                    Log.w(TAG, t);
+                }
+            }
+        });
+    }
+    private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
-        protected String doInBackground(String... params) {
-            String url = params[0];
-            String data = sendHttpRequest(url);
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.i(TAG, "Service connection established");
 
-            return data;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            NWSFeedHandler myXMLHandler = new NWSFeedHandler();
-            raw_text.setText(result);
+            // that's how we get the client side of the IPC connection
+            api = NWSServiceApi.Stub.asInterface(service);
             try {
-
-                /**
-                 * Create the Handler to handle each of the XML tags.
-                 **/
-                Xml.parse(result, myXMLHandler);
-                nwsData = myXMLHandler.getXMLData();
-                parsed_text.setText(nwsData.toString());
-            } catch (Exception e) {
-                System.out.println(e);
+                api.addListener(serviceListener);
+            } catch (RemoteException e) {
+                Log.e(TAG, "Failed to add listener", e);
             }
         }
-    }
-    private String sendHttpRequest(String url) {
-        StringBuffer buffer = new StringBuffer();
-        try {
-            HttpURLConnection con = (HttpURLConnection) (new URL(url))
-                    .openConnection();
-            con.setRequestMethod("GET");
-            con.setDoInput(true);
-            con.setDoOutput(false);
-            con.connect();
 
-            InputStream is = con.getInputStream();
-            BufferedReader r = new BufferedReader(new InputStreamReader(is));
-            String line;
-            while ((line = r.readLine()) != null) {
-                buffer.append(line);
-                buffer.append('\n');
-            }
-            con.disconnect();
-        } catch (Throwable t) {
-            t.printStackTrace();
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.i(TAG, "Service connection closed");
         }
+    };
 
-        return buffer.toString();
-    }
+    private NWSServiceApi api;
+
+    private NWSServiceListener.Stub serviceListener = new NWSServiceListener.Stub() {
+        @Override
+        public void handleFeedUpdated() throws RemoteException {
+            updateMainView();
+        }
+    };
 }

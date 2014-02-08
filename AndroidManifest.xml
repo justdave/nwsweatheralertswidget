@@ -7,11 +7,13 @@
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="19" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/nws_logo"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
@@ -23,13 +25,34 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name="net.justdave.nwsweatheralertswidget.NWSWidgetProvider" >
+
+        <receiver android:name=".NWSWidgetProvider" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
+
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/nws_alert_widget" />
         </receiver>
-    </application>
+        <receiver android:name=".BootReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" >
+                </action>
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".NWSBackgroundService"
+            android:permission="android.permission.SIGNATURE"
+            android:process=":remote" >
+            <intent-filter>
+                <action android:name="net.justdave.nwsweatheralertswidget.NWSBackgroundService" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".NWSWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+        </application>
+
 </manifest>

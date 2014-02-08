@@ -11,7 +11,7 @@ public class NWSFeedHandler extends DefaultHandler {
     Boolean elementOn = false;
     Boolean feedActive = false;
     NWSAlertEntry currentEntry = null;
-    public NWSAlertList data = new NWSAlertList();
+    NWSAlertList data = new NWSAlertList();
     public NWSAlertList getXMLData() {
         return data;
     }
@@ -25,7 +25,7 @@ public class NWSFeedHandler extends DefaultHandler {
         elementOn = true;
         if (localName.equalsIgnoreCase("feed"))
         {
-            data = new NWSAlertList();
+            data.clear();
             feedActive = true;
         } else if (feedActive) {
             if (localName.equals("entry")) {

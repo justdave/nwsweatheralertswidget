@@ -4,5 +4,8 @@
     <string name="app_name">NWS Weather Alerts Widget</string>
     <string name="action_settings">Settings</string>
     <string name="loading_message">Loading&#8230;</string>
-
+    <string name="icon">Icon</string>
+    <string name="alert_title">Alert Title</string>
+    <string name="alert_summary">Alert Summary</string>
+    <string name="widget_title">Current Active NWS Alerts</string>
 </resources>

@@ -1,6 +1,9 @@
 package net.justdave.nwsweatheralertswidget;
 
-public class NWSAlertEntry {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class NWSAlertEntry extends Object implements Parcelable {
     private String id = "";
     private String updated = "";
     private String published = "";
@@ -17,6 +20,41 @@ public class NWSAlertEntry {
     private String severity = "";
     private String certainty = "";
     private String areaDesc = "";
+
+    public static final Creator<NWSAlertEntry> CREATOR = new Creator<NWSAlertEntry>() {
+        @Override
+        public NWSAlertEntry[] newArray(int size) {
+            return new NWSAlertEntry[size];
+        }
+
+        @Override
+        public NWSAlertEntry createFromParcel(Parcel source) {
+            return new NWSAlertEntry(source);
+        }
+    };
+
+    private NWSAlertEntry(Parcel source) {
+        id = source.readString();
+        updated = source.readString();
+        published = source.readString();
+        title = source.readString();
+        link = source.readString();
+        summary = source.readString();
+        event = source.readString();
+        effective = source.readString();
+        expires = source.readString();
+        status = source.readString();
+        msgType = source.readString();
+        category = source.readString();
+        urgency = source.readString();
+        severity = source.readString();
+        certainty = source.readString();
+        areaDesc = source.readString();
+    }
+
+    public NWSAlertEntry() {
+        super();
+    }
 
     @Override
     public String toString() {
@@ -154,5 +192,31 @@ public class NWSAlertEntry {
 	public void setAreaDesc(String areaDesc) {
 		this.areaDesc = areaDesc;
 	}
+
+    @Override
+    public int describeContents() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(updated);
+        dest.writeString(published);
+        dest.writeString(title);
+        dest.writeString(link);
+        dest.writeString(summary);
+        dest.writeString(event);
+        dest.writeString(effective);
+        dest.writeString(expires);
+        dest.writeString(status);
+        dest.writeString(msgType);
+        dest.writeString(category);
+        dest.writeString(urgency);
+        dest.writeString(severity);
+        dest.writeString(certainty);
+        dest.writeString(areaDesc);
+    }
 
 }
