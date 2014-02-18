@@ -25,6 +25,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="net.justdave.nwsweatheralertswidget.DebugActivity"
+            android:label="@string/action_debug"
+            android:parentActivityName="net.justdave.nwsweatheralertswidget.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.justdave.nwsweatheralertswidget.MainActivity" />
+
+            <intent-filter>
+                <action android:name="net.justdave.nwsweatheralertswidget.DebugActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <receiver android:name=".NWSWidgetProvider" >
             <intent-filter>
@@ -53,6 +67,6 @@
         <service
             android:name=".NWSWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
-        </application>
+    </application>
 
 </manifest>

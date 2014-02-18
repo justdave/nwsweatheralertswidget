@@ -19,18 +19,35 @@ public class NWSWidgetProvider extends AppWidgetProvider {
             int appWidgetId = appWidgetIds[i];
             Log.i("NWSWidgetProvider", "onUpdate() called");
 
-            // Create an Intent to launch the widget data service
-            Intent serviceIntent = new Intent(context, NWSWidgetService.class);
-            serviceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-            serviceIntent.setData(Uri.parse(serviceIntent.toUri(Intent.URI_INTENT_SCHEME)));
-
-            // Get the layout for the App Widget and attach a viewFactory to the ListView
-            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.default_widget);
-            views.setRemoteAdapter(R.id.widget_parsed_events, serviceIntent);
+            final RemoteViews rv = buildRemoteViews(context, appWidgetId);
 
             // Tell the AppWidgetManager to perform an update on the current app widget
-            appWidgetManager.updateAppWidget(appWidgetId, views);
+            appWidgetManager.updateAppWidget(appWidgetId, rv);
+
+            //Updates the collection view, not necessary the first time
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.widget_parsed_events);
         }
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
+	public static RemoteViews buildRemoteViews(final Context context, final int appWidgetId) {
+
+        // Create an Intent to launch the widget data service
+        Intent serviceIntent = new Intent(context, NWSWidgetService.class);
+        serviceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        serviceIntent.setData(Uri.parse(serviceIntent.toUri(Intent.URI_INTENT_SCHEME)));
+
+        // Get the layout for the App Widget and attach a viewFactory to the ListView
+        final RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.default_widget);
+        rv.setRemoteAdapter(R.id.widget_parsed_events, serviceIntent);
+
+        // The empty view is displayed when the collection has no items. It should be a sibling
+        // of the collection view.
+        rv.setEmptyView(R.id.widget_parsed_events, android.R.id.empty);
+
+        return rv;
+	}
+	public static void updateAppWidget(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId) {
+	    final RemoteViews views = buildRemoteViews(context, appWidgetId);
+	    appWidgetManager.updateAppWidget(appWidgetId, views);
+	}
 }

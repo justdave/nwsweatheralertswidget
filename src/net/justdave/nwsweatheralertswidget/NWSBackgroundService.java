@@ -55,7 +55,7 @@ public class NWSBackgroundService extends Service {
         Log.i(TAG, "Service creating");
         
         timer = new Timer("NWSServiceTimer");
-        timer.schedule(updateTask, 1000L, 300 * 1000L);
+        timer.schedule(updateTask, 500L, 300 * 1000L);
     }
 
     @Override
