@@ -4,6 +4,7 @@ package net.justdave.nwsweatheralertswidget;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -50,35 +51,15 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
                 R.layout.event_listitem);
         rv.setTextViewText(R.id.alert_title, nwsData.get(position).getEvent());
         rv.setTextViewText(R.id.alert_summary, nwsData.get(position).getTitle());
-        int background = R.drawable.black_button;
-        int icon = R.drawable.nws_logo;
-        if (nwsData.get(position).getEvent().contains("Winter")
-                || nwsData.get(position).getEvent().contains("Wind")) {
-            background = R.drawable.blue_button;
-        }
-        if (nwsData.get(position).getEvent().contains("Watch")) {
-            background = R.drawable.yellow_button;
-        }
-        if (nwsData.get(position).getEvent().contains("Warning")) {
-            background = R.drawable.red_button;
-        }
-        if (nwsData.get(position).getEvent().contains("Winter")) {
-            icon = R.drawable.winter;
-        }
-        if (nwsData.get(position).getEvent().contains("Wind")) {
-            icon = R.drawable.windy;
-        }
-        if (nwsData.get(position).getEvent().contains("Ice")) {
-            icon = R.drawable.ice;
-        }
-        if (nwsData.get(position).getEvent().contains("Thunderstorm")) {
-            icon = R.drawable.thunderstorm;
-        }
-        if (nwsData.get(position).getEvent().contains("Tornado")) {
-            icon = R.drawable.tornado;
-        }
-        rv.setImageViewResource(R.id.icon, icon);
-        rv.setInt(R.id.eventlistitemview, "setBackgroundResource", background);
+        rv.setImageViewResource(R.id.icon, nwsData.get(position).getIcon());
+        rv.setInt(R.id.eventlistitemview, "setBackgroundResource", nwsData.get(position).getBackground());
+
+        Bundle extras = new Bundle();
+        extras.putString(NWSWidgetProvider.EVENT_URL, nwsData.get(position).getLink());
+        Intent fillInIntent = new Intent();
+        fillInIntent.putExtras(extras);
+        rv.setOnClickFillInIntent(R.id.eventlistitemview, fillInIntent);
+
         Log.i(TAG, nwsData.get(position).toString());
         return rv;
     }

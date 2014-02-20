@@ -39,34 +39,8 @@ public class NWSAlertListViewAdapter extends ArrayAdapter<NWSAlertEntry> {
         ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
         titleView.setText(values.get(position).getEvent());
         summaryView.setText(values.get(position).getTitle());
-        int background = R.drawable.black_button;
-        int icon = R.drawable.nws_logo;
-        if (values.get(position).getEvent().contains("Winter")
-                || values.get(position).getEvent().contains("Wind")) {
-            background = R.drawable.blue_button;
-        }
-        if (values.get(position).getEvent().contains("Watch")) {
-            background = R.drawable.yellow_button;
-        }
-        if (values.get(position).getEvent().contains("Warning")) {
-            background = R.drawable.red_button;
-        }
-        if (values.get(position).getEvent().contains("Winter")) {
-            icon = R.drawable.winter;
-        }
-        if (values.get(position).getEvent().contains("Wind")) {
-            icon = R.drawable.windy;
-        }
-        if (values.get(position).getEvent().contains("Ice")) {
-            icon = R.drawable.ice;
-        }
-        if (values.get(position).getEvent().contains("Thunderstorm")) {
-            icon = R.drawable.thunderstorm;
-        }
-        if (values.get(position).getEvent().contains("Tornado")) {
-            icon = R.drawable.tornado;
-        }
-        mainView.setBackgroundResource(background);
+        mainView.setBackgroundResource(values.get(position).getBackground());
+        imageView.setImageResource(values.get(position).getIcon());
         final Intent browserIntent = new Intent(Intent.ACTION_VIEW,
                 Uri.parse(values.get(position).getLink()));
         browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -77,7 +51,6 @@ public class NWSAlertListViewAdapter extends ArrayAdapter<NWSAlertEntry> {
             }
         };
         mainView.setOnClickListener(myListener);
-        imageView.setImageResource(icon);
         return rowView;
     }
 }

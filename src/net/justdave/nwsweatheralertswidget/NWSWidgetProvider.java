@@ -1,5 +1,6 @@
 package net.justdave.nwsweatheralertswidget;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetProvider;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -10,7 +11,10 @@ import android.widget.RemoteViews;
 
 public class NWSWidgetProvider extends AppWidgetProvider {
 
-	@Override
+    public static final String WIDGET_CLICK = "net.justdave.nwsweatheralertswidget.WIDGET_CLICK";
+    public static final String EVENT_URL = "net.justdave.nwsweatheralertswidget.EVENT_URL";
+
+    @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         final int N = appWidgetIds.length;
 
@@ -29,6 +33,21 @@ public class NWSWidgetProvider extends AppWidgetProvider {
         }
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
+	@Override
+	public void onReceive(Context context, Intent intent) {
+	    super.onReceive(context, intent);
+
+	    if (intent.getAction() != null && intent.getAction().equals(WIDGET_CLICK)) {
+	        try {
+	            Intent webIntent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(intent.getExtras().getString(EVENT_URL)));
+	            webIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+	            context.startActivity(webIntent);
+	        } catch (RuntimeException e) {
+	            // The url is invalid, maybe missing http://
+	            e.printStackTrace();
+	        }
+	    }
+	}
 	public static RemoteViews buildRemoteViews(final Context context, final int appWidgetId) {
 
         // Create an Intent to launch the widget data service
@@ -39,6 +58,14 @@ public class NWSWidgetProvider extends AppWidgetProvider {
         // Get the layout for the App Widget and attach a viewFactory to the ListView
         final RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.default_widget);
         rv.setRemoteAdapter(R.id.widget_parsed_events, serviceIntent);
+
+        // Set the action for the intent.
+        Intent browserIntent = new Intent(context, NWSWidgetProvider.class);
+        browserIntent.setAction(WIDGET_CLICK);
+        browserIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        PendingIntent browserPendingIntent = PendingIntent.getBroadcast(context, 0, browserIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT);
+        rv.setPendingIntentTemplate(R.id.widget_parsed_events, browserPendingIntent);
 
         // The empty view is displayed when the collection has no items. It should be a sibling
         // of the collection view.

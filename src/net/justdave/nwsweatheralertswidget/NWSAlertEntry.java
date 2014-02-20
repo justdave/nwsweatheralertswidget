@@ -58,145 +58,179 @@ public class NWSAlertEntry extends Object implements Parcelable {
 
     @Override
     public String toString() {
-    	String result = "";
-    	result = result.concat(this.event);
-    	result = result.concat(" expires ");
-    	result = result.concat(this.expires);
-    	return result;
+        String result = "";
+        result = result.concat(this.event);
+        result = result.concat(" expires ");
+        result = result.concat(this.expires);
+        return result;
     }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getUpdated() {
-		return updated;
-	}
+    public String getUpdated() {
+        return updated;
+    }
 
-	public void setUpdated(String updated) {
-		this.updated = updated;
-	}
+    public void setUpdated(String updated) {
+        this.updated = updated;
+    }
 
-	public String getPublished() {
-		return published;
-	}
+    public String getPublished() {
+        return published;
+    }
 
-	public void setPublished(String published) {
-		this.published = published;
-	}
+    public void setPublished(String published) {
+        this.published = published;
+    }
 
-	public String getTitle() {
-		return title;
-	}
+    public String getTitle() {
+        return title;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public String getLink() {
-		return link;
-	}
+    public String getLink() {
+        return link;
+    }
 
-	public void setLink(String link) {
-		this.link = link;
-	}
+    public void setLink(String link) {
+        this.link = link;
+    }
 
-	public String getSummary() {
-		return summary;
-	}
+    public String getSummary() {
+        return summary;
+    }
 
-	public void setSummary(String summary) {
-		this.summary = summary;
-	}
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
 
-	public String getEvent() {
-		return event;
-	}
+    public String getEvent() {
+        return event;
+    }
 
-	public void setEvent(String event) {
-		this.event = event;
-	}
+    public void setEvent(String event) {
+        this.event = event;
+    }
 
-	public String getEffective() {
-		return effective;
-	}
+    public String getEffective() {
+        return effective;
+    }
 
-	public void setEffective(String effective) {
-		this.effective = effective;
-	}
+    public void setEffective(String effective) {
+        this.effective = effective;
+    }
 
-	public String getExpires() {
-		return expires;
-	}
+    public String getExpires() {
+        return expires;
+    }
 
-	public void setExpires(String expires) {
-		this.expires = expires;
-	}
+    public void setExpires(String expires) {
+        this.expires = expires;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public String getMsgType() {
-		return msgType;
-	}
+    public String getMsgType() {
+        return msgType;
+    }
 
-	public void setMsgType(String msgType) {
-		this.msgType = msgType;
-	}
+    public void setMsgType(String msgType) {
+        this.msgType = msgType;
+    }
 
-	public String getCategory() {
-		return category;
-	}
+    public String getCategory() {
+        return category;
+    }
 
-	public void setCategory(String category) {
-		this.category = category;
-	}
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
-	public String getUrgency() {
-		return urgency;
-	}
+    public String getUrgency() {
+        return urgency;
+    }
 
-	public void setUrgency(String urgency) {
-		this.urgency = urgency;
-	}
+    public void setUrgency(String urgency) {
+        this.urgency = urgency;
+    }
 
-	public String getSeverity() {
-		return severity;
-	}
+    public String getSeverity() {
+        return severity;
+    }
 
-	public void setSeverity(String severity) {
-		this.severity = severity;
-	}
+    public void setSeverity(String severity) {
+        this.severity = severity;
+    }
 
-	public String getCertainty() {
-		return certainty;
-	}
+    public String getCertainty() {
+        return certainty;
+    }
 
-	public void setCertainty(String certainty) {
-		this.certainty = certainty;
-	}
+    public void setCertainty(String certainty) {
+        this.certainty = certainty;
+    }
 
-	public String getAreaDesc() {
-		return areaDesc;
-	}
+    public String getAreaDesc() {
+        return areaDesc;
+    }
 
-	public void setAreaDesc(String areaDesc) {
-		this.areaDesc = areaDesc;
-	}
+    public void setAreaDesc(String areaDesc) {
+        this.areaDesc = areaDesc;
+    }
 
     @Override
     public int describeContents() {
         // TODO Auto-generated method stub
         return 0;
+    }
+
+    public int getIcon() {
+        int icon = R.drawable.nws_logo;
+        if (event.contains("Winter")) {
+            icon = R.drawable.winter;
+        }
+        if (event.contains("Wind")) {
+            icon = R.drawable.windy;
+        }
+        if (event.contains("Ice")) {
+            icon = R.drawable.ice;
+        }
+        if (event.contains("Thunderstorm")) {
+            icon = R.drawable.thunderstorm;
+        }
+        if (event.contains("Tornado")) {
+            icon = R.drawable.tornado;
+        }
+        return icon;
+    }
+
+    public int getBackground() {
+        int background = R.drawable.black_button;
+        if (event.contains("Winter") || event.contains("Wind")) {
+            background = R.drawable.blue_button;
+        }
+        if (event.contains("Watch")) {
+            background = R.drawable.yellow_button;
+        }
+        if (event.contains("Warning")) {
+            background = R.drawable.red_button;
+        }
+        return background;
     }
 
     @Override
