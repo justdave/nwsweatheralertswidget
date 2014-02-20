@@ -1,5 +1,5 @@
-nwsweatheralertswidget
-======================
+NWS Weather Alerts Widget
+=========================
 
 Android home screen widget to display current weather alerts from the US National Weather Service
 
