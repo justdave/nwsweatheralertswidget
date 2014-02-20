@@ -39,7 +39,8 @@ public class NWSWidgetProvider extends AppWidgetProvider {
 
 	    if (intent.getAction() != null && intent.getAction().equals(WIDGET_CLICK)) {
 	        try {
-	            Intent webIntent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(intent.getExtras().getString(EVENT_URL)));
+	            Intent webIntent = new Intent(Intent.ACTION_VIEW);
+	            webIntent.setData(Uri.parse(intent.getExtras().getString(EVENT_URL)));
 	            webIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 	            context.startActivity(webIntent);
 	        } catch (RuntimeException e) {
