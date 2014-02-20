@@ -43,7 +43,10 @@
         <receiver android:name=".NWSWidgetProvider" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
+  <!--               <action android:name="android.appwidget.action.APPWIDGET_ENABLED" />
+                <action android:name="android.appwidget.action.APPWIDGET_DELETED" />
+                <action android:name="android.appwidget.action.APPWIDGET_DISABLED" />
+    -->        </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"

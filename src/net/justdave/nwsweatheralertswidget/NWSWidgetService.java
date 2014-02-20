@@ -1,6 +1,9 @@
 package net.justdave.nwsweatheralertswidget;
 
-/* import android.appwidget.AppWidgetManager; */
+import java.util.Timer;
+import java.util.TimerTask;
+
+import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -22,20 +25,16 @@ public class NWSWidgetService extends RemoteViewsService {
 }
 
 class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
-    private static final String TAG = NWSRemoteViewsFactory.class
-            .getSimpleName();
+    private static final String TAG = NWSWidgetService.class.getSimpleName();
     private Context mContext;
-    /* private int mAppWidgetId; */
-    public NWSAlertList nwsData = new NWSAlertList();
+    private int mAppWidgetId;
+    public static NWSAlertList nwsData = new NWSAlertList();
     private Handler handler;
 
     public NWSRemoteViewsFactory(Context context, Intent intent) {
         mContext = context;
-        /*
-         * mAppWidgetId =
-         * intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
-         * AppWidgetManager.INVALID_APPWIDGET_ID);
-         */
+        mAppWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+        Log.i(TAG,"NWSWidgetService started for widget ID ".concat(String.valueOf(mAppWidgetId)));
     }
 
     @Override
@@ -47,8 +46,7 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public RemoteViews getViewAt(int position) {
         Log.i(TAG, "getViewAt() called");
-        RemoteViews rv = new RemoteViews(mContext.getPackageName(),
-                R.layout.event_listitem);
+        RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.event_listitem);
         rv.setTextViewText(R.id.alert_title, nwsData.get(position).getEvent());
         rv.setTextViewText(R.id.alert_summary, nwsData.get(position).getTitle());
         rv.setImageViewResource(R.id.icon, nwsData.get(position).getIcon());
@@ -66,31 +64,52 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onCreate() {
+        Log.i(TAG, "onCreate() called");
         Intent intent = new Intent(NWSBackgroundService.class.getName());;
         mContext.startService(intent);
         mContext.bindService(intent, serviceConnection, 0);
         handler = new Handler(); // handler will be bound to the current thread
                                  // (UI)
-
+        timer = new Timer("NWSWidgetInitialUpdateTimer");
+        timer.schedule(updateTask, 500L, 1000L);
     }
+
+    private Timer timer;
+
+    private TimerTask updateTask = new TimerTask() {
+        @Override
+        public void run() {
+            Log.i(TAG, "Widget Initial Update Timer fired");
+            doWidgetUpdate();
+        }
+    };
 
     @Override
     public void onDataSetChanged() {
         // TODO Auto-generated method stub
         Log.i(TAG, "onDataSetChanged() called");
+    }
+
+    public void doWidgetUpdate() {
         // doing this in a Handler allows to call this method safely from any
         // thread
         // see Handler docs for more info
+        Log.i(TAG, "doWidgetUpdate() called");
         handler.post(new Runnable() {
             @Override
             public void run() {
                 try {
                     nwsData = api.getFeedData();
-                    Log.i(TAG, "parsed data updated:");
-                    Log.i(TAG, nwsData.toString());
+                    Log.i(TAG, "Sending UPDATE intent");
+                    Intent widgetUpdateIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+                    widgetUpdateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+                    mContext.sendBroadcast(widgetUpdateIntent);
+                    if (timer != null) {
+                        timer.cancel();
+                        timer = null;
+                    }
                 } catch (Throwable t) {
-                    Log.w(TAG,
-                            "Failed to retrieve updated parsed data from the background service");
+                    Log.w(TAG, "Failed to retrieve updated parsed data from the background service");
                     Log.w(TAG, t);
                 }
             }
@@ -110,7 +129,6 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
             // destroying
             Log.w(TAG, "Failed to unbind from the service", t);
         }
-
 
     }
 
@@ -149,10 +167,10 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
             api = NWSServiceApi.Stub.asInterface(service);
             try {
                 api.addListener(serviceListener);
+                Log.i(TAG, "Service connection opened");
             } catch (RemoteException e) {
                 Log.e(TAG, "Failed to add listener", e);
             }
-            onDataSetChanged();
         }
 
         @Override
@@ -166,7 +184,8 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private NWSServiceListener.Stub serviceListener = new NWSServiceListener.Stub() {
         @Override
         public void handleFeedUpdated() throws RemoteException {
-            onDataSetChanged();
+            Log.i(TAG, "handleFeedUpdated() callback received");
+            doWidgetUpdate();
         }
     };
 
