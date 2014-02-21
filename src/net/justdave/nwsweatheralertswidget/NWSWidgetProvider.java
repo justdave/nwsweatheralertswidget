@@ -61,10 +61,6 @@ public class NWSWidgetProvider extends AppWidgetProvider {
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_parsed_events);
             final int N = appWidgetIds.length;
             Log.i(TAG, "Update Intent Received with ".concat(String.valueOf(N)).concat(" widgetIds"));
-            for (int i = 0; i < N; i++) {
-                int thisAppWidgetId = appWidgetIds[i];
-                updateAppWidget(context, appWidgetManager, thisAppWidgetId);
-            }
         }
         /*
          * <action android:name="android.appwidget.action.APPWIDGET_ENABLED" />
@@ -97,11 +93,5 @@ public class NWSWidgetProvider extends AppWidgetProvider {
         rv.setEmptyView(R.id.widget_parsed_events, android.R.id.empty);
 
         return rv;
-    }
-    public static void updateAppWidget(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId) {
-        // final RemoteViews views = buildRemoteViews(context, appWidgetId);
-        // appWidgetManager.updateAppWidget(appWidgetId, views);
-        Log.i(TAG, "updateAppWidget() called on ".concat(String.valueOf(appWidgetId)));
-        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.widget_parsed_events);
     }
 }
