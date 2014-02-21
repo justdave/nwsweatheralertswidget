@@ -20,7 +20,8 @@ import android.util.Xml;
 
 public class NWSBackgroundService extends Service {
 
-    private String url = "http://alerts.weather.gov/cap/wwaatmget.php?x=MIC139&y=0";
+    private String url = "http://alerts.weather.gov/cap/mi.php?x=0"; /* MI ALL */
+    //private String url = "http://alerts.weather.gov/cap/wwaatmget.php?x=MIC139&y=0"; /* Ottawa County MI */
     private NWSAlertList nwsData = new NWSAlertList();
     private String nwsRawData = "";
     private final Object NWSDataLock = new Object();

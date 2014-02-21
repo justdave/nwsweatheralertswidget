@@ -1,0 +1,11 @@
+Image sources:
+
+Ice: http://openclipart.org/detail/26214/icicles-by-anonymous
+Thunderstorm: http://openclipart.org/detail/167269/thundercloud-by-halattas
+Tornado: http://openclipart.org/detail/104887/tornado-by-laabadon
+Snow: http://openclipart.org/detail/65497/winter-by-laobc (trimmed by justdave)
+Flood: http://openclipart.org/detail/93091/water-by-photothailand
+Wind: http://openclipart.org/detail/170683/weather-icon---windy-by-gnokii-170683
+Blizzard: http://www.nws.noaa.gov/weather/images/fcicons/blowingsnow.png (upscaled and traced by justdave and combined with "Snow")
+
+Background buttons: http://openclipart.org/detail/75115/glossy-pill-buttons-by-inky2010

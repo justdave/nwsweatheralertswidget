@@ -204,8 +204,14 @@ public class NWSAlertEntry extends Object implements Parcelable {
         if (event.contains("Winter")) {
             icon = R.drawable.winter;
         }
+        if (event.contains("Blizzard")) {
+            icon = R.drawable.blizzard;
+        }
         if (event.contains("Wind")) {
             icon = R.drawable.windy;
+        }
+        if (event.contains("Flood")) {
+            icon = R.drawable.flood;
         }
         if (event.contains("Ice")) {
             icon = R.drawable.ice;
@@ -221,7 +227,8 @@ public class NWSAlertEntry extends Object implements Parcelable {
 
     public int getBackground() {
         int background = R.drawable.black_button;
-        if (event.contains("Winter") || event.contains("Wind")) {
+        if (event.contains("Winter") || event.contains("Wind") || event.contains("Blizzard") || event.contains("Flood")
+                || event.contains("Hydro")) {
             background = R.drawable.blue_button;
         }
         if (event.contains("Watch")) {
