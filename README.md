@@ -8,3 +8,5 @@ I created this because I wanted a tablet on the wall in my kitchen to display we
 There's also an app with a user interface to go with it, mostly for debugging. :)  The app lets you look at the raw XML feed from the NWS, for example.
 
 Right now it's hard-coded to use Ottawa County, MI (my home county) while I'm testing it.  A county selector is coming soon.
+
+If you feel like helping out or adding cool new features, I welcome pull requests.  Feel free to file issues, too.
