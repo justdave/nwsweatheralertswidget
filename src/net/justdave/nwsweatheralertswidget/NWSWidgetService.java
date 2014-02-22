@@ -20,6 +20,7 @@ public class NWSWidgetService extends RemoteViewsService {
 
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
+        Log.i("NWSWidgetServiceFactory", "Got ".concat(intent.toString()));
         return new NWSRemoteViewsFactory(this.getApplicationContext(), intent);
     }
 }
@@ -28,13 +29,13 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private static final String TAG = NWSWidgetService.class.getSimpleName();
     private Context mContext;
     private int mAppWidgetId;
-    public static NWSAlertList nwsData = new NWSAlertList();
+    public static NWSAlertList nwsData;
     private Handler handler;
 
     public NWSRemoteViewsFactory(Context context, Intent intent) {
         mContext = context;
         mAppWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
-        Log.i(TAG,"NWSWidgetService started for widget ID ".concat(String.valueOf(mAppWidgetId)));
+        Log.i(TAG, "NWSWidgetService started for widget ID ".concat(String.valueOf(mAppWidgetId)));
     }
 
     @Override
@@ -136,8 +137,11 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     public int getCount() {
         // TODO Auto-generated method stub
         Log.i(TAG, "getCount() called");
-        Log.i(TAG, String.format("count = %d", nwsData.size()));
-        return nwsData.size();
+        if (nwsData != null) {
+            Log.i(TAG, String.format("count = %d", nwsData.size()));
+            return nwsData.size();
+        }
+        return 0;
     }
 
     @Override
