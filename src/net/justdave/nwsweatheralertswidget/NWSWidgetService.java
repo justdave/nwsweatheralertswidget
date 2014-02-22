@@ -153,6 +153,7 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
             try {
                 api.addListener(serviceListener);
                 Log.i(TAG, "Service connection opened");
+                doWidgetUpdate();
             } catch (RemoteException e) {
                 Log.e(TAG, "Failed to add listener", e);
             }
