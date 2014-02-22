@@ -1,8 +1,5 @@
 package net.justdave.nwsweatheralertswidget;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -46,7 +43,7 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public RemoteViews getViewAt(int position) {
-        Log.i(TAG, "getViewAt() called");
+        Log.i(TAG, "getViewAt(".concat(String.valueOf(position)).concat(") called"));
         RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.event_listitem);
         rv.setTextViewText(R.id.alert_title, nwsData.get(position).getEvent());
         rv.setTextViewText(R.id.alert_summary, nwsData.get(position).getTitle());
@@ -71,19 +68,7 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         mContext.bindService(intent, serviceConnection, 0);
         handler = new Handler(); // handler will be bound to the current thread
                                  // (UI)
-        timer = new Timer("NWSWidgetInitialUpdateTimer");
-        timer.schedule(updateTask, 500L, 1000L);
     }
-
-    private Timer timer;
-
-    private TimerTask updateTask = new TimerTask() {
-        @Override
-        public void run() {
-            Log.i(TAG, "Widget Initial Update Timer fired");
-            doWidgetUpdate();
-        }
-    };
 
     @Override
     public void onDataSetChanged() {
@@ -94,8 +79,7 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     public void doWidgetUpdate() {
         Log.i(TAG, "doWidgetUpdate() called");
         final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(mContext.getApplicationContext());
-        ComponentName thisWidget = new ComponentName(mContext.getApplicationContext(),
-                NWSWidgetProvider.class);
+        ComponentName thisWidget = new ComponentName(mContext.getApplicationContext(), NWSWidgetProvider.class);
         final int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
         // doing this in a Handler allows to call this method safely from any
         // thread see Handler docs for more info
@@ -106,10 +90,6 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
                     nwsData = api.getFeedData();
                     Log.i(TAG, "Got new data, telling widget(s) to update");
                     appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_parsed_events);
-                    if (timer != null) {
-                        timer.cancel();
-                        timer = null;
-                    }
                 } catch (Throwable t) {
                     Log.w(TAG, "Failed to retrieve updated parsed data from the background service");
                     Log.w(TAG, t);
