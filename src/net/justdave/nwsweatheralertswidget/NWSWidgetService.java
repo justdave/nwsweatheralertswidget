@@ -92,19 +92,20 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     }
 
     public void doWidgetUpdate() {
-        // doing this in a Handler allows to call this method safely from any
-        // thread
-        // see Handler docs for more info
         Log.i(TAG, "doWidgetUpdate() called");
+        final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(mContext.getApplicationContext());
+        ComponentName thisWidget = new ComponentName(mContext.getApplicationContext(),
+                NWSWidgetProvider.class);
+        final int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
+        // doing this in a Handler allows to call this method safely from any
+        // thread see Handler docs for more info
         handler.post(new Runnable() {
             @Override
             public void run() {
                 try {
                     nwsData = api.getFeedData();
-                    Log.i(TAG, "Sending UPDATE intent");
-                    Intent widgetUpdateIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-                    widgetUpdateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-                    mContext.sendBroadcast(widgetUpdateIntent);
+                    Log.i(TAG, "Got new data, telling widget(s) to update");
+                    appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_parsed_events);
                     if (timer != null) {
                         timer.cancel();
                         timer = null;
