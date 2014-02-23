@@ -21,8 +21,9 @@
         android:shadowRadius="5"
         android:singleLine="false"
         android:text="@string/alert_title"
+        android:gravity="center_vertical|center_horizontal"
         android:textAlignment="center"
         android:textColor="@color/white"
-        android:textSize="16sp" />
+        android:textSize="32sp" />
 
 </LinearLayout>
