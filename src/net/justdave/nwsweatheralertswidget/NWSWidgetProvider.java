@@ -24,18 +24,19 @@ public class NWSWidgetProvider extends AppWidgetProvider {
         for (int i = 0; i < N; i++) {
             int appWidgetId = appWidgetIds[i];
             Log.i(TAG, "onUpdate() called with widget ID ".concat(String.valueOf(appWidgetId)));
-            // if (appWidgetManager.getAppWidgetInfo(appWidgetId) != null) {
-            // Create an Intent to launch the widget data service
-            Intent serviceIntent = new Intent(context, NWSWidgetService.class);
-            serviceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-            serviceIntent.setData(Uri.parse(serviceIntent.toUri(Intent.URI_INTENT_SCHEME)));
+
 
             // Get the layout for the App Widget and attach a viewFactory to the
             // ListView
             final RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.default_widget);
+
+            // Create an Intent to launch the widget data service
+            Intent serviceIntent = new Intent(context, NWSWidgetService.class);
+            serviceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            serviceIntent.setData(Uri.parse(serviceIntent.toUri(Intent.URI_INTENT_SCHEME)));
             rv.setRemoteAdapter(R.id.widget_parsed_events, serviceIntent);
 
-            // Set the action for the intent.
+            // Set the action for the click handler.
             Intent browserIntent = new Intent(context, NWSWidgetProvider.class);
             browserIntent.setAction(WIDGET_CLICK);
             browserIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
