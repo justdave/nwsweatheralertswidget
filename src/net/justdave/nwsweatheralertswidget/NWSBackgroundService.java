@@ -20,12 +20,15 @@ import android.util.Xml;
 
 public class NWSBackgroundService extends Service {
 
-    private String url = "http://alerts.weather.gov/cap/mi.php?x=0"; /* MI ALL */
-    //private String url = "http://alerts.weather.gov/cap/wwaatmget.php?x=MIC139&y=0"; /* Ottawa County MI */
+    /* MI ALL */
+    // private String url = "http://alerts.weather.gov/cap/mi.php?x=0";
+    /* Ottawa County MI */
+    private String url = "http://alerts.weather.gov/cap/wwaatmget.php?x=MIC139&y=0";
+
     private NWSAlertList nwsData = new NWSAlertList();
     private String nwsRawData = "";
     private final Object NWSDataLock = new Object();
-    
+
     private static final String TAG = NWSBackgroundService.class.getSimpleName();
 
     private Timer timer;
@@ -39,7 +42,7 @@ public class NWSBackgroundService extends Service {
             task.execute(params);
         }
     };
-    
+
     @Override
     public IBinder onBind(Intent intent) {
         if (NWSBackgroundService.class.getName().equals(intent.getAction())) {
@@ -49,12 +52,12 @@ public class NWSBackgroundService extends Service {
             return null;
         }
     }
-    
+
     @Override
     public void onCreate() {
         super.onCreate();
         Log.i(TAG, "Service creating");
-        
+
         timer = new Timer("NWSServiceTimer");
         timer.schedule(updateTask, 100L, 300 * 1000L);
     }
@@ -63,14 +66,14 @@ public class NWSBackgroundService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.i(TAG, "Service destroying");
-        
+
         timer.cancel();
         timer = null;
     }
     private List<NWSServiceListener> listeners = new ArrayList<NWSServiceListener>();
-    
+
     private NWSServiceApi.Stub apiEndpoint = new NWSServiceApi.Stub() {
-        
+
         @Override
         public NWSAlertList getFeedData() throws RemoteException {
             synchronized (NWSDataLock) {
@@ -82,32 +85,30 @@ public class NWSBackgroundService extends Service {
 
         @Override
         public String getRawData() throws RemoteException {
-            synchronized(NWSDataLock) {
+            synchronized (NWSDataLock) {
                 return nwsRawData;
             }
         }
 
         @Override
-        public void addListener(NWSServiceListener listener)
-                throws RemoteException {
-            
+        public void addListener(NWSServiceListener listener) throws RemoteException {
+
             synchronized (listeners) {
-                Log.i(TAG,"Adding listener ".concat(listener.toString()));
+                Log.i(TAG, "Adding listener ".concat(listener.toString()));
                 listeners.add(listener);
             }
         }
 
         @Override
-        public void removeListener(NWSServiceListener listener)
-                throws RemoteException {
-            
+        public void removeListener(NWSServiceListener listener) throws RemoteException {
+
             synchronized (listeners) {
                 listeners.remove(listener);
             }
         }
-        
+
     };
-    
+
     private class SendHttpRequestTask extends AsyncTask<String, Void, String> {
 
         @Override
@@ -121,7 +122,7 @@ public class NWSBackgroundService extends Service {
         @Override
         protected void onPostExecute(String result) {
             NWSFeedHandler myXMLHandler = new NWSFeedHandler();
-            synchronized(NWSDataLock) {
+            synchronized (NWSDataLock) {
                 nwsRawData = result;
             }
             try {
@@ -130,15 +131,21 @@ public class NWSBackgroundService extends Service {
                  * Create the Handler to handle each of the XML tags.
                  **/
                 Xml.parse(result, myXMLHandler);
-                synchronized(NWSDataLock) {
-                    nwsData = myXMLHandler.getXMLData();
-                }
-                synchronized (listeners) {
-                    for (NWSServiceListener listener : listeners) {
-                        try {
-                            listener.handleFeedUpdated();
-                        } catch (RemoteException e) {
-                            Log.w(TAG, "Failed to notify listener " + listener, e);
+                synchronized (NWSDataLock) {
+                    NWSAlertList nwsDataTemp = myXMLHandler.getXMLData();
+                    if (nwsDataTemp.equals(nwsData)) {
+                        Log.i(TAG, "Newly downloaded data hasn't changed since last time we grabbed it, ignoring.");
+                    } else {
+                        Log.i(TAG, "New data since last time we grabbed it, notifying listeners.");
+                        nwsData = myXMLHandler.getXMLData();
+                        synchronized (listeners) {
+                            for (NWSServiceListener listener : listeners) {
+                                try {
+                                    listener.handleFeedUpdated();
+                                } catch (RemoteException e) {
+                                    Log.w(TAG, "Failed to notify listener " + listener, e);
+                                }
+                            }
                         }
                     }
                 }
@@ -151,8 +158,7 @@ public class NWSBackgroundService extends Service {
     private String sendHttpRequest(String url) {
         StringBuffer buffer = new StringBuffer();
         try {
-            HttpURLConnection con = (HttpURLConnection) (new URL(url))
-                    .openConnection();
+            HttpURLConnection con = (HttpURLConnection) (new URL(url)).openConnection();
             con.setRequestMethod("GET");
             con.setDoInput(true);
             con.setDoOutput(false);
