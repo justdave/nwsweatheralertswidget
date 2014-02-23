@@ -45,8 +45,15 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     public RemoteViews getViewAt(int position) {
         Log.i(TAG, "getViewAt(".concat(String.valueOf(position)).concat(") called"));
         RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.event_listitem);
-        rv.setTextViewText(R.id.alert_title, nwsData.get(position).getEvent());
-        rv.setTextViewText(R.id.alert_summary, nwsData.get(position).getTitle());
+        if (nwsData.get(position).getEvent().equals("")) {
+            // If there is no "event" put the title in the big textfield
+            // (typically the case with the fake entry in an empty list)
+            rv.setTextViewText(R.id.alert_title, nwsData.get(position).getTitle());
+            rv.setTextViewText(R.id.alert_summary, "");
+        } else {
+            rv.setTextViewText(R.id.alert_title, nwsData.get(position).getEvent());
+            rv.setTextViewText(R.id.alert_summary, nwsData.get(position).getTitle());
+        }
         rv.setImageViewResource(R.id.icon, nwsData.get(position).getIcon());
         rv.setInt(R.id.eventlistitemview, "setBackgroundResource", nwsData.get(position).getBackground());
 

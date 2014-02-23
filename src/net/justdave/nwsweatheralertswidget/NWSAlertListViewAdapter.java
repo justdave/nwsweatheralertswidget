@@ -37,8 +37,15 @@ public class NWSAlertListViewAdapter extends ArrayAdapter<NWSAlertEntry> {
         TextView summaryView = (TextView) rowView
                 .findViewById(R.id.alert_summary);
         ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
-        titleView.setText(values.get(position).getEvent());
-        summaryView.setText(values.get(position).getTitle());
+        if (values.get(position).getEvent().equals("")) {
+            // If there is no "event" put the title in the big textfield
+            // (typically the case with the fake entry in an empty list)
+            titleView.setText(values.get(position).getTitle());
+            summaryView.setText("");
+        } else {
+            titleView.setText(values.get(position).getEvent());
+            summaryView.setText(values.get(position).getTitle());
+        }
         mainView.setBackgroundResource(values.get(position).getBackground());
         imageView.setImageResource(values.get(position).getIcon());
         final Intent browserIntent = new Intent(Intent.ACTION_VIEW,
