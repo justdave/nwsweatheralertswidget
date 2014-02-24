@@ -2,9 +2,11 @@
 <resources>
 
     <string name="app_name">NWS Weather Alerts Widget</string>
+    <string name="action_about">About This App</string>
     <string name="action_settings">Settings</string>
     <string name="action_debug">Show Source XML</string>
     <string name="icon">Icon</string>
+    <string name="ok">OK</string>
     <string name="alert_title">Widget Loading</string>
     <string name="alert_summary">Please wait&#8230;</string>
     <string name="widget_title">Current Active NWS Alerts</string>

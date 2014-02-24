@@ -92,6 +92,12 @@ public class MainActivity extends Activity {
         final Intent intent = new Intent(SettingsActivity.class.getName());
         startActivity(intent);
     }
+    public void onAboutMenuItemSelected(MenuItem menuitem) {
+        Log.i(TAG, "onAboutMenuItemSelected() called");
+        AboutDialog about = new AboutDialog(this);
+        about.setTitle(getResources().getIdentifier("action_about", "string", getPackageName()));
+        about.show();
+    }
     private void updateMainView() {
         // doing this in a Handler allows to call this method safely from any
         // thread
