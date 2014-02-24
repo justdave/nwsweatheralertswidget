@@ -11,6 +11,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
@@ -20,11 +21,7 @@ import android.util.Xml;
 
 public class NWSBackgroundService extends Service {
 
-    /* MI ALL */
-    // private String url = "http://alerts.weather.gov/cap/mi.php?x=0";
-    /* Ottawa County MI */
-    private String url = "http://alerts.weather.gov/cap/wwaatmget.php?x=MIC139&y=0";
-
+    private String url;
     private NWSAlertList nwsData = new NWSAlertList();
     private String nwsRawData = "";
     private final Object NWSDataLock = new Object();
@@ -36,7 +33,9 @@ public class NWSBackgroundService extends Service {
     private TimerTask updateTask = new TimerTask() {
         @Override
         public void run() {
-            Log.i(TAG, "Timer task doing work");
+            url = getSharedPreferences(getApplicationContext().getPackageName().concat("_preferences"), Context.MODE_MULTI_PROCESS)
+                    .getString("feed_county", "http://alerts.weather.gov/cap/us.php?x=0");
+            Log.i(TAG, "Timer task fetching ".concat(url));
             SendHttpRequestTask task = new SendHttpRequestTask();
             String[] params = new String[]{url};
             task.execute(params);
@@ -57,7 +56,6 @@ public class NWSBackgroundService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.i(TAG, "Service creating");
-
         timer = new Timer("NWSServiceTimer");
         timer.schedule(updateTask, 100L, 300 * 1000L);
     }
@@ -178,5 +176,4 @@ public class NWSBackgroundService extends Service {
 
         return buffer.toString();
     }
-
 }

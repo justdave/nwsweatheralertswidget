@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <ListPreference
+        android:id="@+id/alert_state"
+        android:defaultValue="us"
+        android:dialogTitle="@string/choose_state"
+        android:entries="@array/preference_state_entries"
+        android:entryValues="@array/preference_state_entryvalues"
+        android:key="feed_state"
+        android:persistent="true"
+        android:title="@string/choose_state" />
+    <ListPreference
+        android:id="@+id/alert_county"
+        android:defaultValue="http://alerts.weather.gov/cap/us.php?x=0"
+        android:dialogTitle="@string/choose_county"
+        android:entries="@array/preference_county_entries_us"
+        android:entryValues="@array/preference_county_entryvalues_us"
+        android:key="feed_county"
+        android:persistent="true"
+        android:title="@string/choose_county" />
+
+</PreferenceScreen>

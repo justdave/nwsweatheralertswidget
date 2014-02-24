@@ -73,8 +73,7 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         Intent intent = new Intent(NWSBackgroundService.class.getName());;
         mContext.startService(intent);
         mContext.bindService(intent, serviceConnection, 0);
-        handler = new Handler(); // handler will be bound to the current thread
-                                 // (UI)
+        handler = new Handler(); // handler will be bound to the current thread (UI)
     }
 
     @Override
@@ -113,9 +112,7 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
             api.removeListener(serviceListener);
             mContext.unbindService(serviceConnection);
         } catch (Throwable t) {
-            // catch any issues, typical for destroy routines
-            // even if we failed to destroy something, we need to continue
-            // destroying
+            // catch any issues, typical for destroy routines even if we failed to destroy something, we need to continue destroying
             Log.w(TAG, "Failed to unbind from the service", t);
         }
 
@@ -168,7 +165,10 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            Log.i(TAG, "Service connection closed");
+            Log.e(TAG, "Service connection closed");
+            // attempt to reconnect to the background service because it probably just restarted
+            Intent intent = new Intent(NWSBackgroundService.class.getName());;
+            mContext.bindService(intent, serviceConnection, 0);
         }
     };
 

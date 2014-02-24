@@ -4,9 +4,12 @@
     <string name="app_name">NWS Weather Alerts Widget</string>
     <string name="action_settings">Settings</string>
     <string name="action_debug">Show Source XML</string>
-    <string name="loading_message">Loading&#8230;</string>
     <string name="icon">Icon</string>
     <string name="alert_title">Widget Loading</string>
     <string name="alert_summary">Please wait&#8230;</string>
     <string name="widget_title">Current Active NWS Alerts</string>
+    <string name="choose_state">Choose State</string>
+    <string name="choose_county">Choose County</string>
+
+
 </resources>

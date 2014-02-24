@@ -87,6 +87,11 @@ public class MainActivity extends Activity {
         final Intent intent = new Intent(DebugActivity.class.getName());
         startActivity(intent);
     }
+    public void onSettingsMenuItemSelected(MenuItem menuitem) {
+        Log.i(TAG, "onSettingsMenuItemSelected() called");
+        final Intent intent = new Intent(SettingsActivity.class.getName());
+        startActivity(intent);
+    }
     private void updateMainView() {
         // doing this in a Handler allows to call this method safely from any
         // thread
@@ -129,7 +134,10 @@ public class MainActivity extends Activity {
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            Log.i(TAG, "Service connection closed");
+            Log.e(TAG, "Service connection closed");
+            // attempt to reconnect to the service, because it probably just restarted
+            Intent intent = new Intent(NWSBackgroundService.class.getName());;
+            bindService(intent, serviceConnection, 0);
         }
     };
 
