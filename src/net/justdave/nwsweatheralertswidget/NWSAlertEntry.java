@@ -241,6 +241,35 @@ public class NWSAlertEntry extends Object implements Parcelable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        //formatter:off
+        if (this == o)                             { return true; }
+        if (!(o instanceof NWSAlertEntry))         { return false; }
+        NWSAlertEntry n = (NWSAlertEntry) o;
+        if (!(id.equals(n.getId())))               { return false; }
+        if (!(published.equals(n.getPublished()))) { return false; }
+        if (!(title.equals(n.getTitle())))         { return false; }
+        if (!(link.equals(n.getLink())))           { return false; }
+        if (!(summary.equals(n.getSummary())))     { return false; }
+        if (!(event.equals(n.getEvent())))         { return false; }
+        if (!(effective.equals(n.getEffective()))) { return false; }
+        if (!(expires.equals(n.getExpires())))     { return false; }
+        if (!(status.equals(n.getStatus())))       { return false; }
+        if (!(msgType.equals(n.getMsgType())))     { return false; }
+        if (!(category.equals(n.getCategory())))   { return false; }
+        if (!(urgency.equals(n.getUrgency())))     { return false; }
+        if (!(severity.equals(n.getSeverity())))   { return false; }
+        if (!(certainty.equals(n.getCertainty()))) { return false; }
+        if (!(areaDesc.equals(n.getAreaDesc())))   { return false; }
+        //formatter:on
+        /*
+         * Note that 'updated' is specifically NOT getting checked here, as that field will always be updated with the timestamp of
+         * when you pulled the feed
+         */
+        return true;
+    }
+
+    @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);
         dest.writeString(updated);

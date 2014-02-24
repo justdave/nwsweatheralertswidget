@@ -43,14 +43,30 @@ public class NWSAlertList extends ArrayList<NWSAlertEntry> implements Parcelable
         }
         return result;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        //formatter:off
+        if (this == o)                      { return true; }
+        if (!(o instanceof NWSAlertList))   { return false; }
+        NWSAlertList n = (NWSAlertList) o;
+        if (size() != n.size())             { return false; }
+        final int N = size();
+        for (int i = 0; i < N; i++) {
+            if (!(get(i).equals(n.get(i)))) { return false; }
+        }
+        //formatter:on
+        return true;
+    }
+
     @Override
     public int describeContents() {
         // TODO Auto-generated method stub
         return 0;
     }
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        // TODO Auto-generated method stub
         dest.writeList((List<NWSAlertEntry>) this);
     }
 
