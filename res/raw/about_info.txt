@@ -1,5 +1,5 @@
 <center>
 Version 1.0<br>
 Copyright 2014<br>
-<b>https://github.com/justdave/nwsweatheralertswidget</b>
+<b>https://github.com/justdave/nwsweatheralertswidget/wiki</b>
 </center>
