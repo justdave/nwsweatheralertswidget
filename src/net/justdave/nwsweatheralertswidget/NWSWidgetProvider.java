@@ -3,6 +3,7 @@ package net.justdave.nwsweatheralertswidget;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetProvider;
 import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,6 +13,7 @@ import android.widget.RemoteViews;
 public class NWSWidgetProvider extends AppWidgetProvider {
 
     public static final String WIDGET_CLICK = "net.justdave.nwsweatheralertswidget.WIDGET_CLICK";
+    public static final String WIDGET_DATA_UPDATE = "net.justdave.nwsweatheralertswidget.WIDGET_DATA_UPDATE";
     public static final String EVENT_URL = "net.justdave.nwsweatheralertswidget.EVENT_URL";
     private static final String TAG = NWSWidgetProvider.class.getSimpleName();
 
@@ -58,17 +60,24 @@ public class NWSWidgetProvider extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         Log.i(TAG, "Intent received: ".concat(intent.toString()));
         super.onReceive(context, intent);
-        if (intent.getAction() != null && intent.getAction().equals(WIDGET_CLICK)) {
-            String event_url = intent.getExtras().getString(EVENT_URL);
-            Log.i(TAG, "URL Launch Event received for ".concat(event_url));
-            try {
-                Intent webIntent = new Intent(Intent.ACTION_VIEW);
-                webIntent.setData(Uri.parse(event_url));
-                webIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(webIntent);
-            } catch (RuntimeException e) {
-                // The url is invalid, maybe missing http://
-                e.printStackTrace();
+        if (intent.getAction() != null) {
+            if (intent.getAction().equals(WIDGET_CLICK)) {
+                String event_url = intent.getExtras().getString(EVENT_URL);
+                Log.i(TAG, "URL Launch Event received for ".concat(event_url));
+                try {
+                    Intent webIntent = new Intent(Intent.ACTION_VIEW);
+                    webIntent.setData(Uri.parse(event_url));
+                    webIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(webIntent);
+                } catch (RuntimeException e) {
+                    // The url is invalid, maybe missing http://
+                    e.printStackTrace();
+                }
+            } else if (intent.getAction().equals(WIDGET_DATA_UPDATE)) {
+                final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context.getApplicationContext());
+                ComponentName thisWidget = new ComponentName(context.getApplicationContext(), NWSWidgetProvider.class);
+                final int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
+                onUpdate(context, appWidgetManager, appWidgetIds);
             }
         }
     }

@@ -11,6 +11,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Service;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -58,6 +60,11 @@ public class NWSBackgroundService extends Service {
         Log.i(TAG, "Service creating");
         timer = new Timer("NWSServiceTimer");
         timer.schedule(updateTask, 100L, 300 * 1000L);
+        // restart all the widgets to make sure they pick up any config changes
+        Context context = getApplicationContext();
+        Intent intent = new Intent(context, NWSWidgetProvider.class);
+        intent.setAction(NWSWidgetProvider.WIDGET_DATA_UPDATE);
+        context.sendBroadcast(intent);
     }
 
     @Override
@@ -101,6 +108,7 @@ public class NWSBackgroundService extends Service {
         public void removeListener(NWSServiceListener listener) throws RemoteException {
 
             synchronized (listeners) {
+                Log.i(TAG, "Removing listener ".concat(listener.toString()));
                 listeners.remove(listener);
             }
         }
@@ -134,10 +142,12 @@ public class NWSBackgroundService extends Service {
                     if (nwsDataTemp.equals(nwsData)) {
                         Log.i(TAG, "Newly downloaded data hasn't changed since last time we grabbed it, ignoring.");
                     } else {
-                        Log.i(TAG, "New data since last time we grabbed it, notifying listeners.");
+                        Log.i(TAG, "New data since last time we grabbed it, notifying ".concat(String.valueOf(listeners.size())
+                                .concat(" listeners.")));
                         nwsData = myXMLHandler.getXMLData();
                         synchronized (listeners) {
                             for (NWSServiceListener listener : listeners) {
+                                Log.i(TAG, "Notifying listener: ".concat(listener.toString()));
                                 try {
                                     listener.handleFeedUpdated();
                                 } catch (RemoteException e) {
@@ -145,6 +155,12 @@ public class NWSBackgroundService extends Service {
                                 }
                             }
                         }
+                        Log.i(TAG, "Notifying widgets to update");
+                        Context context = getApplicationContext();
+                        final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context.getApplicationContext());
+                        ComponentName thisWidget = new ComponentName(context.getApplicationContext(), NWSWidgetProvider.class);
+                        final int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
+                        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_parsed_events);
                     }
                 }
             } catch (Exception e) {

@@ -5,9 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -27,12 +25,12 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private Context mContext;
     private int mAppWidgetId;
     public static NWSAlertList nwsData;
-    private Handler handler;
+    //private Handler handler;
 
     public NWSRemoteViewsFactory(Context context, Intent intent) {
         mContext = context;
         mAppWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
-        Log.i(TAG, "NWSWidgetService started for widget ID ".concat(String.valueOf(mAppWidgetId)));
+        Log.i(TAG, "NWSWidgetListViewAdapter enabled for widget ID ".concat(String.valueOf(mAppWidgetId)));
     }
 
     @Override
@@ -73,35 +71,31 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         Intent intent = new Intent(NWSBackgroundService.class.getName());;
         mContext.startService(intent);
         mContext.bindService(intent, serviceConnection, 0);
-        handler = new Handler(); // handler will be bound to the current thread (UI)
+        //handler = new Handler(); // handler will be bound to the current thread (UI)
     }
 
     @Override
     public void onDataSetChanged() {
-        // TODO Auto-generated method stub
         Log.i(TAG, "onDataSetChanged() called");
-    }
-
-    public void doWidgetUpdate() {
-        Log.i(TAG, "doWidgetUpdate() called");
-        final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(mContext.getApplicationContext());
-        ComponentName thisWidget = new ComponentName(mContext.getApplicationContext(), NWSWidgetProvider.class);
-        final int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
         // doing this in a Handler allows to call this method safely from any
         // thread see Handler docs for more info
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
+//        handler.post(new Runnable() {
+//            @Override
+//            public void run() {
                 try {
-                    nwsData = api.getFeedData();
-                    Log.i(TAG, "Got new data, telling widget(s) to update");
-                    appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_parsed_events);
+                    if (api != null) {
+                        Log.i(TAG, "Fetching updated data");
+                        nwsData = api.getFeedData();
+                        Log.i(TAG, "Retrieved updated data");
+                    } else {
+                        Log.w(TAG, "Skipping update because the backend service doesn't appear to be connected yet");
+                    }
                 } catch (Throwable t) {
                     Log.w(TAG, "Failed to retrieve updated parsed data from the background service");
                     Log.w(TAG, t);
                 }
-            }
-        });
+//            }
+//        });
     }
 
     @Override
@@ -109,7 +103,6 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
         Log.i(TAG, "onDestroy() called");
         try {
-            api.removeListener(serviceListener);
             mContext.unbindService(serviceConnection);
         } catch (Throwable t) {
             // catch any issues, typical for destroy routines even if we failed to destroy something, we need to continue destroying
@@ -152,15 +145,10 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.i(TAG, "Service connection established");
 
-            // that's how we get the client side of the IPC connection
+            // get the client side of the IPC connection
             api = NWSServiceApi.Stub.asInterface(service);
-            try {
-                api.addListener(serviceListener);
-                Log.i(TAG, "Service connection opened");
-                doWidgetUpdate();
-            } catch (RemoteException e) {
-                Log.e(TAG, "Failed to add listener", e);
-            }
+            // force an update since we just now got access to the data
+            onDataSetChanged();
         }
 
         @Override
@@ -173,13 +161,5 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     };
 
     private NWSServiceApi api;
-
-    private NWSServiceListener.Stub serviceListener = new NWSServiceListener.Stub() {
-        @Override
-        public void handleFeedUpdated() throws RemoteException {
-            Log.i(TAG, "handleFeedUpdated() callback received");
-            doWidgetUpdate();
-        }
-    };
 
 }
