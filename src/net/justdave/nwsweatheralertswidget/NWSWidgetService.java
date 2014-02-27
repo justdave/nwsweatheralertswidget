@@ -148,7 +148,10 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
             // get the client side of the IPC connection
             api = NWSServiceApi.Stub.asInterface(service);
             // force an update since we just now got access to the data
-            onDataSetChanged();
+            final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(mContext.getApplicationContext());
+            ComponentName thisWidget = new ComponentName(mContext.getApplicationContext(), NWSWidgetProvider.class);
+            final int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_parsed_events);
         }
 
         @Override
