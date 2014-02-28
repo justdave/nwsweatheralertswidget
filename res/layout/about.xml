@@ -11,7 +11,7 @@
             android:layout_height="64dp"
             android:layout_gravity="left|center"
             android:contentDescription="@string/icon"
-            android:src="@drawable/nws_logo" />
+            android:src="@drawable/app_icon" />
 
         <TextView
             android:layout_width="fill_parent"
