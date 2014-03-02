@@ -89,6 +89,9 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
                         Log.i(TAG, "Retrieved updated data");
                     } else {
                         Log.w(TAG, "Skipping update because the backend service doesn't appear to be connected yet");
+                        // attempt to re-bind - it won't hurt anything, and will kick it if it stalled
+                        Intent intent = new Intent(NWSBackgroundService.class.getName());;
+                        mContext.bindService(intent, serviceConnection, 0);
                     }
                 } catch (Throwable t) {
                     Log.w(TAG, "Failed to retrieve updated parsed data from the background service");
