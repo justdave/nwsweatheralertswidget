@@ -92,6 +92,11 @@ public class MainActivity extends Activity {
         final Intent intent = new Intent(SettingsActivity.class.getName());
         startActivity(intent);
     }
+    public void onDemoMenuItemSelected(MenuItem menuitem) {
+        Log.i(TAG, "onDemoMenuItemSelected() called");
+        final Intent intent = new Intent(DemoActivity.class.getName());
+        startActivity(intent);
+    }
     public void onAboutMenuItemSelected(MenuItem menuitem) {
         Log.i(TAG, "onAboutMenuItemSelected() called");
         AboutDialog about = new AboutDialog(this);

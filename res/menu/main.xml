@@ -7,15 +7,21 @@
         android:showAsAction="never"
         android:title="@string/action_settings"/>
     <item
+        android:id="@+id/action_demo"
+        android:onClick="onDemoMenuItemSelected"
+        android:orderInCategory="101"
+        android:showAsAction="never"
+        android:title="@string/action_demo"/>
+    <item
         android:id="@+id/action_debug"
         android:onClick="onDebugMenuItemSelected"
-        android:orderInCategory="101"
+        android:orderInCategory="102"
         android:showAsAction="never"
         android:title="@string/action_debug"/>
     <item
         android:id="@+id/action_about"
         android:onClick="onAboutMenuItemSelected"
-        android:orderInCategory="102"
+        android:orderInCategory="103"
         android:showAsAction="never"
         android:title="@string/action_about"/>
 

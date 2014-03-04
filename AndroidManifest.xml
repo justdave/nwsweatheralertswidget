@@ -32,12 +32,27 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.justdave.nwsweatheralertswidget.MainActivity" />
+
             <intent-filter>
                 <action android:name="net.justdave.nwsweatheralertswidget.SettingsActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-            </activity>
+        </activity>
+        <activity
+            android:name="net.justdave.nwsweatheralertswidget.DemoActivity"
+            android:label="@string/action_demo"
+            android:parentActivityName="net.justdave.nwsweatheralertswidget.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.justdave.nwsweatheralertswidget.MainActivity" />
+
+            <intent-filter>
+                <action android:name="net.justdave.nwsweatheralertswidget.DemoActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
             android:name="net.justdave.nwsweatheralertswidget.DebugActivity"
             android:label="@string/action_debug"

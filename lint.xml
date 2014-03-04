@@ -4,6 +4,8 @@
     <issue id="UnusedResources" >
 
         <ignore path="res/values/counties.xml" />
+
+        <ignore path="res/values/demodata.xml" />
     </issue>
 
 </lint>
