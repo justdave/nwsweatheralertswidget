@@ -81,27 +81,29 @@ public class MainActivity extends Activity {
 
         return true;
     }
-
-    public void onDebugMenuItemSelected(MenuItem menuitem) {
+    public boolean onOptionsItemSelected(MenuItem menuitem) {
         Log.i(TAG, "onDebugMenuItemSelected() called");
-        final Intent intent = new Intent(DebugActivity.class.getName());
-        startActivity(intent);
-    }
-    public void onSettingsMenuItemSelected(MenuItem menuitem) {
-        Log.i(TAG, "onSettingsMenuItemSelected() called");
-        final Intent intent = new Intent(SettingsActivity.class.getName());
-        startActivity(intent);
-    }
-    public void onDemoMenuItemSelected(MenuItem menuitem) {
-        Log.i(TAG, "onDemoMenuItemSelected() called");
-        final Intent intent = new Intent(DemoActivity.class.getName());
-        startActivity(intent);
-    }
-    public void onAboutMenuItemSelected(MenuItem menuitem) {
-        Log.i(TAG, "onAboutMenuItemSelected() called");
-        AboutDialog about = new AboutDialog(this);
-        about.setTitle(getResources().getIdentifier("action_about", "string", getPackageName()));
-        about.show();
+        Intent intent;
+        switch (menuitem.getItemId()) {
+            case R.id.action_about :
+                AboutDialog about = new AboutDialog(this);
+                about.setTitle(getResources().getIdentifier("action_about", "string", getPackageName()));
+                about.show();
+                break;
+            case R.id.action_debug :
+                intent = new Intent(getApplicationContext(), DebugActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.action_demo :
+                intent = new Intent(getApplicationContext(), DemoActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.action_settings :
+                intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                startActivity(intent);
+                break;
+        }
+        return true;
     }
     private void updateMainView() {
         // doing this in a Handler allows to call this method safely from any
@@ -111,6 +113,18 @@ public class MainActivity extends Activity {
             @Override
             public void run() {
                 try {
+                    if (api == null) {
+                        Log.w(TAG, "We don't appear to be connected to the background service yet... waiting for it to connect");
+                        // attempt to re-bind - it won't hurt anything, and will kick it if it stalled
+                        final Intent intent = new Intent(NWSBackgroundService.class.getName());
+                        bindService(intent, serviceConnection, 0);
+                    }
+                    // and then wait for it to connect before continuing - I'm guessing this will hang if it never connects,
+                    // but if that happens we probably have bigger problems. Docs say we can do expensive ops here.
+                    // http://developer.android.com/reference/android/widget/RemoteViewsService.RemoteViewsFactory.html#onDataSetChanged%28%29
+                    while (api == null) {
+                        Thread.sleep(100);
+                    }
                     nwsData = api.getFeedData();
                     adapter.clear();
                     adapter.addAll(nwsData);
@@ -122,8 +136,7 @@ public class MainActivity extends Activity {
                         timer = null;
                     }
                 } catch (Throwable t) {
-                    Log.w(TAG,
-                            "Failed to retrieve updated parsed data from the background service");
+                    Log.w(TAG, "Failed to retrieve updated parsed data from the background service");
                     Log.w(TAG, t);
                 }
             }

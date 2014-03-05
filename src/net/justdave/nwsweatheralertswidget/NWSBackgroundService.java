@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.RemoteException;
 import android.util.Log;
 import android.util.Xml;
@@ -38,9 +39,11 @@ public class NWSBackgroundService extends Service {
             url = getSharedPreferences(getApplicationContext().getPackageName().concat("_preferences"), Context.MODE_MULTI_PROCESS)
                     .getString("feed_county", "http://alerts.weather.gov/cap/us.php?x=0");
             Log.i(TAG, "Timer task fetching ".concat(url));
+            Looper.prepare();
             SendHttpRequestTask task = new SendHttpRequestTask();
             String[] params = new String[]{url};
             task.execute(params);
+            Looper.loop();
         }
     };
 

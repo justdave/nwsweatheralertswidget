@@ -72,7 +72,6 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         Intent intent = new Intent(NWSBackgroundService.class.getName());;
         mContext.startService(intent);
         mContext.bindService(intent, serviceConnection, 0);
-        // handler = new Handler(); // handler will be bound to the current thread (UI)
     }
 
     @Override
@@ -80,7 +79,7 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         Log.i(TAG, "onDataSetChanged() called");
         try {
             if (api == null) {
-                Log.w(TAG, "We don't appear to be connected to the background service yet... reconecting");
+                Log.w(TAG, "We don't appear to be connected to the background service yet... waiting for connection");
                 // attempt to re-bind - it won't hurt anything, and will kick it if it stalled
                 Intent intent = new Intent(NWSBackgroundService.class.getName());;
                 mContext.bindService(intent, serviceConnection, 0);
