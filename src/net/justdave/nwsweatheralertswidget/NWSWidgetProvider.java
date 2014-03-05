@@ -3,7 +3,6 @@ package net.justdave.nwsweatheralertswidget;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetProvider;
 import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,7 +12,6 @@ import android.widget.RemoteViews;
 public class NWSWidgetProvider extends AppWidgetProvider {
 
     public static final String WIDGET_CLICK = "net.justdave.nwsweatheralertswidget.WIDGET_CLICK";
-    public static final String WIDGET_DATA_UPDATE = "net.justdave.nwsweatheralertswidget.WIDGET_DATA_UPDATE";
     public static final String EVENT_URL = "net.justdave.nwsweatheralertswidget.EVENT_URL";
     private static final String TAG = NWSWidgetProvider.class.getSimpleName();
 
@@ -73,11 +71,6 @@ public class NWSWidgetProvider extends AppWidgetProvider {
                     // The url is invalid, maybe missing http://
                     e.printStackTrace();
                 }
-            } else if (intent.getAction().equals(WIDGET_DATA_UPDATE)) {
-                final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context.getApplicationContext());
-                ComponentName thisWidget = new ComponentName(context.getApplicationContext(), NWSWidgetProvider.class);
-                final int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
-                onUpdate(context, appWidgetManager, appWidgetIds);
             }
         }
     }

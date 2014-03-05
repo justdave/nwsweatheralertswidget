@@ -60,11 +60,6 @@ public class NWSBackgroundService extends Service {
         Log.i(TAG, "Service creating");
         timer = new Timer("NWSServiceTimer");
         timer.schedule(updateTask, 100L, 300 * 1000L);
-        // restart all the widgets to make sure they pick up any config changes
-        Context context = getApplicationContext();
-        Intent intent = new Intent(context, NWSWidgetProvider.class);
-        intent.setAction(NWSWidgetProvider.WIDGET_DATA_UPDATE);
-        context.sendBroadcast(intent);
     }
 
     @Override

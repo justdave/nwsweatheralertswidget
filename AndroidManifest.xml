@@ -71,7 +71,6 @@
         <receiver android:name=".NWSWidgetProvider" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="net.justdave.nwsweatheralertswidget.WIDGET_DATA_UPDATE" />
             </intent-filter>
 
             <meta-data
