@@ -94,6 +94,9 @@ public class NWSBackgroundService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.i(TAG, "Service creating");
+        NWSAlertEntry temp = new NWSAlertEntry(); // fake entry to make first comparison always fail
+        temp.setEvent("Waiting for feed download");
+        nwsData.add(temp);
         timer = new Timer("NWSServiceTimer");
         timer.schedule(updateTask, 100L, 300 * 1000L);
     }

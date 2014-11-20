@@ -20,17 +20,14 @@ public class NWSFeedHandler extends DefaultHandler {
      * This will be called when the tags of the XML starts.
      **/
     @Override
-    public void startElement(String uri, String localName, String qName,
-            Attributes attributes) throws SAXException {
+    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         elementOn = true;
-        if (localName.equalsIgnoreCase("feed"))
-        {
+        if (localName.equalsIgnoreCase("feed")) {
             data.clear();
             feedActive = true;
         } else if (feedActive) {
             if (localName.equals("entry")) {
                 currentEntry = new NWSAlertEntry();
-                data.add(currentEntry);
             } else if (currentEntry != null) {
                 /* Here we get data that needs to be retrieved from attributes */
                 if (localName.equals("link")) {
@@ -44,17 +41,21 @@ public class NWSFeedHandler extends DefaultHandler {
      * This will be called when the tags of the XML end.
      **/
     @Override
-    public void endElement(String uri, String localName, String qName)
-            throws SAXException {
+    public void endElement(String uri, String localName, String qName) throws SAXException {
         elementOn = false;
         /**
          * Sets the values after retrieving the values from the XML tags
          * */
         if (feedActive) {
-        	if (currentEntry != null) {
+            if (currentEntry != null) {
                 if (localName.equalsIgnoreCase("id"))
                     currentEntry.setId(elementValue);
                 else if (localName.equalsIgnoreCase("entry")) {
+                    if (!currentEntry.getEvent().equals("")) {
+                        // if Event is blank, it means this is the fake entry we get
+                        // when the feed is empty, so ignore it.
+                        data.add(currentEntry);
+                    }
                     currentEntry = null;
                 } else if (localName.equalsIgnoreCase("updated")) {
                     currentEntry.setUpdated(elementValue);
@@ -86,7 +87,7 @@ public class NWSFeedHandler extends DefaultHandler {
                     currentEntry.setAreaDesc(elementValue);
                 }
             } else if (localName.equalsIgnoreCase("feed")) {
-            	feedActive = false;
+                feedActive = false;
             }
         }
     }
@@ -94,8 +95,7 @@ public class NWSFeedHandler extends DefaultHandler {
      * This is called to get the tags value
      **/
     @Override
-    public void characters(char[] ch, int start, int length)
-            throws SAXException {
+    public void characters(char[] ch, int start, int length) throws SAXException {
         if (elementOn) {
             elementValue = new String(ch, start, length);
             elementOn = false;
