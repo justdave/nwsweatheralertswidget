@@ -15,9 +15,7 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.RemoteException;
 import android.util.Log;
 import android.util.Xml;
@@ -39,11 +37,46 @@ public class NWSBackgroundService extends Service {
             url = getSharedPreferences(getApplicationContext().getPackageName().concat("_preferences"), Context.MODE_MULTI_PROCESS)
                     .getString("feed_county", "http://alerts.weather.gov/cap/us.php?x=0");
             Log.i(TAG, "Timer task fetching ".concat(url));
-            Looper.prepare();
-            SendHttpRequestTask task = new SendHttpRequestTask();
-            String[] params = new String[]{url};
-            task.execute(params);
-            Looper.loop();
+            String result = sendHttpRequest(url);
+            NWSFeedHandler myXMLHandler = new NWSFeedHandler();
+            synchronized (NWSDataLock) {
+                nwsRawData = result;
+            }
+            try {
+
+                /**
+                 * Create the Handler to handle each of the XML tags.
+                 **/
+                Xml.parse(result, myXMLHandler);
+                synchronized (NWSDataLock) {
+                    NWSAlertList nwsDataTemp = myXMLHandler.getXMLData();
+                    if (nwsDataTemp.equals(nwsData)) {
+                        Log.i(TAG, "Newly downloaded data hasn't changed since last time we grabbed it, ignoring.");
+                    } else {
+                        Log.i(TAG, "New data since last time we grabbed it, notifying ".concat(String.valueOf(listeners.size())
+                                .concat(" listeners.")));
+                        nwsData = myXMLHandler.getXMLData();
+                        synchronized (listeners) {
+                            for (NWSServiceListener listener : listeners) {
+                                Log.i(TAG, "Notifying listener: ".concat(listener.toString()));
+                                try {
+                                    listener.handleFeedUpdated();
+                                } catch (RemoteException e) {
+                                    Log.w(TAG, "Failed to notify listener " + listener, e);
+                                }
+                            }
+                        }
+                        Log.i(TAG, "Notifying widgets to update");
+                        Context context = getApplicationContext();
+                        final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context.getApplicationContext());
+                        ComponentName thisWidget = new ComponentName(context.getApplicationContext(), NWSWidgetProvider.class);
+                        final int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
+                        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_parsed_events);
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println(e);
+            }
         }
     };
 
@@ -113,62 +146,9 @@ public class NWSBackgroundService extends Service {
 
     };
 
-    private class SendHttpRequestTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... params) {
-            String url = params[0];
-            String data = sendHttpRequest(url);
-
-            return data;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            NWSFeedHandler myXMLHandler = new NWSFeedHandler();
-            synchronized (NWSDataLock) {
-                nwsRawData = result;
-            }
-            try {
-
-                /**
-                 * Create the Handler to handle each of the XML tags.
-                 **/
-                Xml.parse(result, myXMLHandler);
-                synchronized (NWSDataLock) {
-                    NWSAlertList nwsDataTemp = myXMLHandler.getXMLData();
-                    if (nwsDataTemp.equals(nwsData)) {
-                        Log.i(TAG, "Newly downloaded data hasn't changed since last time we grabbed it, ignoring.");
-                    } else {
-                        Log.i(TAG, "New data since last time we grabbed it, notifying ".concat(String.valueOf(listeners.size())
-                                .concat(" listeners.")));
-                        nwsData = myXMLHandler.getXMLData();
-                        synchronized (listeners) {
-                            for (NWSServiceListener listener : listeners) {
-                                Log.i(TAG, "Notifying listener: ".concat(listener.toString()));
-                                try {
-                                    listener.handleFeedUpdated();
-                                } catch (RemoteException e) {
-                                    Log.w(TAG, "Failed to notify listener " + listener, e);
-                                }
-                            }
-                        }
-                        Log.i(TAG, "Notifying widgets to update");
-                        Context context = getApplicationContext();
-                        final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context.getApplicationContext());
-                        ComponentName thisWidget = new ComponentName(context.getApplicationContext(), NWSWidgetProvider.class);
-                        final int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
-                        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_parsed_events);
-                    }
-                }
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-        }
-    }
 
     private String sendHttpRequest(String url) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         try {
             HttpURLConnection con = (HttpURLConnection) (new URL(url)).openConnection();
             con.setRequestMethod("GET");
