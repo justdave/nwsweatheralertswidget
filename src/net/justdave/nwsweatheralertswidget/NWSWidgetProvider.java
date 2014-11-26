@@ -63,7 +63,7 @@ public class NWSWidgetProvider extends AppWidgetProvider {
                 String event_url = intent.getExtras().getString(EVENT_URL);
                 Log.i(TAG, "URL Launch Event received for ".concat(event_url));
                 try {
-                    Intent webIntent = new Intent(Intent.ACTION_VIEW);
+                    Intent webIntent = new Intent(context.getApplicationContext(), AlertDetailActivity.class);
                     webIntent.setData(Uri.parse(event_url));
                     webIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(webIntent);

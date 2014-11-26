@@ -67,6 +67,20 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="net.justdave.nwsweatheralertswidget.AlertDetailActivity"
+            android:label="@string/activity_detail"
+            android:parentActivityName="net.justdave.nwsweatheralertswidget.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.justdave.nwsweatheralertswidget.MainActivity" />
+
+            <intent-filter>
+                <action android:name="net.justdave.nwsweatheralertswidget.AlertDetailActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <receiver android:name=".NWSWidgetProvider" >
             <intent-filter>

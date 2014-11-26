@@ -48,8 +48,9 @@ public class NWSAlertListViewAdapter extends ArrayAdapter<NWSAlertEntry> {
         }
         mainView.setBackgroundResource(values.get(position).getBackground());
         imageView.setImageResource(values.get(position).getIcon());
-        final Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse(values.get(position).getLink()));
+
+        final Intent browserIntent = new Intent(context.getApplicationContext(), AlertDetailActivity.class);
+        browserIntent.setData(Uri.parse(values.get(position).getLink()));
         browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         OnClickListener myListener = new OnClickListener() {
             @Override
