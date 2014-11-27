@@ -79,9 +79,9 @@ public class AlertDetailActivity extends Activity {
                             description.setText(data.getDescription());
                             instructions.setText(data.getInstruction());
                             target.setText(data.getAreaDesc());
-                            
+
                             // parse the expires date and reformat it to be human-readable
-                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"); 
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
                             try {
                                 event_expires = format.parse(data.getExpires());
                             } catch (ParseException e) {
