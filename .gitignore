@@ -1,3 +1,7 @@
-bin
-gen
-README.md~
+/bin
+/gen
+/.idea
+/app/build
+/build
+/.gradle
+/README.md~
