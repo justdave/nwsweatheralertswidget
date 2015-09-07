@@ -12,7 +12,8 @@
          they can possibly send, as a demo of what that alert will look like when displayed.
          This is mainly to make it easy to tell which items are still missing appropriate
          icons or background colors.  The NWS Logo on a gray background is the default used
-         if nothing else has been set.</string>
+         if nothing else has been set. Please visit
+         https://github.com/justdave/nwsweatheralertswidget/issues to suggest icons or colors.</string>
     <string name="icon">Icon</string>
     <string name="ok">OK</string>
     <string name="alert_title">Widget Loading</string>
