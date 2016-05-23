@@ -1,9 +1,35 @@
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/parsed_events"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/actity_main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_weight="1"
-    android:fillViewport="true">
+    android:layout_marginBottom="@dimen/widget_margin_bottom"
+    android:layout_marginLeft="@dimen/widget_margin_left"
+    android:layout_marginRight="@dimen/widget_margin_right"
+    android:layout_marginTop="@dimen/widget_margin_top"
+    android:background="@drawable/widget_frame"
+    android:orientation="vertical">
 
-</ListView>
+    <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/parsed_events"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+    </ListView>
+
+    <TextView
+        android:id="@android:id/empty"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:background="@color/semigray"
+        android:gravity="center_vertical|center_horizontal"
+        android:padding="6dip"
+        android:singleLine="false"
+        android:text="@string/alert_empty"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
+
+</LinearLayout>

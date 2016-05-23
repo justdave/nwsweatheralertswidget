@@ -17,7 +17,7 @@
     <string name="icon">Icon</string>
     <string name="ok">OK</string>
     <string name="alert_title">Widget Loading</string>
-    <string name="alert_empty">There are no alerts at this time</string>
+    <string name="alert_empty">There are no alerts at this time for this location</string>
     <string name="alert_summary">Please wait&#8230;</string>
     <string name="widget_title">Current Active NWS Alerts</string>
     <string name="choose_state">Choose State</string>

@@ -37,6 +37,7 @@ public class MainActivity extends Activity {
         parsed_events = (ListView) findViewById(R.id.parsed_events);
         adapter = new NWSAlertListViewAdapter(getBaseContext(), nwsData);
         parsed_events.setAdapter(adapter);
+        parsed_events.setEmptyView(findViewById(android.R.id.empty));
         Intent intent = new Intent(NWSBackgroundService.class.getName());
         startService(intent);
         bindService(intent, serviceConnection, 0);
