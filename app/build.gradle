@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+import com.android.builder.core.DefaultManifestParser
 
 android {
     compileSdkVersion 19
@@ -17,11 +18,11 @@ android {
             signingConfig getSigningConfig()
             applicationVariants.all { variant ->
                 variant.outputs.each { output ->
-                    def date = new Date();
-                    def formattedDate = date.format('yyyyMMddHHmmss')
-                    output.outputFile = new File(output.outputFile.parent,
-                            output.outputFile.name.replace("app", "nwswidget")
-                    )
+                    def file = output.outputFile
+                    def manifestParser = new DefaultManifestParser()
+                    def String versionName = manifestParser.getVersionName((File) android.sourceSets.main.manifest.srcFile)
+                    def fileName = "NWSWeatherAlertsWidget-" + versionName + ".apk"
+                    output.outputFile = new File(file.parent, fileName)
                 }
             }
         }
