@@ -90,7 +90,11 @@ public class AlertDetailActivity extends Activity {
                             }
                             // include day of week and timezone abbrev.
                             format = (SimpleDateFormat) SimpleDateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.LONG);
-                            expires.setText(format.format(event_expires));
+                            if (event_expires != null) {
+                                expires.setText(format.format(event_expires));
+                            } else {
+                                expires.setText("This event has expired.");
+                            }
 
                             raw_xml.setText(rawdata);
                             NWSAlertEntry entry = new NWSAlertEntry();
