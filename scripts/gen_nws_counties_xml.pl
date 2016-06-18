@@ -2,7 +2,7 @@
 
 use CGI qw( escapeHTML );
 
-if ( !-e "project.properties" ) {
+if ( !-e "local.properties" ) {
     print "ERROR: you need to be in the project root directory to run this script.\n";
     exit -1;
 }
@@ -11,7 +11,7 @@ my @states_entries = ();
 my @states_entryValues = ();
 
 sub process_statelist {
-    my $html = `wget -O- -q http://alerts.weather.gov/`;
+    my $html = `wget -O- -q https://alerts.weather.gov/`;
     $html =~ s@.*summary="Table summary@@s; # nuke the part before the table we want
     $html =~ s@.*<tbody>\s*@@s;
     $html =~ s@\s*</tbody>.*@@s; # and the part after
@@ -69,7 +69,7 @@ sub process_state {
         return;
     }
 
-    my $html = `wget -O- -q http://alerts.weather.gov/cap/${state}.php?x=3`;
+    my $html = `wget -O- -q https://alerts.weather.gov/cap/${state}.php?x=3`;
 
     my @entries     = ();
     my @entryValues = ();
@@ -111,13 +111,13 @@ EOF1
     print COUNTIES <<EOF2;
     </string-array>
     <string-array name="preference_county_entryvalues_$state">
-        <item>http://alerts.weather.gov/cap/$state.php?x=0</item>
+        <item>https://alerts.weather.gov/cap/$state.php?x=0</item>
 EOF2
     foreach my $entryValue (@entryValues) {
         my $temp = $entryValue; # make a copy, don't edit the original
         $temp =~ s/'/\\'/g; # Android apparently needs this
         $temp = escapeHTML($temp); # And this is just good practice in XML
-        print COUNTIES "        <item>http://alerts.weather.gov/cap/wwaatmget.php?x=$temp&amp;y=0</item>\n";
+        print COUNTIES "        <item>https://alerts.weather.gov/cap/wwaatmget.php?x=$temp&amp;y=0</item>\n";
     }
     print COUNTIES <<EOF3;
     </string-array>
