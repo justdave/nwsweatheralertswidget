@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- a list of all possible alert types taken from http://alerts.weather.gov/cap/product_list.txt -->
+    <!-- a list of all possible alert types taken from https://alerts.weather.gov/cap/product_list.txt -->
     <string-array name="demo_alert_types">
         <item>911 Telephone Outage</item>
         <item>Administrative Message</item>
