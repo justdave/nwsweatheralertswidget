@@ -37,7 +37,7 @@ public class NWSBackgroundService extends Service {
             url = getSharedPreferences(getApplicationContext().getPackageName().concat("_preferences"), Context.MODE_MULTI_PROCESS)
                     .getString("feed_county", "https://alerts.weather.gov/cap/us.php?x=0");
             if (url.startsWith("http:")) {
-                url.replaceFirst("http:", "https:"); // everything is https!
+                url = url.replaceFirst("http:", "https:"); // everything is https!
             }
             Log.i(TAG, "Timer task fetching ".concat(url));
             String result = sendHttpRequest(url);
