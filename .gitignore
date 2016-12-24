@@ -1,6 +1,7 @@
 /bin
 /gen
 /.idea
+/app/app.iml
 /app/build
 /build
 /.gradle
