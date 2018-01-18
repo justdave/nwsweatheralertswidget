@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.0'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
     def applicationName = "NWSWeatherAlertsWidget"
     defaultConfig {
         applicationId "net.justdave.nwsweatheralertswidget"
         minSdkVersion 14
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 11
         versionName '1.1.4-SNAPSHOT'
     }
@@ -20,7 +20,7 @@ android {
     productFlavors {
     }
     applicationVariants.all { variant ->
-        variant.outputs.each { output ->
+        variant.outputs.all { output ->
             def newApkName
             def newBaseName
             if (output.baseName == 'release') {
@@ -29,11 +29,12 @@ android {
                 newBaseName = "-${output.baseName}"
             }
             newApkName = "${applicationName}${newBaseName}-${variant.versionName}.apk"
-            output.outputFile = new File(output.outputFile.parent, newApkName)
+            outputFileName = new File(newApkName)
         }
     }
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:25.1.0'
+    compile 'com.android.support:support-v4:26.1.0'
+//    compile 'com.android.support.constraint:constraint-layout:1'
 }
