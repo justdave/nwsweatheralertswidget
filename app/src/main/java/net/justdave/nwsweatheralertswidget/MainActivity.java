@@ -39,6 +39,7 @@ public class MainActivity extends Activity {
         parsed_events.setAdapter(adapter);
         parsed_events.setEmptyView(findViewById(android.R.id.empty));
         Intent intent = new Intent(NWSBackgroundService.class.getName());
+        intent.setPackage(this.getPackageName());
         startService(intent);
         bindService(intent, serviceConnection, 0);
         timer = new Timer("NWSInitialUpdateTimer");
@@ -118,6 +119,7 @@ public class MainActivity extends Activity {
                         Log.w(TAG, "We don't appear to be connected to the background service yet... waiting for it to connect");
                         // attempt to re-bind - it won't hurt anything, and will kick it if it stalled
                         final Intent intent = new Intent(NWSBackgroundService.class.getName());
+                        intent.setPackage("net.justdave.nwsweatheralertswidget");
                         bindService(intent, serviceConnection, 0);
                     }
                     // and then wait for it to connect before continuing - I'm guessing this will hang if it never connects,
@@ -161,7 +163,8 @@ public class MainActivity extends Activity {
         public void onServiceDisconnected(ComponentName name) {
             Log.e(TAG, "Service connection closed");
             // attempt to reconnect to the service, because it probably just restarted
-            Intent intent = new Intent(NWSBackgroundService.class.getName());;
+            Intent intent = new Intent(NWSBackgroundService.class.getName());
+            intent.setPackage("net.justdave.nwsweatheralertswidget");
             bindService(intent, serviceConnection, 0);
         }
     };

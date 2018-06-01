@@ -69,7 +69,8 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public void onCreate() {
         Log.i(TAG, "onCreate() called");
-        Intent intent = new Intent(NWSBackgroundService.class.getName());;
+        Intent intent = new Intent(NWSBackgroundService.class.getName());
+        intent.setPackage("net.justdave.nwsweatheralertswidget");
         mContext.startService(intent);
         mContext.bindService(intent, serviceConnection, 0);
     }

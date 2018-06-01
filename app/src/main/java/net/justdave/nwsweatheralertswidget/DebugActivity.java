@@ -38,6 +38,7 @@ public class DebugActivity extends Activity {
                                  // (UI)
         raw_text = (TextView) findViewById(R.id.raw_text);
         Intent intent = new Intent(NWSBackgroundService.class.getName());
+        intent.setPackage(this.getPackageName());
         startService(intent);
         bindService(intent, serviceConnection, 0);
         timer = new Timer("NWSInitialUpdateTimer");

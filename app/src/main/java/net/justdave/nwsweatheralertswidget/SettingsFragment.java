@@ -91,6 +91,7 @@ public final class SettingsFragment extends PreferenceFragment implements OnShar
 
             // kill off the background service and restart it to pick up the new preferences
             Intent intent = new Intent(NWSBackgroundService.class.getName());
+            intent.setPackage("net.justdave.nwsweatheralertswidget");
             getActivity().stopService(intent);
             getActivity().startService(intent);
 
