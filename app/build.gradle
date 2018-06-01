@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '27.0.3'
     def applicationName = "NWSWeatherAlertsWidget"
     defaultConfig {
         applicationId "net.justdave.nwsweatheralertswidget"
@@ -35,6 +35,6 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:26.1.0'
+    implementation 'com.android.support:support-v4:26.1.0'
 //    compile 'com.android.support.constraint:constraint-layout:1'
 }

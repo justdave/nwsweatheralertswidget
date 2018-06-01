@@ -3,6 +3,7 @@
 /.idea
 /app/app.iml
 /app/build
+/app/release
 /build
 /.gradle
 /README.md~
