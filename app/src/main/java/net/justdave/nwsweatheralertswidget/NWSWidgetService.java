@@ -158,7 +158,8 @@ class NWSRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         public void onServiceDisconnected(ComponentName name) {
             Log.e(TAG, "Service connection closed");
             // attempt to reconnect to the background service because it probably just restarted
-            Intent intent = new Intent(NWSBackgroundService.class.getName());;
+            Intent intent = new Intent(NWSBackgroundService.class.getName());
+            intent.setPackage("net.justdave.nwsweatheralertswidget");
             mContext.bindService(intent, serviceConnection, 0);
         }
     };
