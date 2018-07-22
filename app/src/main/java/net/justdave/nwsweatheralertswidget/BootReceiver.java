@@ -8,6 +8,7 @@ public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Intent serviceIntent = new Intent(NWSBackgroundService.class.getName());
-        context.startService(serviceIntent); 
+        serviceIntent.setPackage(context.getPackageName());
+        context.startService(serviceIntent);
     }
 }
