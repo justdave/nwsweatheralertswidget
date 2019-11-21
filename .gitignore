@@ -8,3 +8,5 @@
 /.gradle
 /README.md~
 /app/*.apk
+/local.properties
+/*.iml
