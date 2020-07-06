@@ -10,3 +10,4 @@
 /app/*.apk
 /local.properties
 /*.iml
+/.DS_Store
