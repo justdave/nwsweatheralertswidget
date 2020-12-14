@@ -18,4 +18,7 @@ android:
   - android-${ANDROID_API}
 
 before_install:
-  - echo yes | sdkmanager "platforms;android-${ANDROID-API}"
+  - echo yes | sdkmanager "platforms;android-${ANDROID_API}"
+
+notifications:
+  email: null
