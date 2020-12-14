@@ -4,6 +4,9 @@ dist: trusty
 jdk:
   - oraclejdk8
 
+notifications:
+  email: null
+
 env:
  global:
  - ANDROID_API=30
@@ -20,5 +23,6 @@ android:
 before_install:
   - echo yes | sdkmanager "platforms;android-${ANDROID_API}"
 
-notifications:
-  email: null
+script:
+  - "./gradlew clean test build"
+
