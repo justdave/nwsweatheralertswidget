@@ -1,24 +1,33 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion '29.0.3'
+    compileSdkVersion 30
+    buildToolsVersion "30.0.2"
     def applicationName = "NWSWeatherAlertsWidget"
+
     defaultConfig {
         applicationId "net.justdave.nwsweatheralertswidget"
-        minSdkVersion 14
-        targetSdkVersion 29
-        versionCode 11
-        versionName '1.1.4-SNAPSHOT'
+        minSdkVersion 16
+        targetSdkVersion 30
+        versionCode 12
+        versionName "2.0-SNAPSHOT"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
+    buildFeatures {
+        viewBinding true
+//        dataBinding true
+    }
+
     buildTypes {
         release {
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-            signingConfig getSigningConfig()
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    productFlavors {
-    }
+
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
             def newApkName
@@ -32,9 +41,23 @@ android {
             outputFileName = new File(newApkName)
         }
     }
+
 }
 
 dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.4.21"
+    implementation 'androidx.core:core-ktx:1.3.2'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-//    compile 'com.android.support.constraint:constraint-layout:1'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.2'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.2'
+    implementation 'com.android.volley:volley:1.1.1'
+    testImplementation 'junit:junit:4.13.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
 }

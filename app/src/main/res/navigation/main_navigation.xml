@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_navigation.xml"
+    app:startDestination="@id/title_destination">
+
+    <fragment
+        android:id="@+id/title_destination"
+        android:name="net.justdave.nwsweatheralertswidget.AlertsDisplayFragment"
+        android:label="alertsdisplay_fragment"
+        tools:layout="@layout/fragment_alertsdisplay">
+ <!--       <action
+            android:id="@+id/action_title_to_game"
+            app:destination="@id/game_destination"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:launchSingleTop="true"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left" /> -->
+    </fragment>
+
+</navigation>

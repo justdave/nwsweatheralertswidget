@@ -29,5 +29,8 @@
     <string name="detail_instructions">Instructions</string>
     <string name="detail_action_showxml">Show XML</string>
     <string name="detail_action_hidexml">Hide XML</string>
-    
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="configure">Configure</string>
+    <string name="add_widget">Add widget</string>
+
 </resources>
