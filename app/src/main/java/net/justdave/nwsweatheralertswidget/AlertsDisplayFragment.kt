@@ -21,7 +21,7 @@ class AlertsDisplayFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         binding = FragmentAlertsdisplayBinding.inflate(inflater, container, false)
 
@@ -30,9 +30,9 @@ class AlertsDisplayFragment : Fragment() {
         viewModel.initializeRequestQueue(requireActivity().applicationContext)
         lifecycleScope.launch {
             try {
-                viewModel.getEmptyText({
-                    response -> binding.emptytext.setText(response, TextView.BufferType.NORMAL)
-                })
+                viewModel.getEmptyText { response ->
+                    binding.emptytext.setText(response, TextView.BufferType.NORMAL)
+                }
             } finally {
                 // foo
             }

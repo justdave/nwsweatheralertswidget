@@ -7,9 +7,9 @@ import com.android.volley.Response
 
 class AlertsDisplayViewModel : ViewModel() {
 
-    lateinit var nwsapi: NWSAPI
+    private lateinit var nwsapi: NWSAPI
 
-    fun init() {
+    init {
         Log.i("MainViewModel","MainViewModel Created!")
 
         /*       viewModelScope.launch(Dispatchers.IO) {
@@ -28,8 +28,8 @@ class AlertsDisplayViewModel : ViewModel() {
 
 
     fun getEmptyText(listener: Response.Listener<String>) {
-        return nwsapi.getCounties("MI", {
-            response -> listener.onResponse(response.toString())
-        })
+        return nwsapi.getCounties("MI") { response ->
+            listener.onResponse(response.toString())
+        }
     }
 }
