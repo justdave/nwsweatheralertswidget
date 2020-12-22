@@ -159,6 +159,7 @@ public class AlertDetailActivity extends Activity {
         StringBuilder buffer = new StringBuilder();
         try {
             HttpURLConnection con = (HttpURLConnection) (new URL(url)).openConnection();
+            con.setRequestProperty("User-Agent", "(http://justdave.github.io/nwsweatheralertswidget, playstoresupport@justdave.net)");
             con.setRequestMethod("GET");
             con.setDoInput(true);
             con.setDoOutput(false);
