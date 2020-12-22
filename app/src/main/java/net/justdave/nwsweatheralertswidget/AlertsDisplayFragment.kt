@@ -10,12 +10,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
-import net.justdave.nwsweatheralertswidget.databinding.FragmentAlertsdisplayBinding
+import net.justdave.nwsweatheralertswidget.databinding.AlertsDisplayFragmentBinding
 
 class AlertsDisplayFragment : Fragment() {
 
     private lateinit var viewModel: AlertsDisplayViewModel
-    private lateinit var binding: FragmentAlertsdisplayBinding
+    private lateinit var binding: AlertsDisplayFragmentBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -23,7 +23,7 @@ class AlertsDisplayFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        binding = FragmentAlertsdisplayBinding.inflate(inflater, container, false)
+        binding = AlertsDisplayFragmentBinding.inflate(inflater, container, false)
 
         Log.i("AlertsDisplayFragment", "loaded")
         viewModel = ViewModelProvider(requireActivity()).get(AlertsDisplayViewModel::class.java)

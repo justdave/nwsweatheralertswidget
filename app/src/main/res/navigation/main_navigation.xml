@@ -9,7 +9,7 @@
         android:id="@+id/title_destination"
         android:name="net.justdave.nwsweatheralertswidget.AlertsDisplayFragment"
         android:label="alertsdisplay_fragment"
-        tools:layout="@layout/fragment_alertsdisplay">
+        tools:layout="@layout/alerts_display_fragment">
  <!--       <action
             android:id="@+id/action_title_to_game"
             app:destination="@id/game_destination"
