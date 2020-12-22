@@ -158,6 +158,7 @@ public class NWSBackgroundService extends Service {
         try {
             HttpURLConnection con = (HttpURLConnection) (new URL(url)).openConnection();
             con.setRequestMethod("GET");
+            con.setRequestProperty("User-Agent", "(http://justdave.github.io/nwsweatheralertswidget, playstoresupport@justdave.net)");
             con.setDoInput(true);
             con.setDoOutput(false);
             con.connect();
