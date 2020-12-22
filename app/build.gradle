@@ -8,8 +8,8 @@ android {
         applicationId "net.justdave.nwsweatheralertswidget"
         minSdkVersion 14
         targetSdkVersion 30
-        versionCode 11
-        versionName '1.1.4-SNAPSHOT'
+        versionCode 12
+        versionName '1.1.4'
     }
     buildTypes {
         release {
