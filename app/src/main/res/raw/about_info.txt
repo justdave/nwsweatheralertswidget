@@ -7,4 +7,6 @@ Licensed under the Apache License, Version 2.0 (the "License");<br>
 You may obtain a copy of the License at<br>
 http://www.apache.org/licenses/LICENSE-2.0<br>
 <br>
+The "NWS" name and logo are used in compliance with the trademark usage guidelines found at https://www.weather.gov/disclaimer .
+<br>
 Image/icon credits can be found at https://github.com/justdave/nwsweatheralertswidget/blob/master/src-images/SOURCES
