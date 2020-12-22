@@ -24,6 +24,7 @@ class AlertsDisplayFragment : Fragment() {
     ): View {
 
         binding = AlertsDisplayFragmentBinding.inflate(inflater, container, false)
+        binding.parsedEvents.setEmptyView(binding.emptytext)
 
         Log.i("AlertsDisplayFragment", "loaded")
         viewModel = ViewModelProvider(requireActivity()).get(AlertsDisplayViewModel::class.java)
