@@ -2,14 +2,10 @@ package net.justdave.nwsweatheralertswidget
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
+import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
+import androidx.navigation.fragment.findNavController
 import net.justdave.nwsweatheralertswidget.databinding.AlertsDisplayFragmentBinding
 
 class AlertsDisplayFragment : Fragment() {
@@ -23,12 +19,21 @@ class AlertsDisplayFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
+        setHasOptionsMenu(true)
+
         binding = AlertsDisplayFragmentBinding.inflate(inflater, container, false)
-        binding.parsedEvents.setEmptyView(binding.emptytext)
+        binding.parsedEvents.emptyView = binding.emptytext
 
         Log.i("AlertsDisplayFragment", "loaded")
-        viewModel = ViewModelProvider(requireActivity()).get(AlertsDisplayViewModel::class.java)
-        viewModel.initializeRequestQueue(requireActivity().applicationContext)
+
+        return binding.root
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        viewModel = ViewModelProvider(this).get(AlertsDisplayViewModel::class.java)
+        viewModel.initializeContext(requireActivity().applicationContext)
+/*        viewModel.initializeRequestQueue(requireActivity().applicationContext)
         lifecycleScope.launch {
             try {
                 viewModel.getEmptyText { response ->
@@ -37,9 +42,23 @@ class AlertsDisplayFragment : Fragment() {
             } finally {
                 // foo
             }
-        }
+        }*/
+    }
 
-        return binding.root
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        //super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.alerts_display_options, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle item selection
+        return when (item.itemId) {
+            R.id.option_debug -> {
+                findNavController().navigate(AlertsDisplayFragmentDirections.actionAlertsDisplayFragmentToDebugFragment())
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
 }

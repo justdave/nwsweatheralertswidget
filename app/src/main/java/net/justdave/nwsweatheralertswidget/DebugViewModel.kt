@@ -3,13 +3,13 @@ package net.justdave.nwsweatheralertswidget
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.android.volley.Response
 
-class AlertsDisplayViewModel : ViewModel() {
-
+class DebugViewModel : ViewModel() {
     private lateinit var nwsapi: NWSAPI
 
     init {
-        Log.i("AlertsDisplayViewModel","Created!")
+        Log.i("DebugViewModel","Created!")
     }
 
     fun initializeContext(context: Context) {
@@ -18,7 +18,12 @@ class AlertsDisplayViewModel : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        Log.i("AlertsDisplayViewModel", "destroyed!")
+        Log.i("DebugViewModel", "destroyed!")
     }
 
+    fun getDebugText(listener: Response.Listener<String>) {
+        return nwsapi.getCounties("MI") { response ->
+            listener.onResponse(response.toString())
+        }
+    }
 }

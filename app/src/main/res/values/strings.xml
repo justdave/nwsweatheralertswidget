@@ -6,7 +6,7 @@
     <string name="action_about">About This App</string>
     <string name="action_demo">Demo all alert types</string>
     <string name="action_settings">Settings</string>
-    <string name="action_debug">Show Source XML</string>
+    <string name="action_debug">Show Debug Window</string>
     <string name="activity_detail">Alert Detail</string>
     <string name="demo_header">This screen displays a list of every alert type the NWS says
          they can possibly send, as a demo of what that alert will look like when displayed.
@@ -32,5 +32,6 @@
     <string name="appwidget_text">EXAMPLE</string>
     <string name="configure">Configure</string>
     <string name="add_widget">Add widget</string>
+    <string name="loading">Loading…</string>
 
 </resources>
