@@ -33,25 +33,77 @@ class DebugFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 viewModel.getAreaPopupContent { response ->
-                    val adapter = ArrayAdapter(requireActivity().applicationContext, android.R.layout.simple_spinner_dropdown_item, response)
+                    val adapter = ArrayAdapter(
+                        requireActivity().applicationContext,
+                        android.R.layout.simple_spinner_dropdown_item,
+                        response
+                    )
                     binding.areaPopup.adapter = adapter
                     binding.areaPopup.setSelection(0)
                 }
-                binding.areaPopup.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                    override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                        if (parent.getItemAtPosition(position) == "") {
-                            binding.areaPopup.setSelection(0)
-                        }
-                        else {
-                            val item = parent.getItemAtPosition(position) as NWSArea
-                            binding.debugText.setText(R.string.loading)
-                            viewModel.getCountyList(item.id) { response ->
-                                binding.debugText.setText(response, TextView.BufferType.NORMAL)
+                viewModel.getCountyPopupContent(binding.areaPopup.selectedItem as NWSArea) { response ->
+                    binding.countyPopup.adapter = ArrayAdapter(
+                        requireActivity().applicationContext,
+                        android.R.layout.simple_spinner_dropdown_item,
+                        response
+                    )
+                    binding.countyPopup.setSelection(0)
+                }
+                binding.areaPopup.onItemSelectedListener =
+                    object : AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(
+                            parent: AdapterView<*>,
+                            view: View?,
+                            position: Int,
+                            id: Long
+                        ) {
+                            if (parent.getItemAtPosition(position) == "") {
+                                binding.areaPopup.setSelection(0)
+                            } else {
+                                val area = parent.getItemAtPosition(position) as NWSArea
+                                val loadingMenu = ArrayList<NWSCounty>()
+                                loadingMenu.add(NWSCounty("all","Loading..."))
+                                binding.countyPopup.adapter = ArrayAdapter<NWSCounty>(
+                                    requireActivity().applicationContext,
+                                    android.R.layout.simple_spinner_dropdown_item,
+                                    loadingMenu
+                                )
+                                viewModel.getCountyPopupContent(area) { response ->
+                                    binding.countyPopup.adapter = ArrayAdapter(
+                                        requireActivity().applicationContext,
+                                        android.R.layout.simple_spinner_dropdown_item,
+                                        response
+                                    )
+                                    binding.countyPopup.setSelection(0)
+                                }
                             }
                         }
+
+                        override fun onNothingSelected(parent: AdapterView<*>?) {}
                     }
-                    override fun onNothingSelected(parent: AdapterView<*>?) {}
-                }
+                binding.countyPopup.onItemSelectedListener =
+                    object : AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(
+                            parent: AdapterView<*>,
+                            view: View?,
+                            position: Int,
+                            id: Long
+                        ) {
+                            if (parent.getItemAtPosition(position) == "") {
+                                binding.areaPopup.setSelection(0)
+                            } else {
+                                val area = binding.areaPopup.selectedItem as NWSArea
+                                val zone = parent.getItemAtPosition(position) as NWSCounty
+                                binding.debugText.setText(R.string.loading)
+
+                                viewModel.getDebugContent(area, zone) { response ->
+                                    binding.debugText.setText(response.toString(), TextView.BufferType.NORMAL)
+                                }
+                            }
+                        }
+
+                        override fun onNothingSelected(parent: AdapterView<*>?) {}
+                    }
             } finally {
                 // foo
             }

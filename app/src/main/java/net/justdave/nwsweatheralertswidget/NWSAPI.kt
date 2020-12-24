@@ -61,7 +61,7 @@ class NWSAPI constructor(context: Context) {
         // we're going to treat it like a queued request anyway just in
         // case they add it someday and I can drop all this code without
         // having to refactor everywhere that calls it.
-        areaList.add(NWSArea("US", "National (all)"))
+        areaList.add(NWSArea("us-all", "National (all)"))
         areaList.add(NWSArea("AL", "Alabama"))
         areaList.add(NWSArea("AK", "Alaska"))
         areaList.add(NWSArea("AS", "America Samoa"))
@@ -136,38 +136,67 @@ class NWSAPI constructor(context: Context) {
         listener.onResponse(areaList)
     }
 
-    fun getCounties(state: String, listener: Response.Listener<ArrayList<NWSCounty>>) {
+    fun getCounties(area: NWSArea, listener: Response.Listener<ArrayList<NWSCounty>>) {
         val countyList = ArrayList<NWSCounty>()
         countyList.add(NWSCounty("all", "All"))
-        if (state == "us-all" || state == "marine") {
+        if (area.id == "us-all" || area.id == "marine") {
             listener.onResponse(countyList)
+        } else {
+            val req = makeRequest("$apiurl/zones/county?area=${area.id}", { response ->
+                Log.i("NWSAPI", "Response: $response")
+                // TODO: check response for error codes
+                val features = response.optJSONArray("features")
+                if (features != null) {
+                    for (i in 0 until features.length()) {
+                        val properties = features.getJSONObject(i).optJSONObject("properties")
+                        countyList.add(
+                            NWSCounty(
+                                properties?.optString("id") ?: "",
+                                properties?.optString("name") ?: ""
+                            )
+                        )
+                    }
+                }
+                Log.i("NWSAPI", "Returning: $countyList")
+                listener.onResponse(countyList)
+            }, { error ->
+                Log.i("NWSAPI", "Error: $error")
+                listener.onResponse(countyList)
+            })
+            requestQueue.add(req)
         }
-        val req = makeRequest("$apiurl/zones/county?area=$state", { response ->
-            Log.i("NWSAPI", "Response: $response")
+    }
+
+    fun getActiveAlerts(area: NWSArea, zone: NWSCounty, listener: Response.Listener<ArrayList<NWSAlert>>) {
+        val alertList = ArrayList<NWSAlert>()
+        val url: String
+        if (area.id == "us-all") {
+            url = "$apiurl/alerts/active/"
+        } else if (area.id == "marine") {
+            url = "$apiurl/alerts/active?region_type=marine"
+        } else if (zone.id == "all") {
+            url = "$apiurl/alerts/active/area/${area.id}"
+        } else {
+            url = "$apiurl/alerts/active/zone/${zone.id}"
+        }
+        val req = makeRequest(url, { response ->
+            // TODO: check response for error codes
             val features = response.optJSONArray("features")
             if (features != null) {
                 for (i in 0 until features.length()) {
-                    val properties = features.getJSONObject(i).optJSONObject("properties")
-                    countyList.add(
-                        NWSCounty(
-                            properties?.optString("id") ?: "",
-                            properties?.optString("name") ?: ""
-                        )
-                    )
+                    val alert = features.getJSONObject(i)
+                    if (alert != null) {
+                        alertList.add(NWSAlert(alert))
+                    }
                 }
             }
-            Log.i("NWSAPI", "Returning: $countyList")
-            listener.onResponse(countyList)
+            listener.onResponse(alertList)
         }, { error ->
             Log.i("NWSAPI", "Error: $error")
-            listener.onResponse(countyList)
+            listener.onResponse(alertList)
         })
         requestQueue.add(req)
     }
-
-    // fun getActiveAlerts(area: NWSArea, zone: NWSCounty, listener: Response.Listener<ArrayList<NWSAlert>>) {
-    //
-    // }
 }
 
 class NWSArea(var id: String, var name: String) {
@@ -210,4 +239,12 @@ class NWSCounty(var id: String, var name: String) {
         result = 31 * result + name.hashCode()
         return result
     }
+}
+
+class NWSAlert(var blob: JSONObject) {
+    override fun toString(): String {
+        val properties = blob.getJSONObject("properties")
+        return properties.optString("headline")
+    }
+
 }
