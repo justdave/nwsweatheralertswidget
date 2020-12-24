@@ -1,10 +1,11 @@
 package net.justdave.nwsweatheralertswidget
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -31,9 +32,25 @@ class DebugFragment : Fragment() {
         viewModel.initializeContext(requireActivity().applicationContext)
         lifecycleScope.launch {
             try {
-                viewModel.getDebugText { response ->
-                    Log.i("DebugFragment","setting the result text")
-                    binding.debugText.setText(response, TextView.BufferType.NORMAL)
+                viewModel.getAreaPopupContent { response ->
+                    val adapter = ArrayAdapter(requireActivity().applicationContext, android.R.layout.simple_spinner_dropdown_item, response)
+                    binding.areaPopup.adapter = adapter
+                    binding.areaPopup.setSelection(0)
+                }
+                binding.areaPopup.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                        if (parent.getItemAtPosition(position) == "") {
+                            binding.areaPopup.setSelection(0)
+                        }
+                        else {
+                            val item = parent.getItemAtPosition(position) as NWSArea
+                            binding.debugText.setText(R.string.loading)
+                            viewModel.getCountyList(item.id) { response ->
+                                binding.debugText.setText(response, TextView.BufferType.NORMAL)
+                            }
+                        }
+                    }
+                    override fun onNothingSelected(parent: AdapterView<*>?) {}
                 }
             } finally {
                 // foo

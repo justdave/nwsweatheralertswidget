@@ -21,9 +21,16 @@ class DebugViewModel : ViewModel() {
         Log.i("DebugViewModel", "destroyed!")
     }
 
-    fun getDebugText(listener: Response.Listener<String>) {
-        return nwsapi.getCounties("MI") { response ->
+    fun getAreaPopupContent(listener: Response.Listener<ArrayList<NWSArea>>) {
+        return nwsapi.getAreas { response ->
+            listener.onResponse(response)
+        }
+    }
+
+    fun getCountyList(area: String, listener: Response.Listener<String>) {
+        return nwsapi.getCounties(area) { response ->
             listener.onResponse(response.toString())
         }
     }
+
 }
