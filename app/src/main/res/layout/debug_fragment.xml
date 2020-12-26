@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Spinner
-        android:id="@+id/county_popup"
+        android:id="@+id/zone_popup"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:contentDescription="@string/choose_county"
@@ -38,6 +38,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/county_popup" />
+        app:layout_constraintTop_toBottomOf="@+id/zone_popup" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

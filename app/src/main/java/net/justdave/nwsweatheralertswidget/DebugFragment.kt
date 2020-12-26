@@ -41,13 +41,13 @@ class DebugFragment : Fragment() {
                     binding.areaPopup.adapter = adapter
                     binding.areaPopup.setSelection(0)
                 }
-                viewModel.getCountyPopupContent(binding.areaPopup.selectedItem as NWSArea) { response ->
-                    binding.countyPopup.adapter = ArrayAdapter(
+                viewModel.getZonePopupContent(binding.areaPopup.selectedItem as NWSArea) { response ->
+                    binding.zonePopup.adapter = ArrayAdapter(
                         requireActivity().applicationContext,
                         android.R.layout.simple_spinner_dropdown_item,
                         response
                     )
-                    binding.countyPopup.setSelection(0)
+                    binding.zonePopup.setSelection(0)
                 }
                 binding.areaPopup.onItemSelectedListener =
                     object : AdapterView.OnItemSelectedListener {
@@ -61,27 +61,27 @@ class DebugFragment : Fragment() {
                                 binding.areaPopup.setSelection(0)
                             } else {
                                 val area = parent.getItemAtPosition(position) as NWSArea
-                                val loadingMenu = ArrayList<NWSCounty>()
-                                loadingMenu.add(NWSCounty("all","Loading..."))
-                                binding.countyPopup.adapter = ArrayAdapter<NWSCounty>(
+                                val loadingMenu = ArrayList<NWSZone>()
+                                loadingMenu.add(NWSZone("all","Loading..."))
+                                binding.zonePopup.adapter = ArrayAdapter<NWSZone>(
                                     requireActivity().applicationContext,
                                     android.R.layout.simple_spinner_dropdown_item,
                                     loadingMenu
                                 )
-                                viewModel.getCountyPopupContent(area) { response ->
-                                    binding.countyPopup.adapter = ArrayAdapter(
+                                viewModel.getZonePopupContent(area) { response ->
+                                    binding.zonePopup.adapter = ArrayAdapter(
                                         requireActivity().applicationContext,
                                         android.R.layout.simple_spinner_dropdown_item,
                                         response
                                     )
-                                    binding.countyPopup.setSelection(0)
+                                    binding.zonePopup.setSelection(0)
                                 }
                             }
                         }
 
                         override fun onNothingSelected(parent: AdapterView<*>?) {}
                     }
-                binding.countyPopup.onItemSelectedListener =
+                binding.zonePopup.onItemSelectedListener =
                     object : AdapterView.OnItemSelectedListener {
                         override fun onItemSelected(
                             parent: AdapterView<*>,
@@ -93,7 +93,7 @@ class DebugFragment : Fragment() {
                                 binding.areaPopup.setSelection(0)
                             } else {
                                 val area = binding.areaPopup.selectedItem as NWSArea
-                                val zone = parent.getItemAtPosition(position) as NWSCounty
+                                val zone = parent.getItemAtPosition(position) as NWSZone
                                 binding.debugText.setText(R.string.loading)
 
                                 viewModel.getDebugContent(area, zone) { response ->

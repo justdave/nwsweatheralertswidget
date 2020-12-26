@@ -27,13 +27,13 @@ class DebugViewModel : ViewModel() {
         }
     }
 
-    fun getCountyPopupContent(area: NWSArea, listener: Response.Listener<ArrayList<NWSCounty>>) {
-        return nwsapi.getCounties(area) { response ->
+    fun getZonePopupContent(area: NWSArea, listener: Response.Listener<ArrayList<NWSZone>>) {
+        return nwsapi.getZones(area) { response ->
             listener.onResponse(response)
         }
     }
 
-    fun getDebugContent(area: NWSArea, zone: NWSCounty, listener: Response.Listener<ArrayList<NWSAlert>>) {
+    fun getDebugContent(area: NWSArea, zone: NWSZone, listener: Response.Listener<ArrayList<NWSAlert>>) {
         return nwsapi.getActiveAlerts(area, zone) { response ->
             listener.onResponse(response)
         }
