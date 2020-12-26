@@ -63,7 +63,7 @@ class DebugFragment : Fragment() {
                                 val area = parent.getItemAtPosition(position) as NWSArea
                                 val loadingMenu = ArrayList<NWSZone>()
                                 loadingMenu.add(NWSZone("all","Loading..."))
-                                binding.zonePopup.adapter = ArrayAdapter<NWSZone>(
+                                binding.zonePopup.adapter = ArrayAdapter(
                                     requireActivity().applicationContext,
                                     android.R.layout.simple_spinner_dropdown_item,
                                     loadingMenu

@@ -136,9 +136,9 @@ class NWSAPI constructor(context: Context) {
         listener.onResponse(areaList)
     }
 
-    fun getCounties(area: NWSArea, listener: Response.Listener<ArrayList<NWSCounty>>) {
-        val countyList = ArrayList<NWSCounty>()
-        countyList.add(NWSCounty("all", "All"))
+    fun getZones(area: NWSArea, listener: Response.Listener<ArrayList<NWSZone>>) {
+        val countyList = ArrayList<NWSZone>()
+        countyList.add(NWSZone("all", "All"))
         if (area.id == "us-all" || area.id == "marine") {
             listener.onResponse(countyList)
         } else {
@@ -150,7 +150,7 @@ class NWSAPI constructor(context: Context) {
                     for (i in 0 until features.length()) {
                         val properties = features.getJSONObject(i).optJSONObject("properties")
                         countyList.add(
-                            NWSCounty(
+                            NWSZone(
                                 properties?.optString("id") ?: "",
                                 properties?.optString("name") ?: ""
                             )
@@ -167,17 +167,21 @@ class NWSAPI constructor(context: Context) {
         }
     }
 
-    fun getActiveAlerts(area: NWSArea, zone: NWSCounty, listener: Response.Listener<ArrayList<NWSAlert>>) {
+    fun getActiveAlerts(area: NWSArea, zone: NWSZone, listener: Response.Listener<ArrayList<NWSAlert>>) {
         val alertList = ArrayList<NWSAlert>()
-        val url: String
-        if (area.id == "us-all") {
-            url = "$apiurl/alerts/active/"
-        } else if (area.id == "marine") {
-            url = "$apiurl/alerts/active?region_type=marine"
-        } else if (zone.id == "all") {
-            url = "$apiurl/alerts/active/area/${area.id}"
-        } else {
-            url = "$apiurl/alerts/active/zone/${zone.id}"
+        val url = when {
+            area.id == "us-all" -> {
+                "$apiurl/alerts/active/"
+            }
+            area.id == "marine" -> {
+                "$apiurl/alerts/active?region_type=marine"
+            }
+            zone.id == "all" -> {
+                "$apiurl/alerts/active/area/${area.id}"
+            }
+            else -> {
+                "$apiurl/alerts/active/zone/${zone.id}"
+            }
         }
         val req = makeRequest(url, { response ->
             // TODO: check response for error codes
@@ -220,7 +224,7 @@ class NWSArea(var id: String, var name: String) {
     }
 }
 
-class NWSCounty(var id: String, var name: String) {
+class NWSZone(var id: String, var name: String) {
 
     //to display object as a string in spinner
     override fun toString(): String {
@@ -228,7 +232,7 @@ class NWSCounty(var id: String, var name: String) {
     }
 
     override fun equals(other: Any?): Boolean {
-        if (other is NWSCounty) {
+        if (other is NWSZone) {
             if (other.name === name && other.id === id) return true
         }
         return false
@@ -241,10 +245,13 @@ class NWSCounty(var id: String, var name: String) {
     }
 }
 
-class NWSAlert(var blob: JSONObject) {
+class NWSAlert(blob: JSONObject) {
+    private val properties = blob.getJSONObject("properties")
+    val headline: String = properties.optString("headline", "Unknown Alert")
+    val description: String = properties.optString("description", "No description provided")
+
     override fun toString(): String {
-        val properties = blob.getJSONObject("properties")
-        return properties.optString("headline")
+        return headline
     }
 
 }
