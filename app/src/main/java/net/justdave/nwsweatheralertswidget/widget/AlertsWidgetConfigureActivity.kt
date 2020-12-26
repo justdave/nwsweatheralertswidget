@@ -1,4 +1,4 @@
-package net.justdave.nwsweatheralertswidget
+package net.justdave.nwsweatheralertswidget.widget
 
 import android.app.Activity
 import android.appwidget.AppWidgetManager
@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
+import net.justdave.nwsweatheralertswidget.R
 
 /**
  * The configuration screen for the [AlertsWidget] AppWidget.

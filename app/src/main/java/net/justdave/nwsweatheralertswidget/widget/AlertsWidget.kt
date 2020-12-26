@@ -1,9 +1,10 @@
-package net.justdave.nwsweatheralertswidget
+package net.justdave.nwsweatheralertswidget.widget
 
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.widget.RemoteViews
+import net.justdave.nwsweatheralertswidget.R
 
 /**
  * Implementation of App Widget functionality.
