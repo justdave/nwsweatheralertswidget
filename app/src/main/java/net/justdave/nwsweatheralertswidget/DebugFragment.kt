@@ -35,7 +35,7 @@ class DebugFragment : Fragment() {
                 viewModel.getAreaPopupContent { response ->
                     val adapter = ArrayAdapter(
                         requireActivity().applicationContext,
-                        android.R.layout.simple_spinner_dropdown_item,
+                        R.layout.spinner_layout,
                         response
                     )
                     binding.areaPopup.adapter = adapter
@@ -44,7 +44,7 @@ class DebugFragment : Fragment() {
                 viewModel.getZonePopupContent(binding.areaPopup.selectedItem as NWSArea) { response ->
                     binding.zonePopup.adapter = ArrayAdapter(
                         requireActivity().applicationContext,
-                        android.R.layout.simple_spinner_dropdown_item,
+                        R.layout.spinner_layout,
                         response
                     )
                     binding.zonePopup.setSelection(0)
@@ -65,13 +65,13 @@ class DebugFragment : Fragment() {
                                 loadingMenu.add(NWSZone("all","Loading..."))
                                 binding.zonePopup.adapter = ArrayAdapter(
                                     requireActivity().applicationContext,
-                                    android.R.layout.simple_spinner_dropdown_item,
+                                    R.layout.spinner_layout,
                                     loadingMenu
                                 )
                                 viewModel.getZonePopupContent(area) { response ->
                                     binding.zonePopup.adapter = ArrayAdapter(
                                         requireActivity().applicationContext,
-                                        android.R.layout.simple_spinner_dropdown_item,
+                                        R.layout.spinner_layout,
                                         response
                                     )
                                     binding.zonePopup.setSelection(0)
