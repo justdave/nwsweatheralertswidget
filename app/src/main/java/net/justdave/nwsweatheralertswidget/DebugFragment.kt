@@ -12,6 +12,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import net.justdave.nwsweatheralertswidget.databinding.DebugFragmentBinding
+import net.justdave.nwsweatheralertswidget.objects.NWSArea
+import net.justdave.nwsweatheralertswidget.objects.NWSZone
 
 class DebugFragment : Fragment() {
 

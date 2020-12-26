@@ -6,9 +6,11 @@ import com.android.volley.RequestQueue
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
+import net.justdave.nwsweatheralertswidget.objects.NWSAlert
+import net.justdave.nwsweatheralertswidget.objects.NWSArea
+import net.justdave.nwsweatheralertswidget.objects.NWSZone
 import org.json.JSONObject
 
-private const val apiurl = "https://api.weather.gov"
 // The documentation for this API is at https://www.weather.gov/documentation/services-web-api
 
 /**
@@ -23,6 +25,7 @@ class NWSAPI constructor(context: Context) {
     companion object {
         @Volatile
         private var INSTANCE: NWSAPI? = null
+        private const val apiurl = "https://api.weather.gov"
         fun getInstance(context: Context) =
             INSTANCE ?: synchronized(this) {
                 INSTANCE ?: NWSAPI(context).also {
@@ -201,57 +204,4 @@ class NWSAPI constructor(context: Context) {
         })
         requestQueue.add(req)
     }
-}
-
-class NWSArea(var id: String, var name: String) {
-
-    //to display object as a string in spinner
-    override fun toString(): String {
-        return name
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (other is NWSArea) {
-            if (other.name === name && other.id === id) return true
-        }
-        return false
-    }
-
-    override fun hashCode(): Int {
-        var result = id.hashCode()
-        result = 31 * result + name.hashCode()
-        return result
-    }
-}
-
-class NWSZone(var id: String, var name: String) {
-
-    //to display object as a string in spinner
-    override fun toString(): String {
-        return name
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (other is NWSZone) {
-            if (other.name === name && other.id === id) return true
-        }
-        return false
-    }
-
-    override fun hashCode(): Int {
-        var result = id.hashCode()
-        result = 31 * result + name.hashCode()
-        return result
-    }
-}
-
-class NWSAlert(blob: JSONObject) {
-    private val properties = blob.getJSONObject("properties")
-    val headline: String = properties.optString("headline", "Unknown Alert")
-    val description: String = properties.optString("description", "No description provided")
-
-    override fun toString(): String {
-        return headline
-    }
-
 }

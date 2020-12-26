@@ -4,6 +4,9 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.android.volley.Response
+import net.justdave.nwsweatheralertswidget.objects.NWSAlert
+import net.justdave.nwsweatheralertswidget.objects.NWSArea
+import net.justdave.nwsweatheralertswidget.objects.NWSZone
 
 class DebugViewModel : ViewModel() {
     private lateinit var nwsapi: NWSAPI
