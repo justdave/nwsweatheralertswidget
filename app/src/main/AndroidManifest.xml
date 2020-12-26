@@ -11,7 +11,7 @@
         android:roundIcon="@mipmap/app_icon_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
-        <receiver android:name=".AlertsWidget">
+        <receiver android:name=".widget.AlertsWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -21,7 +21,7 @@
                 android:resource="@xml/alerts_widget_info" />
         </receiver>
 
-        <activity android:name=".AlertsWidgetConfigureActivity">
+        <activity android:name=".widget.AlertsWidgetConfigureActivity">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>

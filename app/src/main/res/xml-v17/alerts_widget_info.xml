@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:configure="net.justdave.nwsweatheralertswidget.AlertsWidgetConfigureActivity"
+    android:configure="net.justdave.nwsweatheralertswidget.widget.AlertsWidgetConfigureActivity"
     android:initialKeyguardLayout="@layout/alerts_widget"
     android:initialLayout="@layout/alerts_widget"
     android:minWidth="180dp"
