@@ -1,6 +1,6 @@
 package net.justdave.nwsweatheralertswidget.widget
 
-import android.app.Activity
+import androidx.appcompat.app.AppCompatActivity
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
@@ -12,7 +12,7 @@ import net.justdave.nwsweatheralertswidget.R
 /**
  * The configuration screen for the [AlertsWidget] AppWidget.
  */
-class AlertsWidgetConfigureActivity : Activity() {
+class AlertsWidgetConfigureActivity : AppCompatActivity() {
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
     private lateinit var appWidgetText: EditText
     private var onClickListener = View.OnClickListener {
