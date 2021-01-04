@@ -21,7 +21,7 @@ class NWSAlertList() : ArrayList<NWSAlert>(), Parcelable {
         for (entry in this) {
             result = """
                 $result
-                ${entry.toString()}
+                $entry
                 """.trimIndent()
         }
         return result
@@ -35,13 +35,12 @@ class NWSAlertList() : ArrayList<NWSAlert>(), Parcelable {
         if (other !is NWSAlertList) {
             return false
         }
-        val n = other
-        if (size != n.size) {
+        if (size != other.size) {
             return false
         }
-        val N = size
-        for (i in 0 until N) {
-            if (!get(i).equals(n[i])) {
+        val n = size
+        for (i in 0 until n) {
+            if (get(i) != other[i]) {
                 return false
             }
         }
