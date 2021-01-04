@@ -1,37 +1,81 @@
 package net.justdave.nwsweatheralertswidget.widget
 
-import androidx.appcompat.app.AppCompatActivity
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import android.widget.EditText
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
+import androidx.appcompat.app.AppCompatActivity
+import net.justdave.nwsweatheralertswidget.NWSAPI
 import net.justdave.nwsweatheralertswidget.R
+import net.justdave.nwsweatheralertswidget.objects.NWSArea
+import net.justdave.nwsweatheralertswidget.objects.NWSZone
 
 /**
  * The configuration screen for the [AlertsWidget] AppWidget.
  */
 class AlertsWidgetConfigureActivity : AppCompatActivity() {
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
-    private lateinit var appWidgetText: EditText
-    private var onClickListener = View.OnClickListener {
+    private lateinit var appWidgetArea: Spinner
+    private lateinit var appWidgetZone: Spinner
+    private lateinit var nwsapi: NWSAPI
+
+    private var addWidgetClickListener = View.OnClickListener {
         val context = this@AlertsWidgetConfigureActivity
 
+        /*
         // When the button is clicked, store the string locally
-        val widgetText = appWidgetText.text.toString()
-        saveTitlePref(context, appWidgetId, widgetText)
+        val widgetArea = appWidgetArea.toString()
+        saveTitlePref(context, appWidgetId, widgetArea)
+        */
 
         // It is the responsibility of the configuration activity to update the app widget
         val appWidgetManager = AppWidgetManager.getInstance(context)
         updateAppWidget(context, appWidgetManager, appWidgetId)
-
         // Make sure we pass back the original appWidgetId
         val resultValue = Intent()
         resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
         setResult(RESULT_OK, resultValue)
         finish()
     }
+
+    private var areaSelectedListener = object : AdapterView.OnItemSelectedListener {
+        override fun onItemSelected(
+            parent: AdapterView<*>,
+            view: View?,
+            position: Int,
+            id: Long
+        ) {
+            if (parent.getItemAtPosition(position) == "") {
+                appWidgetArea.setSelection(0)
+            } else {
+                val area = parent.getItemAtPosition(position) as NWSArea
+                val loadingMenu = ArrayList<NWSZone>()
+                loadingMenu.add(NWSZone("all", "Loading..."))
+                appWidgetZone.adapter = ArrayAdapter(
+                    applicationContext,
+                    R.layout.spinner_layout,
+                    loadingMenu
+                )
+                nwsapi.getZones(area) { response ->
+                    Log.i("WidgetConfigure", "ZoneWidget: $response")
+                    appWidgetZone.adapter = ArrayAdapter(
+                        applicationContext,
+                        R.layout.spinner_layout,
+                        response
+                    )
+                    appWidgetZone.setSelection(0)
+                }
+            }
+        }
+
+        override fun onNothingSelected(parent: AdapterView<*>?) {}
+    }
+
 
     public override fun onCreate(icicle: Bundle?) {
         super.onCreate(icicle)
@@ -40,9 +84,30 @@ class AlertsWidgetConfigureActivity : AppCompatActivity() {
         // out of the widget placement if the user presses the back button.
         setResult(RESULT_CANCELED)
 
+        nwsapi = NWSAPI.getInstance(applicationContext)
+
         setContentView(R.layout.alerts_widget_configure)
-        appWidgetText = findViewById<View>(R.id.appwidget_text) as EditText
-        findViewById<View>(R.id.add_button).setOnClickListener(onClickListener)
+        appWidgetArea = findViewById<View>(R.id.appwidget_area) as Spinner
+        nwsapi.getAreas { response ->
+            Log.i("WidgetConfigure", "AreaWidget: $response")
+            appWidgetArea.adapter = ArrayAdapter(
+                applicationContext,
+                R.layout.spinner_layout,
+                response
+            )
+        }
+        appWidgetArea.onItemSelectedListener = areaSelectedListener
+        appWidgetZone = findViewById<View>(R.id.appwidget_zone) as Spinner
+        nwsapi.getZones(NWSArea("us-all", "")) { response ->
+            Log.i("WidgetConfigure", "ZoneWidget: $response")
+            appWidgetZone.adapter = ArrayAdapter(
+                applicationContext,
+                R.layout.spinner_layout,
+                response
+            )
+        }
+
+        findViewById<View>(R.id.add_button).setOnClickListener(addWidgetClickListener)
 
         // Find the widget id from the intent.
         val intent = intent
@@ -59,7 +124,8 @@ class AlertsWidgetConfigureActivity : AppCompatActivity() {
             return
         }
 
-        appWidgetText.setText(loadTitlePref(this@AlertsWidgetConfigureActivity, appWidgetId))
+        appWidgetArea.setSelection(0)
+        appWidgetZone.setSelection(0)
     }
 
 }

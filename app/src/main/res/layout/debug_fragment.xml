@@ -8,23 +8,41 @@
     android:layout_height="match_parent"
     tools:context=".DebugFragment">
 
-    <Spinner
-        android:id="@+id/area_popup"
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/choose_area"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/choose_state"
+        android:text="@string/choose_area"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Spinner
+        android:id="@+id/area_popup"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/choose_area"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/choose_area" />
+
+    <TextView
+        android:id="@+id/choose_zone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/choose_zone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/area_popup" />
+
+    <Spinner
         android:id="@+id/zone_popup"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/choose_county"
+        android:contentDescription="@string/choose_zone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/area_popup" />
+        app:layout_constraintTop_toBottomOf="@+id/choose_zone" />
 
     <TextView
         android:id="@+id/debugText"

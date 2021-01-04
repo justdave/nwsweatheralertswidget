@@ -20,8 +20,8 @@
     <string name="alert_empty">There are no alerts at this time for this location</string>
     <string name="alert_summary">Please wait&#8230;</string>
     <string name="widget_title">Current Active NWS Alerts</string>
-    <string name="choose_state">Choose State</string>
-    <string name="choose_county">Choose County</string>
+    <string name="choose_area">Choose State or Area</string>
+    <string name="choose_zone">Choose County or Zone</string>
     <string name="detail_retrieval">Retreiving alert detail&#8230;</string>
     <string name="detail_target">Target Area:</string>
     <string name="detail_expires">Expires:</string>
