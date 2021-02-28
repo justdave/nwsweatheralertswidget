@@ -57,6 +57,18 @@ class AlertsDisplayFragment : Fragment() {
                 findNavController().navigate(AlertsDisplayFragmentDirections.actionAlertsDisplayFragmentToDebugFragment())
                 true
             }
+            R.id.action_about -> {
+                val about = AboutDialog(requireActivity())
+                about.setTitle(
+                    resources.getIdentifier(
+                        "action_about",
+                        "string",
+                        requireActivity().packageName
+                    )
+                )
+                about.show()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
