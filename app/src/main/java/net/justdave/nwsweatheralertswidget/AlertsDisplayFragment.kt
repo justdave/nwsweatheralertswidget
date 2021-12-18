@@ -29,8 +29,8 @@ class AlertsDisplayFragment : Fragment() {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this).get(AlertsDisplayViewModel::class.java)
         viewModel.initializeContext(requireActivity().applicationContext)
 /*        viewModel.initializeRequestQueue(requireActivity().applicationContext)

@@ -28,8 +28,8 @@ class DebugFragment : Fragment() {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this).get(DebugViewModel::class.java)
         viewModel.initializeContext(requireActivity().applicationContext)
         lifecycleScope.launch {
