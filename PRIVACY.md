@@ -6,4 +6,4 @@ The US National Weather Service will be able to know the IP address you are conn
 <br>
 <b>Third Party Content Notice</b><br>
 <br>
-NWSWeatherAlertsInfo displays information provided by the US National Weather Service. NWSWeatherAlertsWidget has no control over the content of the weather alerts provided by the servers, and takes no responsibility for the suitability of that content for a particular audience.<br>
+NWSWeatherAlertsInfo displays information provided by the US National Weather Service. NWSWeatherAlertsWidget has no control over the content of the weather alerts provided by the National Weather Service, and takes no responsibility for the suitability of that content for a particular audience.<br>
