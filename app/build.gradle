@@ -3,8 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
-    compileSdkVersion 31
-    buildToolsVersion "30.0.3"
+    compileSdk 31
     def applicationName = "NWSWeatherAlertsWidget"
 
     defaultConfig {
@@ -35,6 +34,7 @@ android {
     kotlinOptions {
         jvmTarget = '11'
     }
+    namespace 'net.justdave.nwsweatheralertswidget'
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
