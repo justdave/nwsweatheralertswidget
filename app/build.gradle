@@ -1,8 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion '30.0.3'
+    compileSdk 30
     def applicationName = "NWSWeatherAlertsWidget"
     defaultConfig {
         applicationId "net.justdave.nwsweatheralertswidget"
@@ -19,7 +18,11 @@ android {
     }
     productFlavors {
     }
-    applicationVariants.all { variant ->
+    buildFeatures {
+        aidl true
+    }
+    namespace 'net.justdave.nwsweatheralertswidget'
+    applicationVariants.configureEach { variant ->
         variant.outputs.all { output ->
             def newApkName
             def newBaseName
