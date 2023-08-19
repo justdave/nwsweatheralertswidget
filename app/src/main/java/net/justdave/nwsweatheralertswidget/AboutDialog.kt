@@ -16,7 +16,7 @@ class AboutDialog(context: Context) : Dialog(context) {
     public override fun onCreate(savedInstanceState: Bundle?) {
         setContentView(R.layout.about)
         val tv = findViewById<View>(R.id.info_text) as TextView
-        tv.text =readRawTextFile(R.raw.about_info)?.let { HtmlCompat.fromHtml(it,HtmlCompat.FROM_HTML_MODE_LEGACY) }
+        tv.text = readAboutInfoFile()?.let { HtmlCompat.fromHtml(it,HtmlCompat.FROM_HTML_MODE_LEGACY) }
         tv.setLinkTextColor(Color.BLUE)
         Linkify.addLinks(tv, Linkify.WEB_URLS)
         val ver = findViewById<View>(R.id.version_string) as TextView
@@ -28,8 +28,8 @@ class AboutDialog(context: Context) : Dialog(context) {
         button.setOnClickListener { dismiss() }
     }
 
-    private fun readRawTextFile(id: Int): String? {
-        val inputStream = context.resources.openRawResource(id)
+    private fun readAboutInfoFile(): String? {
+        val inputStream = context.resources.openRawResource(R.raw.about_info)
         val `in` = InputStreamReader(inputStream)
         val buf = BufferedReader(`in`)
         var line: String?
