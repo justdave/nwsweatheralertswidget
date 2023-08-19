@@ -30,7 +30,7 @@ class DebugFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(DebugViewModel::class.java)
+        viewModel = ViewModelProvider(this)[DebugViewModel::class.java]
         viewModel.initializeContext(requireActivity().applicationContext)
         lifecycleScope.launch {
             try {

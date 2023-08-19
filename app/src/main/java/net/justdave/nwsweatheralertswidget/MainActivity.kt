@@ -1,7 +1,6 @@
 package net.justdave.nwsweatheralertswidget
 
 import android.os.Bundle
-import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -26,7 +25,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onPostCreate(
-        @Nullable savedInstanceState: Bundle?
+        savedInstanceState: Bundle?
     ) {
         super.onPostCreate(savedInstanceState)
         navController = Navigation.findNavController(this, R.id.my_nav_host_fragment)

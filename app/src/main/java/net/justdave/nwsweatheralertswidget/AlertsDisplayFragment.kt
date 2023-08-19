@@ -31,7 +31,7 @@ class AlertsDisplayFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(AlertsDisplayViewModel::class.java)
+        viewModel = ViewModelProvider(this)[AlertsDisplayViewModel::class.java]
         viewModel.initializeContext(requireActivity().applicationContext)
 /*        viewModel.initializeRequestQueue(requireActivity().applicationContext)
         lifecycleScope.launch {
@@ -59,13 +59,7 @@ class AlertsDisplayFragment : Fragment() {
             }
             R.id.action_about -> {
                 val about = AboutDialog(requireActivity())
-                about.setTitle(
-                    resources.getIdentifier(
-                        "action_about",
-                        "string",
-                        requireActivity().packageName
-                    )
-                )
+                about.setTitle(R.string.action_about)
                 about.show()
                 true
             }
