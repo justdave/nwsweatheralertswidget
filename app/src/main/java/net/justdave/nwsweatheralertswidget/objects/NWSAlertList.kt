@@ -48,6 +48,7 @@ class NWSAlertList() : ArrayList<NWSAlert>(), Parcelable {
         return true
     }
 
+    @Suppress("EmptyMethod")
     override fun hashCode(): Int {
         return super.hashCode()
     }
