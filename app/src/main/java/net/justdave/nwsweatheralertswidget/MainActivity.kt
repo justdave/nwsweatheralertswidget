@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
         ProviderInstaller.installIfNeededAsync(this, object :
             ProviderInstaller.ProviderInstallListener {
             override fun onProviderInstalled() {
+                // We don't actually need to do anything here but the implementation requires we override this.
             }
 
             override fun onProviderInstallFailed(errorCode: Int, recoveryIntent: Intent?) {
