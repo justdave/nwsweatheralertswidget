@@ -2,7 +2,14 @@ package net.justdave.nwsweatheralertswidget
 
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -18,8 +25,28 @@ class AlertsDisplayFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        (requireActivity() as MenuHost).addMenuProvider(object: MenuProvider{
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.alerts_display_options, menu)
+            }
 
-        setHasOptionsMenu(true)
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                when (menuItem.itemId) {
+                    R.id.option_debug -> {
+                        findNavController().navigate(AlertsDisplayFragmentDirections.actionAlertsDisplayFragmentToDebugFragment())
+                        return true
+                    }
+                    R.id.action_about -> {
+                        val about = AboutDialog(requireActivity())
+                        about.setTitle(R.string.action_about)
+                        about.show()
+                        return true
+                    }
+
+                }
+                return false
+            }
+        })
 
         binding = AlertsDisplayFragmentBinding.inflate(inflater, container, false)
         binding.parsedEvents.emptyView = binding.emptytext
@@ -43,30 +70,6 @@ class AlertsDisplayFragment : Fragment() {
                 // foo
             }
         }*/
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        //super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.alerts_display_options, menu)
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle item selection
-        return when (item.itemId) {
-            R.id.option_debug -> {
-                findNavController().navigate(AlertsDisplayFragmentDirections.actionAlertsDisplayFragmentToDebugFragment())
-                true
-            }
-            R.id.action_about -> {
-                val about = AboutDialog(requireActivity())
-                about.setTitle(R.string.action_about)
-                about.show()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
     }
 
 }
