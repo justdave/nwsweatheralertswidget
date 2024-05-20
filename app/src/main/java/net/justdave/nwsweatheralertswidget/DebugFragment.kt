@@ -1,6 +1,7 @@
 package net.justdave.nwsweatheralertswidget
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,18 +19,16 @@ import net.justdave.nwsweatheralertswidget.objects.NWSZone
 class DebugFragment : Fragment() {
 
     private lateinit var viewModel: DebugViewModel
-    private lateinit var binding: DebugFragmentBinding
+    private var _binding: DebugFragmentBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DebugFragmentBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        Log.i("AlertsDisplayFragment", "onCreateView called")
+        _binding = DebugFragmentBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(this)[DebugViewModel::class.java]
         viewModel.initializeContext(requireActivity().applicationContext)
         lifecycleScope.launch {
@@ -110,6 +109,13 @@ class DebugFragment : Fragment() {
                 // foo
             }
         }
+        val view = binding.root
+        return view
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 
 }
