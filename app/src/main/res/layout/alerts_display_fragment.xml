@@ -2,18 +2,16 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".MainActivity"
     android:id="@+id/alertsdisplay_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="@dimen/widget_margin_bottom"
-    android:layout_marginLeft="@dimen/widget_margin_left"
-    android:layout_marginRight="@dimen/widget_margin_right"
+    android:layout_marginStart="@dimen/widget_margin_left"
     android:layout_marginTop="@dimen/widget_margin_top"
+    android:layout_marginEnd="@dimen/widget_margin_right"
+    android:layout_marginBottom="@dimen/widget_margin_bottom"
     android:background="@drawable/widget_frame"
     android:orientation="vertical"
-    android:layout_marginStart="@dimen/widget_margin_left"
-    android:layout_marginEnd="@dimen/widget_margin_right">
+    tools:context=".MainActivity">
 
     <ListView
         android:id="@+id/parsed_events"
