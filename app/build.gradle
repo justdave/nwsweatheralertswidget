@@ -5,7 +5,7 @@ android {
     def applicationName = "NWSWeatherAlertsWidget"
     defaultConfig {
         applicationId "net.justdave.nwsweatheralertswidget"
-        minSdkVersion 23
+        minSdk 24
         targetSdkVersion 36
         versionCode 12
         versionName '1.1.4'
