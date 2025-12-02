@@ -26,9 +26,7 @@ class NWSAlert() : Parcelable {
     private var certainty = ""
     private var areaDesc = ""
 
-    constructor(parcel: Parcel) : this() {
-        NWSAlert(JSONObject(parcel.readString()!!))
-    }
+    constructor(parcel: Parcel) : this(JSONObject(parcel.readString()!!))
 
     constructor(data: JSONObject) : this() {
         blob = data

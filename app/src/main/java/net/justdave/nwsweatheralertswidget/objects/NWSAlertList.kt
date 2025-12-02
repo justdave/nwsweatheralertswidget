@@ -7,8 +7,9 @@ import java.util.*
 class NWSAlertList() : ArrayList<NWSAlert>(), Parcelable {
 
     constructor(parcel: Parcel) : this() {
-        arrayListOf<NWSAlert>().apply {
-            parcel.readList(this, NWSAlert::class.java.classLoader)
+        val list = parcel.createTypedArrayList(NWSAlert.CREATOR)
+        if (list != null) {
+            addAll(list)
         }
     }
 
@@ -54,7 +55,7 @@ class NWSAlertList() : ArrayList<NWSAlert>(), Parcelable {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeList(this as List<NWSAlert?>)
+        parcel.writeTypedList(this as List<NWSAlert>)
     }
 
     override fun describeContents(): Int {

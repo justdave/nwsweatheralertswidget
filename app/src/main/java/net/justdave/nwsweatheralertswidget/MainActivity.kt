@@ -24,6 +24,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun upgradeSecurityProvider() {
+        // This allows older Android devices to use modern SSL codecs (required to connect
+        // to the NWS servers) provided they have Google Play installed
         ProviderInstaller.installIfNeededAsync(this, object :
             ProviderInstaller.ProviderInstallListener {
             override fun onProviderInstalled() {
