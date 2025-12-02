@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -17,12 +18,10 @@ public class NWSWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        final int N = appWidgetIds.length;
 
         // Perform this loop procedure for each App Widget that belongs to this
         // provider
-        for (int i = 0; i < N; i++) {
-            int appWidgetId = appWidgetIds[i];
+        for (int appWidgetId : appWidgetIds) {
             Log.i(TAG, "onUpdate() called with widget ID ".concat(String.valueOf(appWidgetId)));
 
 
@@ -41,7 +40,7 @@ public class NWSWidgetProvider extends AppWidgetProvider {
             browserIntent.setAction(WIDGET_CLICK);
             browserIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             PendingIntent browserPendingIntent = PendingIntent.getBroadcast(context, 0, browserIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT);
+                    PendingIntent.FLAG_UPDATE_CURRENT+PendingIntent.FLAG_IMMUTABLE);
             rv.setPendingIntentTemplate(R.id.widget_parsed_events, browserPendingIntent);
 
             // The empty view is displayed when the collection has no items. It
@@ -60,16 +59,21 @@ public class NWSWidgetProvider extends AppWidgetProvider {
         super.onReceive(context, intent);
         if (intent.getAction() != null) {
             if (intent.getAction().equals(WIDGET_CLICK)) {
-                String event_url = intent.getExtras().getString(EVENT_URL);
-                Log.i(TAG, "URL Launch Event received for ".concat(event_url));
-                try {
-                    Intent webIntent = new Intent(context.getApplicationContext(), AlertDetailActivity.class);
-                    webIntent.setData(Uri.parse(event_url));
-                    webIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    context.startActivity(webIntent);
-                } catch (RuntimeException e) {
-                    // The url is invalid, maybe missing http://
-                    e.printStackTrace();
+                Bundle extras = intent.getExtras();
+                if (extras != null) {
+                    String event_url = extras.getString(EVENT_URL);
+                    if (event_url != null) {
+                        Log.i(TAG, "URL Launch Event received for ".concat(event_url));
+                        try {
+                            Intent webIntent = new Intent(context.getApplicationContext(), AlertDetailActivity.class);
+                            webIntent.setData(Uri.parse(event_url));
+                            webIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            context.startActivity(webIntent);
+                        } catch (RuntimeException e) {
+                            // The url is invalid, maybe missing http://
+                            Log.e(TAG, "Error parsing URL", e);
+                        }
+                    }
                 }
             }
         }
