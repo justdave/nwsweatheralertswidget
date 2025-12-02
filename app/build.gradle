@@ -1,18 +1,19 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdk 30
+    compileSdk 36
     def applicationName = "NWSWeatherAlertsWidget"
     defaultConfig {
         applicationId "net.justdave.nwsweatheralertswidget"
         minSdkVersion 14
-        targetSdkVersion 30
+        targetSdkVersion 36
         versionCode 12
         versionName '1.1.4'
+        multiDexEnabled true
     }
     buildTypes {
         release {
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
             signingConfig getSigningConfig()
         }
     }
@@ -39,5 +40,8 @@ android {
 
 dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.google.android.gms:play-services-basement:18.9.0'
+    implementation 'com.google.android.gms:play-services-base:18.9.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
 //    compile 'com.android.support.constraint:constraint-layout:1'
 }
