@@ -10,7 +10,7 @@ android {
         versionCode 15
         versionName '1.2.1'
         multiDexEnabled true
-        versionNameSuffix 'fdroid1'
+        versionNameSuffix '-fdroid1'
     }
     buildTypes {
         release {
