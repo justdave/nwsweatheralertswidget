@@ -1,15 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdk 36
+    compileSdk = 36
     def applicationName = "NWSWeatherAlertsWidget"
     defaultConfig {
         applicationId "net.justdave.nwsweatheralertswidget"
         minSdk 24
         targetSdkVersion 36
-        versionCode 14
+        versionCode 15
         versionName '1.2.1'
         multiDexEnabled true
+        versionNameSuffix 'fdroid1'
     }
     buildTypes {
         release {
