@@ -17,7 +17,7 @@
     <string name="icon">Icon</string>
     <string name="ok">OK</string>
     <string name="alert_title">Widget Loading</string>
-    <string name="alert_empty">There are no alerts at this time for this location</string>
+    <string name="alert_empty">Effective 10pm US Eastern Time 12/02/2025 the NWS has decommissioned the server used by this app to fetch alert data in favor of their new REST API. A rewrite of this app using that API has already been in progress for the last couple years but is moving very slowly. You can follow the progress by following the bug reports link in the About box.</string>
     <string name="alert_summary">Please wait&#8230;</string>
     <string name="widget_title">Current Active NWS Alerts</string>
     <string name="choose_state">Choose State</string>

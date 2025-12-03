@@ -47,9 +47,6 @@ public class NWSBackgroundService extends Service {
             }
             try {
 
-                /**
-                 * Create the Handler to handle each of the XML tags.
-                 **/
                 Xml.parse(result, myXMLHandler);
                 synchronized (NWSDataLock) {
                     NWSAlertList nwsDataTemp = myXMLHandler.getXMLData();
@@ -97,11 +94,16 @@ public class NWSBackgroundService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.i(TAG, "Service creating");
-        NWSAlertEntry temp = new NWSAlertEntry(); // fake entry to make first comparison always fail
-        temp.setEvent("Waiting for feed download");
-        nwsData.add(temp);
-        timer = new Timer("NWSServiceTimer");
-        timer.schedule(updateTask, 100L, 300 * 1000L);
+        // NWSAlertEntry temp = new NWSAlertEntry(); // fake entry to make first comparison always fail
+        // temp.setEvent("Waiting for feed download");
+        // nwsData.add(temp);
+        // timer = new Timer("NWSServiceTimer");
+        // timer.schedule(updateTask, 100L, 300 * 1000L);
+        Context context = getApplicationContext();
+        final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context.getApplicationContext());
+        ComponentName thisWidget = new ComponentName(context.getApplicationContext(), NWSWidgetProvider.class);
+        final int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_parsed_events);
     }
 
     @Override

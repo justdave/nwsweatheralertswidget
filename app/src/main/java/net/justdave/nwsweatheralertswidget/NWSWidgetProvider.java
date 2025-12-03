@@ -29,18 +29,23 @@ public class NWSWidgetProvider extends AppWidgetProvider {
             // ListView
             final RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.default_widget);
 
+            // Create an Intent to launch the app
+            Intent launchIntent = new Intent(context, MainActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, launchIntent, PendingIntent.FLAG_IMMUTABLE);
+            rv.setOnClickPendingIntent(R.id.widget_layout, pendingIntent);
+
             // Create an Intent to launch the widget data service
             Intent serviceIntent = new Intent(context, NWSWidgetService.class);
             serviceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             serviceIntent.setData(Uri.parse(serviceIntent.toUri(Intent.URI_INTENT_SCHEME)));
             rv.setRemoteAdapter(R.id.widget_parsed_events, serviceIntent);
 
-            // Set the action for the click handler.
+            // Set the action for the click handler for each list item.
             Intent browserIntent = new Intent(context, NWSWidgetProvider.class);
             browserIntent.setAction(WIDGET_CLICK);
             browserIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             PendingIntent browserPendingIntent = PendingIntent.getBroadcast(context, 0, browserIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT+PendingIntent.FLAG_IMMUTABLE);
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
             rv.setPendingIntentTemplate(R.id.widget_parsed_events, browserPendingIntent);
 
             // The empty view is displayed when the collection has no items. It
