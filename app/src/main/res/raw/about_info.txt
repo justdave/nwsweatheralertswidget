@@ -1,7 +1,7 @@
 To request new features or file bug reports, please visit<br>
 <b>https://justdave.github.io/nwsweatheralertswidget</b><br>
 <br>
-Copyright 2014-2021 David D. Miller<br>
+Copyright 2014-2025 David D. Miller<br>
 and additional contributors found at<br>
 https://github.com/justdave/nwsweatheralertswidget/graphs/contributors<br>
 <br>
