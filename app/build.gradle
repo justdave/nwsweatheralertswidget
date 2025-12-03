@@ -1,45 +1,47 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-parcelize'
-apply plugin: "androidx.navigation.safeargs.kotlin"
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-parcelize'
+    id 'androidx.navigation.safeargs.kotlin'
+}
 
 android {
-    compileSdk 36
+    compileSdk = 36
     def applicationName = "NWSWeatherAlertsWidget"
 
     defaultConfig {
-        applicationId "net.justdave.nwsweatheralertswidget"
-        minSdkVersion 23
-        targetSdkVersion 36
-        versionCode 20
-        versionName "2.0-SNAPSHOT"
-        multiDexEnabled true
+        applicationId = "net.justdave.nwsweatheralertswidget"
+        minSdkVersion = 23
+        targetSdkVersion = 36
+        versionCode = 20
+        versionName = "2.0-SNAPSHOT"
+        multiDexEnabled = true
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildFeatures {
-        viewBinding true
-        buildConfig true
+        viewBinding = true
+        buildConfig = true
 //        dataBinding true
     }
 
     buildTypes {
         release {
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            minifyEnabled = true
+            shrinkResources = true
+            proguardFiles(getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro')
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlin {
         jvmToolchain(17)
     }
-    namespace 'net.justdave.nwsweatheralertswidget'
-    buildToolsVersion '36.1.0'
+    namespace = 'net.justdave.nwsweatheralertswidget'
+    buildToolsVersion = '36.1.0'
 
     applicationVariants.configureEach { variant ->
         variant.outputs.configureEach { output ->
