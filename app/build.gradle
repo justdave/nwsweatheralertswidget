@@ -45,8 +45,6 @@ android {
 
 dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.android.gms:play-services-basement:18.9.0'
-    implementation 'com.google.android.gms:play-services-base:18.9.0'
     implementation 'androidx.multidex:multidex:2.0.1'
 //    compile 'com.android.support.constraint:constraint-layout:1'
 }
