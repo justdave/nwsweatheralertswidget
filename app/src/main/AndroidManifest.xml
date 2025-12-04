@@ -22,6 +22,10 @@
                 android:resource="@xml/alerts_widget_info" />
         </receiver>
 
+        <service
+            android:name=".widget.AlertsWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
         <activity android:name=".widget.AlertsWidgetConfigureActivity"
             android:exported="false">
             <intent-filter>

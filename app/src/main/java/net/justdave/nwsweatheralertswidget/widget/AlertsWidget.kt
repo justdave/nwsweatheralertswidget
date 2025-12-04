@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.widget.RemoteViews
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -58,17 +59,27 @@ internal suspend fun updateAppWidget(
     val views = RemoteViews(context.packageName, R.layout.alerts_widget)
     views.setTextViewText(R.id.widget_title, widgetText)
 
-    val dummyData: List<NWSAlert> = (1..10).map { NWSAlert() }
-    val items = RemoteViews.RemoteCollectionItems.Builder()
-        .apply {
-            dummyData.forEach {
-                val remoteViews = RemoteViews(context.packageName, R.layout.alerts_widget_list_item)
-                remoteViews.setTextViewText(R.id.widget_title, it.toString())
-                this.addItem(it.hashCode().toLong(), remoteViews)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        val dummyData: List<NWSAlert> = (1..10).map { NWSAlert() }
+        val items = RemoteViews.RemoteCollectionItems.Builder()
+            .apply {
+                dummyData.forEach {
+                    val remoteViews = RemoteViews(context.packageName, R.layout.alerts_widget_list_item)
+                    remoteViews.setTextViewText(R.id.widget_title, it.toString())
+                    this.addItem(it.hashCode().toLong(), remoteViews)
+                }
             }
-        }
-        .build()
-    views.setRemoteAdapter(R.id.widget_parsed_events, items)
+            .build()
+        views.setRemoteAdapter(R.id.widget_parsed_events, items)
+    } else {
+        @Suppress("DEPRECATION")
+        views.setRemoteAdapter(
+            R.id.widget_parsed_events, Intent(
+                context,
+                AlertsWidgetService::class.java
+            ).apply { putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId) } // not a typo
+        )
+    }
 
     val pendingIntent: PendingIntent = Intent(context, AlertsDisplayFragment::class.java)
         .let { intent ->
