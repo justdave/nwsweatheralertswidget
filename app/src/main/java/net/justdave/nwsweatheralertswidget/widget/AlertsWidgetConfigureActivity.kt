@@ -10,10 +10,22 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import net.justdave.nwsweatheralertswidget.NWSAPI
 import net.justdave.nwsweatheralertswidget.R
 import net.justdave.nwsweatheralertswidget.objects.NWSArea
 import net.justdave.nwsweatheralertswidget.objects.NWSZone
+
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 /**
  * The configuration screen for the [AlertsWidget] AppWidget.
@@ -27,15 +39,16 @@ class AlertsWidgetConfigureActivity : AppCompatActivity() {
     private var addWidgetClickListener = View.OnClickListener {
         val context = this@AlertsWidgetConfigureActivity
 
-        /*
-        // When the button is clicked, store the string locally
-        val widgetArea = appWidgetArea.toString()
-        saveTitlePref(context, appWidgetId, widgetArea)
-        */
+        CoroutineScope(Dispatchers.Main).launch {
+            // When the button is clicked, store the string locally
+            val widgetArea = appWidgetArea.toString()
+            saveTitlePref(context, appWidgetId, widgetArea)
 
-        // It is the responsibility of the configuration activity to update the app widget
-        val appWidgetManager = AppWidgetManager.getInstance(context)
-        updateAppWidget(context, appWidgetManager, appWidgetId)
+            // It is the responsibility of the configuration activity to update the app widget
+            val appWidgetManager = AppWidgetManager.getInstance(context)
+            updateAppWidget(context, appWidgetManager, appWidgetId)
+        }
+
         // Make sure we pass back the original appWidgetId
         val resultValue = Intent()
         resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
@@ -130,26 +143,27 @@ class AlertsWidgetConfigureActivity : AppCompatActivity() {
 
 }
 
-private const val PREFS_NAME = "net.justdave.nwsweatheralertswidget.AlertsWidget"
-private const val PREF_PREFIX_KEY = "appwidget_"
-
-// Write the prefix to the SharedPreferences object for this widget
-internal fun saveTitlePref(context: Context, appWidgetId: Int, text: String) {
-    val prefs = context.getSharedPreferences(PREFS_NAME, 0).edit()
-    prefs.putString(PREF_PREFIX_KEY + appWidgetId, text)
-    prefs.apply()
+// Write the prefix to the DataStore object for this widget
+suspend fun saveTitlePref(context: Context, appWidgetId: Int, text: String) {
+    val key = stringPreferencesKey("appwidget_$appWidgetId")
+    context.dataStore.edit { settings ->
+        settings[key] = text
+    }
 }
 
-// Read the prefix from the SharedPreferences object for this widget.
+// Read the prefix from the DataStore object for this widget.
 // If there is no preference saved, get the default from a resource
-internal fun loadTitlePref(context: Context, appWidgetId: Int): String {
-    val prefs = context.getSharedPreferences(PREFS_NAME, 0)
-    val titleValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId, null)
-    return titleValue ?: context.getString(R.string.appwidget_text)
+suspend fun loadTitlePref(context: Context, appWidgetId: Int): String {
+    val key = stringPreferencesKey("appwidget_$appWidgetId")
+    val flow = context.dataStore.data.map {
+        it[key] ?: context.getString(R.string.appwidget_text)
+    }
+    return flow.first()
 }
 
-internal fun deleteTitlePref(context: Context, appWidgetId: Int) {
-    val prefs = context.getSharedPreferences(PREFS_NAME, 0).edit()
-    prefs.remove(PREF_PREFIX_KEY + appWidgetId)
-    prefs.apply()
+suspend fun deleteTitlePref(context: Context, appWidgetId: Int) {
+    val key = stringPreferencesKey("appwidget_$appWidgetId")
+    context.dataStore.edit {
+        it.remove(key)
+    }
 }
