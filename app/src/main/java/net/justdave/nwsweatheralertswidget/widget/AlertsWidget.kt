@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.justdave.nwsweatheralertswidget.AlertsDisplayFragment
 import net.justdave.nwsweatheralertswidget.R
+import net.justdave.nwsweatheralertswidget.objects.NWSAlert
 
 /**
  * Implementation of App Widget functionality.
@@ -56,12 +57,18 @@ internal suspend fun updateAppWidget(
     // Construct the RemoteViews object
     val views = RemoteViews(context.packageName, R.layout.alerts_widget)
     views.setTextViewText(R.id.widget_title, widgetText)
-    views.setRemoteAdapter(
-        R.id.widget_parsed_events, Intent(
-            context,
-            AlertsWidgetService::class.java
-        ).apply { putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId) } // not a typo
-    )
+
+    val dummyData: List<NWSAlert> = (1..10).map { NWSAlert() }
+    val items = RemoteViews.RemoteCollectionItems.Builder()
+        .apply {
+            dummyData.forEach {
+                val remoteViews = RemoteViews(context.packageName, R.layout.alerts_widget_list_item)
+                remoteViews.setTextViewText(R.id.widget_title, it.toString())
+                this.addItem(it.hashCode().toLong(), remoteViews)
+            }
+        }
+        .build()
+    views.setRemoteAdapter(R.id.widget_parsed_events, items)
 
     val pendingIntent: PendingIntent = Intent(context, AlertsDisplayFragment::class.java)
         .let { intent ->
