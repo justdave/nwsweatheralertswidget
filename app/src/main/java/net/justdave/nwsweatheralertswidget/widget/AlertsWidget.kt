@@ -5,14 +5,13 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.widget.RemoteViews
+import androidx.work.WorkManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.justdave.nwsweatheralertswidget.AlertsDisplayFragment
 import net.justdave.nwsweatheralertswidget.R
-import net.justdave.nwsweatheralertswidget.objects.NWSAlert
 
 /**
  * Implementation of App Widget functionality.
@@ -32,20 +31,13 @@ class AlertsWidget : AppWidgetProvider() {
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
-        // When the user deletes a widget, delete the preference associated with it.
+        // When the user deletes a widget, cancel the background worker and delete the preference
         for (appWidgetId in appWidgetIds) {
+            WorkManager.getInstance(context).cancelUniqueWork("AlertsUpdateWorker_$appWidgetId")
             CoroutineScope(Dispatchers.Main).launch {
-                deleteTitlePref(context, appWidgetId)
+                deleteWidgetPrefs(context, appWidgetId)
             }
         }
-    }
-
-    override fun onEnabled(context: Context) {
-        // Enter relevant functionality for when the first widget is created
-    }
-
-    override fun onDisabled(context: Context) {
-        // Enter relevant functionality for when the last widget is disabled
     }
 }
 
@@ -54,32 +46,17 @@ internal suspend fun updateAppWidget(
     appWidgetManager: AppWidgetManager,
     appWidgetId: Int
 ) {
-    val widgetText = loadTitlePref(context, appWidgetId)
+    val prefs = loadWidgetPrefs(context, appWidgetId)
+    val widgetText = prefs["title"] ?: context.getString(R.string.appwidget_text)
     // Construct the RemoteViews object
     val views = RemoteViews(context.packageName, R.layout.alerts_widget)
     views.setTextViewText(R.id.widget_title, widgetText)
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        val dummyData: List<NWSAlert> = (1..10).map { NWSAlert() }
-        val items = RemoteViews.RemoteCollectionItems.Builder()
-            .apply {
-                dummyData.forEach {
-                    val remoteViews = RemoteViews(context.packageName, R.layout.alerts_widget_list_item)
-                    remoteViews.setTextViewText(R.id.widget_title, it.toString())
-                    this.addItem(it.hashCode().toLong(), remoteViews)
-                }
-            }
-            .build()
-        views.setRemoteAdapter(R.id.widget_parsed_events, items)
-    } else {
-        @Suppress("DEPRECATION")
-        views.setRemoteAdapter(
-            R.id.widget_parsed_events, Intent(
-                context,
-                AlertsWidgetService::class.java
-            ).apply { putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId) } // not a typo
-        )
+    val intent = Intent(context, AlertsWidgetService::class.java).apply {
+        putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
     }
+    views.setRemoteAdapter(R.id.widget_parsed_events, intent)
+    views.setEmptyView(R.id.widget_parsed_events, android.R.id.empty)
 
     val pendingIntent: PendingIntent = Intent(context, AlertsDisplayFragment::class.java)
         .let { intent ->
@@ -89,4 +66,5 @@ internal suspend fun updateAppWidget(
 
     // Instruct the widget manager to update the widget
     appWidgetManager.updateAppWidget(appWidgetId, views)
+    appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.widget_parsed_events)
 }

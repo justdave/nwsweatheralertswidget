@@ -11,8 +11,10 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.android.volley.Response
 import kotlinx.coroutines.launch
 import net.justdave.nwsweatheralertswidget.databinding.DebugFragmentBinding
+import net.justdave.nwsweatheralertswidget.objects.NWSAlert
 import net.justdave.nwsweatheralertswidget.objects.NWSArea
 import net.justdave.nwsweatheralertswidget.objects.NWSZone
 
@@ -53,8 +55,7 @@ class DebugFragment : Fragment() {
                 binding.areaPopup.onItemSelectedListener =
                     object : AdapterView.OnItemSelectedListener {
                         override fun onItemSelected(
-                            parent: AdapterView<*>,
-                            view: View?,
+                            parent: AdapterView<*>,                            view: View?,
                             position: Int,
                             id: Long
                         ) {
@@ -85,8 +86,7 @@ class DebugFragment : Fragment() {
                 binding.zonePopup.onItemSelectedListener =
                     object : AdapterView.OnItemSelectedListener {
                         override fun onItemSelected(
-                            parent: AdapterView<*>,
-                            view: View?,
+                            parent: AdapterView<*>,                            view: View?,
                             position: Int,
                             id: Long
                         ) {
@@ -97,9 +97,16 @@ class DebugFragment : Fragment() {
                                 val zone = parent.getItemAtPosition(position) as NWSZone
                                 binding.debugText.setText(R.string.loading)
 
-                                viewModel.getDebugContent(area, zone) { response ->
-                                    binding.debugText.setText(response.toString(), TextView.BufferType.NORMAL)
-                                }
+                                viewModel.getDebugContent(area, zone, Response.Listener { response ->
+                                    val sb = StringBuilder()
+                                    sb.append("There are currently ").append(response.size).append(" active alerts")
+                                    response.forEach { alert ->
+                                        sb.append("\n").append(alert.toString())
+                                    }
+                                    binding.debugText.setText(sb.toString(), TextView.BufferType.NORMAL)
+                                }, Response.ErrorListener { error ->
+                                    binding.debugText.setText(error.toString(), TextView.BufferType.NORMAL)
+                                })
                             }
                         }
 

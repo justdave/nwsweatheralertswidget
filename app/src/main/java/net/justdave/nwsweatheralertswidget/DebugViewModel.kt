@@ -36,10 +36,17 @@ class DebugViewModel : ViewModel() {
         }
     }
 
-    fun getDebugContent(area: NWSArea, zone: NWSZone, listener: Response.Listener<ArrayList<NWSAlert>>) {
-        return nwsapi.getActiveAlerts(area, zone) { response ->
-            listener.onResponse(response)
-        }
+    fun getDebugContent(
+        area: NWSArea,
+        zone: NWSZone,
+        listener: Response.Listener<List<NWSAlert>>,
+        errorListener: Response.ErrorListener
+    ) {
+        return nwsapi.getActiveAlerts(
+            area,
+            zone,
+            { response -> listener.onResponse(response) },
+            { error -> errorListener.onErrorResponse(error) })
     }
 
 }

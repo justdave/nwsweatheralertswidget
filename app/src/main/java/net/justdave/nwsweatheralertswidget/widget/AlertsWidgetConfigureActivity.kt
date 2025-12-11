@@ -1,31 +1,28 @@
 package net.justdave.nwsweatheralertswidget.widget
 
 import android.appwidget.AppWidgetManager
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
+import androidx.work.Data
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import net.justdave.nwsweatheralertswidget.AlertsUpdateWorker
 import net.justdave.nwsweatheralertswidget.NWSAPI
 import net.justdave.nwsweatheralertswidget.R
 import net.justdave.nwsweatheralertswidget.objects.NWSArea
 import net.justdave.nwsweatheralertswidget.objects.NWSZone
-
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+import java.util.concurrent.TimeUnit
 
 /**
  * The configuration screen for the [AlertsWidget] AppWidget.
@@ -41,19 +38,36 @@ class AlertsWidgetConfigureActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.Main).launch {
             // When the button is clicked, store the string locally
-            val widgetArea = appWidgetArea.toString()
-            saveTitlePref(context, appWidgetId, widgetArea)
+            val area = appWidgetArea.selectedItem as NWSArea
+            val zone = appWidgetZone.selectedItem as NWSZone
+            val title = if (zone.id != "all" && zone.toString() != "Loading...") {
+                zone.toString()
+            } else {
+                area.toString()
+            }
+            saveWidgetPrefs(context, appWidgetId, area.id, zone.id, title)
+
+            // Schedule the background work
+            val workManager = WorkManager.getInstance(context)
+            val workRequest = PeriodicWorkRequestBuilder<AlertsUpdateWorker>(5, TimeUnit.MINUTES)
+                .setInputData(Data.Builder().putInt(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId).build())
+                .build()
+            workManager.enqueueUniquePeriodicWork(
+                "AlertsUpdateWorker_$appWidgetId",
+                ExistingPeriodicWorkPolicy.REPLACE,
+                workRequest
+            )
 
             // It is the responsibility of the configuration activity to update the app widget
             val appWidgetManager = AppWidgetManager.getInstance(context)
             updateAppWidget(context, appWidgetManager, appWidgetId)
-        }
 
-        // Make sure we pass back the original appWidgetId
-        val resultValue = Intent()
-        resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-        setResult(RESULT_OK, resultValue)
-        finish()
+            // Make sure we pass back the original appWidgetId
+            val resultValue = Intent()
+            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+            setResult(RESULT_OK, resultValue)
+            finish()
+        }
     }
 
     private var areaSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -120,7 +134,8 @@ class AlertsWidgetConfigureActivity : AppCompatActivity() {
             )
         }
 
-        findViewById<View>(R.id.add_button).setOnClickListener(addWidgetClickListener)
+        val addButton = findViewById<Button>(R.id.add_button)
+        addButton.setOnClickListener(addWidgetClickListener)
 
         // Find the widget id from the intent.
         val intent = intent
@@ -137,33 +152,33 @@ class AlertsWidgetConfigureActivity : AppCompatActivity() {
             return
         }
 
-        appWidgetArea.setSelection(0)
-        appWidgetZone.setSelection(0)
+        CoroutineScope(Dispatchers.Main).launch {
+            val prefs = loadWidgetPrefs(this@AlertsWidgetConfigureActivity, appWidgetId)
+            val areaId = prefs["area"]
+            val zoneId = prefs["zone"]
+            val title = prefs["title"]
+
+            // If the title is not the default, we are reconfiguring
+            if (title != getString(R.string.appwidget_text)) {
+                addButton.text = "Save"
+            }
+
+            appWidgetArea.setSelection(findSpinnerIndex(appWidgetArea, areaId))
+            appWidgetZone.setSelection(findSpinnerIndex(appWidgetZone, zoneId))
+        }
+
     }
 
-}
-
-// Write the prefix to the DataStore object for this widget
-suspend fun saveTitlePref(context: Context, appWidgetId: Int, text: String) {
-    val key = stringPreferencesKey("appwidget_$appWidgetId")
-    context.dataStore.edit { settings ->
-        settings[key] = text
-    }
-}
-
-// Read the prefix from the DataStore object for this widget.
-// If there is no preference saved, get the default from a resource
-suspend fun loadTitlePref(context: Context, appWidgetId: Int): String {
-    val key = stringPreferencesKey("appwidget_$appWidgetId")
-    val flow = context.dataStore.data.map {
-        it[key] ?: context.getString(R.string.appwidget_text)
-    }
-    return flow.first()
-}
-
-suspend fun deleteTitlePref(context: Context, appWidgetId: Int) {
-    val key = stringPreferencesKey("appwidget_$appWidgetId")
-    context.dataStore.edit {
-        it.remove(key)
+    private fun findSpinnerIndex(spinner: Spinner, value: String?): Int {
+        for (i in 0 until spinner.count) {
+            val item = spinner.getItemAtPosition(i)
+            if (item is NWSArea && item.id == value) {
+                return i
+            }
+            if (item is NWSZone && item.id == value) {
+                return i
+            }
+        }
+        return 0
     }
 }

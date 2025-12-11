@@ -2,11 +2,14 @@ package net.justdave.nwsweatheralertswidget.objects
 
 import android.os.Parcel
 import android.os.Parcelable
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.json.JSONObject
 
+@Serializable
 class NWSAlert() : Parcelable {
-    private var blob = JSONObject()
-    private var properties = JSONObject()
+    @Transient private var blob = JSONObject()
+    @Transient private var properties = JSONObject()
     private var headline = ""
     private var description = ""
     private var id = ""
@@ -30,10 +33,47 @@ class NWSAlert() : Parcelable {
 
     constructor(data: JSONObject) : this() {
         blob = data
-        properties = blob.getJSONObject(("properties"))
+        properties = data.optJSONObject("properties") ?: JSONObject()
         headline = properties.optString("headline", "Unknown Alert")
         description = properties.optString("description", "No description provided")
+        id = properties.optString("id", "")
+        updated = properties.optString("sent", "")
+        published = properties.optString("sent", "")
+        title = properties.optString("event", "")
+        link = blob.optString("id", "")
+        summary = properties.optString("description", "")
+        event = properties.optString("event", "")
+        effective = properties.optString("effective", "")
+        expires = properties.optString("expires", "")
+        status = properties.optString("status", "")
+        msgType = properties.optString("messageType", "")
+        category = properties.optString("category", "")
+        urgency = properties.optString("urgency", "")
+        severity = properties.optString("severity", "")
+        certainty = properties.optString("certainty", "")
+        areaDesc = properties.optString("areaDesc", "")
     }
+
+    fun getBlob(): JSONObject = blob
+    fun getProperties(): JSONObject = properties
+    fun getHeadline(): String = headline
+    fun getDescription(): String = description
+    fun getId(): String = id
+    fun getUpdated(): String = updated
+    fun getPublished(): String = published
+    fun getTitle(): String = title
+    fun getLink(): String = link
+    fun getSummary(): String = summary
+    fun getEvent(): String = event
+    fun getEffective(): String = effective
+    fun getExpires(): String = expires
+    fun getStatus(): String = status
+    fun getMsgType(): String = msgType
+    fun getCategory(): String = category
+    fun getUrgency(): String = urgency
+    fun getSeverity(): String = severity
+    fun getCertainty(): String = certainty
+    fun getAreaDesc(): String = areaDesc
 
     override fun toString(): String {
         return headline

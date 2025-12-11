@@ -175,7 +175,7 @@ class NWSAPI constructor(context: Context) {
         }
     }
 
-    fun getActiveAlerts(area: NWSArea, zone: NWSZone, listener: Response.Listener<ArrayList<NWSAlert>>) {
+    fun getActiveAlerts(area: NWSArea, zone: NWSZone, listener: Response.Listener<List<NWSAlert>>, errorListener: Response.ErrorListener) {
         val alertList = ArrayList<NWSAlert>()
         val url = when {
             area.id == "us-all" -> {
@@ -203,10 +203,7 @@ class NWSAPI constructor(context: Context) {
                 }
             }
             listener.onResponse(alertList)
-        }, { error ->
-            Log.i("NWSAPI", "Error: $error")
-            listener.onResponse(alertList)
-        })
+        }, errorListener)
         requestQueue.add(req)
     }
 }
