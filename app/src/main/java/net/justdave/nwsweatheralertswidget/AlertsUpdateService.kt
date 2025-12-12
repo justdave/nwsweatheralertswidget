@@ -33,7 +33,7 @@ import java.util.TimerTask
 
 class AlertsUpdateService : Service() {
 
-    private lateinit var timer: Timer
+    private var timer: Timer? = null
     private lateinit var nwsapi: NWSAPI
 
     override fun onBind(intent: Intent): IBinder? {
@@ -43,6 +43,7 @@ class AlertsUpdateService : Service() {
     override fun onCreate() {
         super.onCreate()
         Log.i(TAG, "Service creating")
+        isRunning = true
 
         // Start the service in the foreground immediately.
         val notification = createNotification()
@@ -56,14 +57,16 @@ class AlertsUpdateService : Service() {
             // After migration, initialize the API and schedule the recurring update task.
             nwsapi = NWSAPI.getInstance(applicationContext)
             timer = Timer("NWSServiceTimer")
-            timer.schedule(updateTask, 100L, 900 * 1000L) // 15 minutes
+            timer?.schedule(updateTask, 100L, 900 * 1000L) // 15 minutes
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Log.i(TAG, "Service destroying")
-        timer.cancel()
+        timer?.cancel()
+        timer = null
+        isRunning = false
     }
 
     private suspend fun migrateLegacySettings() {
@@ -160,5 +163,7 @@ class AlertsUpdateService : Service() {
     companion object {
         private const val TAG = "AlertsUpdateService"
         private const val NOTIFICATION_ID = 1
+        var isRunning = false
+            private set
     }
 }

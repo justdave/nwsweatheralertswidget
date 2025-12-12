@@ -1,6 +1,7 @@
 package net.justdave.nwsweatheralertswidget
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -31,6 +32,18 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.my_toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         //supportActionBar?.setLogo(R.mipmap.app_icon)
+
+        // As a developer convenience, start the service if it isn't already running.
+        if (!AlertsUpdateService.isRunning) {
+            val serviceIntent = Intent(this, AlertsUpdateService::class.java).apply {
+                addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(serviceIntent)
+            } else {
+                startService(serviceIntent)
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
