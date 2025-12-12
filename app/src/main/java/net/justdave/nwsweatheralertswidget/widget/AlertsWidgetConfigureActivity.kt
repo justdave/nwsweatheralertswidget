@@ -2,6 +2,7 @@ package net.justdave.nwsweatheralertswidget.widget
 
 import android.appwidget.AppWidgetManager
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -46,7 +47,11 @@ class AlertsWidgetConfigureActivity : AppCompatActivity() {
             val serviceIntent = Intent(context, AlertsUpdateService::class.java).apply {
                 addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
             }
-            context.startForegroundService(serviceIntent)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(serviceIntent)
+            } else {
+                context.startService(serviceIntent)
+            }
 
             // It is the responsibility of the configuration activity to update the app widget
             val appWidgetManager = AppWidgetManager.getInstance(context)

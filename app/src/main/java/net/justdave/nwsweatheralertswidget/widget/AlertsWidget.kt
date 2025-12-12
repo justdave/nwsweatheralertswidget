@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.SystemClock
 import android.widget.RemoteViews
 import kotlinx.coroutines.CoroutineScope
@@ -57,12 +58,21 @@ class AlertsWidget : AppWidgetProvider() {
         val intent = Intent(context, AlertsUpdateService::class.java).apply {
             addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
         }
-        val pendingIntent = PendingIntent.getForegroundService(
-            context,
-            1, // Unique request code
-            intent,
-            PendingIntent.FLAG_IMMUTABLE
-        )
+        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            PendingIntent.getForegroundService(
+                context,
+                1, // Unique request code
+                intent,
+                PendingIntent.FLAG_IMMUTABLE
+            )
+        } else {
+            PendingIntent.getService(
+                context,
+                1, // Unique request code
+                intent,
+                PendingIntent.FLAG_IMMUTABLE
+            )
+        }
         // Set the alarm to go off immediately to start the service
         alarmManager.set(
             AlarmManager.ELAPSED_REALTIME,
