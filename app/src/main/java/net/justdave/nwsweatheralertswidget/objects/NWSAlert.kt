@@ -4,6 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import net.justdave.nwsweatheralertswidget.R
 import org.json.JSONObject
 
 @Serializable
@@ -74,6 +75,58 @@ class NWSAlert() : Parcelable {
     fun getSeverity(): String = severity
     fun getCertainty(): String = certainty
     fun getAreaDesc(): String = areaDesc
+
+    fun getIcon(): Int {
+        var icon = R.drawable.nws_logo
+        if (event.contains("Fire") || event.contains("Red Flag")) {
+            icon = R.drawable.fire
+        }
+        if (event.contains("Surf") || event.contains("Tsunami")) {
+            icon = R.drawable.wave
+        }
+        if (event.contains("Winter") || event.contains("Snow")) {
+            icon = R.drawable.winter
+        }
+        if (event.contains("Blizzard")) {
+            icon = R.drawable.blizzard
+        }
+        if (event.contains("Wind")) {
+            icon = R.drawable.windy
+        }
+        if (event.contains("Flood")) {
+            icon = R.drawable.flood
+        }
+        if (event.contains("Ice") || event.contains("Freezing") || event.contains("Freeze") || event.contains("Frost")
+            || event.contains("Sleet")) {
+            icon = R.drawable.ice
+        }
+        if (event.contains("Thunderstorm")) {
+            icon = R.drawable.thunderstorm
+        }
+        if (event.contains("Tornado")) {
+            icon = R.drawable.tornado
+        }
+        return icon
+    }
+
+    fun getBackground(): Int {
+        var background = R.drawable.black_button
+        if (event.contains("Fire") || event.contains("Dust")) {
+            background = R.drawable.orange_button
+        }
+        if (event.contains("Winter") || event.contains("Wind") || event.contains("Blizzard") || event.contains("Flood")
+            || event.contains("Hydro") || event.contains("Snow") || event.contains("Rain") || event.contains("Marine")
+            || event.contains("Surf")) {
+            background = R.drawable.blue_button
+        }
+        if (event.contains("Watch")) {
+            background = R.drawable.yellow_button
+        }
+        if (event.contains("Warning")) {
+            background = R.drawable.red_button
+        }
+        return background
+    }
 
     override fun toString(): String {
         return headline

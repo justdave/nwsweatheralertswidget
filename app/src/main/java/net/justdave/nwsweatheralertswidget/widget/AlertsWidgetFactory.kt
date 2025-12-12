@@ -48,6 +48,8 @@ class AlertsWidgetFactory(private val context: Context, intent: Intent) :
         if (position < alerts.size) {
             val alert = alerts[position]
             views.setTextViewText(R.id.alert_item_text, alert.getEvent())
+            views.setImageViewResource(R.id.alert_item_icon, alert.getIcon())
+            views.setInt(R.id.alert_item_layout, "setBackgroundResource", alert.getBackground())
             Log.i("AlertsWidgetFactory", "Widget $appWidgetId: loaded view for '${alert.getEvent()}' at position $position")
         }
 

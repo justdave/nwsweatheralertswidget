@@ -8,6 +8,8 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.json.Json
+import net.justdave.nwsweatheralertswidget.objects.NWSAlert
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
@@ -29,11 +31,13 @@ suspend fun saveWidgetPrefs(context: Context, appWidgetId: Int, areaId: String, 
 
 suspend fun loadWidgetPrefs(context: Context, appWidgetId: Int): Map<String, String?> {
     return context.dataStore.data.map {
+        val alerts = it[alertsKey(appWidgetId)] ?: "[]"
         mapOf(
             "area" to it[areaKey(appWidgetId)],
             "zone" to it[zoneKey(appWidgetId)],
             "title" to it[titleKey(appWidgetId)],
-            "updated" to it[updatedKey(appWidgetId)]
+            "updated" to it[updatedKey(appWidgetId)],
+            "alert_count" to Json.decodeFromString<List<NWSAlert>>(alerts).size.toString()
         )
     }.first()
 }

@@ -9,6 +9,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.SystemClock
+import android.view.View
 import android.widget.RemoteViews
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -102,10 +103,21 @@ internal suspend fun updateAppWidget(
     val prefs = loadWidgetPrefs(context, appWidgetId)
     val widgetText = prefs["title"] ?: context.getString(R.string.appwidget_text)
     val updatedText = prefs["updated"] ?: "Never"
+    val alertCount = prefs["alert_count"]?.toInt() ?: 0
+
     // Construct the RemoteViews object
     val views = RemoteViews(context.packageName, R.layout.alerts_widget)
     views.setTextViewText(R.id.widget_title, widgetText)
     views.setTextViewText(R.id.widget_updated_timestamp, "Last updated: ".plus(updatedText))
+
+    // Manually control the visibility of the list and the empty view
+    if (alertCount > 0) {
+        views.setViewVisibility(R.id.widget_parsed_events, View.VISIBLE)
+        views.setViewVisibility(R.id.widget_empty_view, View.GONE)
+    } else {
+        views.setViewVisibility(R.id.widget_parsed_events, View.GONE)
+        views.setViewVisibility(R.id.widget_empty_view, View.VISIBLE)
+    }
 
     // Set up the intent that starts the AlertsWidgetService, which will
     // provide the views for this collection. This intent needs to be unique for each widget.
@@ -116,9 +128,6 @@ internal suspend fun updateAppWidget(
     }
     @Suppress("DEPRECATION")
     views.setRemoteAdapter(R.id.widget_parsed_events, intent)
-
-    // Set the empty view to be displayed when the collection is empty
-    views.setEmptyView(R.id.widget_parsed_events, android.R.id.empty)
 
     // This section makes the widget title clickable
     val pendingIntent: PendingIntent = Intent(context, AlertsDisplayFragment::class.java)
