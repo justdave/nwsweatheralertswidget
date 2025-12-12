@@ -11,7 +11,6 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
 
-
 class MainActivity : AppCompatActivity() {
 
     private lateinit var navController : NavController
@@ -57,4 +56,3 @@ class MainActivity : AppCompatActivity() {
         //NavigationUI.setupWithNavController(navigationView, navController)
     }
 }
-

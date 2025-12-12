@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.CoroutineScope
@@ -27,6 +28,8 @@ class AlertsWidgetConfigureActivity : AppCompatActivity() {
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
     private lateinit var appWidgetArea: Spinner
     private lateinit var appWidgetZone: Spinner
+    private lateinit var zoneLoadingSpinner: ProgressBar
+    private lateinit var addButton: Button
     private lateinit var nwsapi: NWSAPI
 
     private var addWidgetClickListener = View.OnClickListener {
@@ -76,13 +79,18 @@ class AlertsWidgetConfigureActivity : AppCompatActivity() {
                 appWidgetArea.setSelection(0)
             } else {
                 val area = parent.getItemAtPosition(position) as NWSArea
-                val loadingMenu = ArrayList<NWSZone>()
-                loadingMenu.add(NWSZone("all", getString(R.string.loading)))
+                // Show the loading indicator and set a temporary adapter
+                zoneLoadingSpinner.visibility = View.VISIBLE
+                appWidgetZone.isEnabled = false
+                addButton.isEnabled = false
+                val loadingMenu = arrayListOf(NWSZone("all", getString(R.string.loading)))
                 appWidgetZone.adapter = ArrayAdapter(
                     applicationContext,
                     R.layout.spinner_layout,
                     loadingMenu
                 )
+
+                // Fetch the new list of zones
                 nwsapi.getZones(area) { response ->
                     Log.i("WidgetConfigure", "ZoneWidget: $response")
                     appWidgetZone.adapter = ArrayAdapter(
@@ -91,6 +99,10 @@ class AlertsWidgetConfigureActivity : AppCompatActivity() {
                         response
                     )
                     appWidgetZone.setSelection(0)
+                    // Hide the loading indicator
+                    zoneLoadingSpinner.visibility = View.GONE
+                    appWidgetZone.isEnabled = true
+                    addButton.isEnabled = true
                 }
             }
         }
@@ -109,7 +121,11 @@ class AlertsWidgetConfigureActivity : AppCompatActivity() {
         nwsapi = NWSAPI.getInstance(applicationContext)
 
         setContentView(R.layout.alerts_widget_configure)
-        appWidgetArea = findViewById<View>(R.id.appwidget_area) as Spinner
+        appWidgetArea = findViewById(R.id.appwidget_area)
+        appWidgetZone = findViewById(R.id.appwidget_zone)
+        zoneLoadingSpinner = findViewById(R.id.zone_loading_spinner)
+        addButton = findViewById(R.id.add_button)
+
         nwsapi.getAreas { response ->
             Log.i("WidgetConfigure", "AreaWidget: $response")
             appWidgetArea.adapter = ArrayAdapter(
@@ -119,7 +135,6 @@ class AlertsWidgetConfigureActivity : AppCompatActivity() {
             )
         }
         appWidgetArea.onItemSelectedListener = areaSelectedListener
-        appWidgetZone = findViewById<View>(R.id.appwidget_zone) as Spinner
         nwsapi.getZones(NWSArea("us-all", "")) { response ->
             Log.i("WidgetConfigure", "ZoneWidget: $response")
             appWidgetZone.adapter = ArrayAdapter(
@@ -129,7 +144,6 @@ class AlertsWidgetConfigureActivity : AppCompatActivity() {
             )
         }
 
-        val addButton = findViewById<Button>(R.id.add_button)
         addButton.setOnClickListener(addWidgetClickListener)
 
         // Find the widget id from the intent.
