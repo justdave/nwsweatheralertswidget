@@ -140,10 +140,11 @@ class AlertsUpdateService : Service() {
                                     saveAlerts(context, appWidgetId, serializedAlerts)
                                     val timestamp = SimpleDateFormat("h:mm a", Locale.US).format(Date())
                                     saveUpdatedTimestamp(context, appWidgetId, timestamp)
-                                    // Send a broadcast to the widget provider to trigger an update
-                                    val intent = Intent(context, AlertsWidget.DataFetchedReceiver::class.java).apply {
-                                        action = AlertsWidget.DATA_FETCHED
-                                        putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+
+                                    // Send the standard APPWIDGET_UPDATE broadcast to trigger the widget's onUpdate method.
+                                    val intent = Intent(context, AlertsWidget::class.java).apply {
+                                        action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+                                        putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, intArrayOf(appWidgetId))
                                     }
                                     context.sendBroadcast(intent)
                                 }

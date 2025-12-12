@@ -4,7 +4,6 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -23,27 +22,6 @@ import net.justdave.nwsweatheralertswidget.R
  * App Widget Configuration implemented in [AlertsWidgetConfigureActivity]
  */
 class AlertsWidget : AppWidgetProvider() {
-
-    /**
-     * A BroadcastReceiver that listens for our custom data fetched action.
-     * This is embedded in the AppWidgetProvider so it can easily access the AppWidgetManager.
-     */
-    class DataFetchedReceiver : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action == DATA_FETCHED) {
-                val appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
-                if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
-                    val appWidgetManager = AppWidgetManager.getInstance(context)
-                    // The data has changed, so notify the widget to update its views.
-                    // Note: We use the deprecated version here because the modern equivalent
-                    // requires a different signature and is not a drop-in replacement for this use case.
-                    @Suppress("DEPRECATION")
-                    appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.widget_parsed_events)
-                }
-            }
-        }
-    }
-
     /**
      * This is called to update the widget at intervals defined by the updatePeriodMillis attribute in the
      * AppWidgetProviderInfo. It is also called when the user adds the widget.
@@ -110,10 +88,6 @@ class AlertsWidget : AppWidgetProvider() {
     override fun onDisabled(context: Context) {
         // Stop the service when the last widget is removed
         context.stopService(Intent(context, AlertsUpdateService::class.java))
-    }
-
-    companion object {
-        const val DATA_FETCHED = "net.justdave.nwsweatheralertswidget.DATA_FETCHED"
     }
 }
 
