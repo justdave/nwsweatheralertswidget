@@ -13,6 +13,7 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.edit
+import androidx.core.net.toUri
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -76,7 +77,20 @@ class AlertsUpdateService : Service() {
         if (sharedPreferences.contains("feed_state")) {
             Log.i(TAG, "Found legacy settings, migrating...")
             val area = sharedPreferences.getString("feed_state", "us-all") ?: "us-all"
-            val zone = sharedPreferences.getString("feed_county", "all") ?: "all"
+            val legacyCountyUrl = sharedPreferences.getString("feed_county", null)
+
+            val zone = if (legacyCountyUrl != null) {
+                try {
+                    val parsedZone = legacyCountyUrl.toUri().getQueryParameter("x")
+                    // The legacy value for 'Entire State' was a URL with x=0
+                    if (parsedZone == null || parsedZone == "0") "all" else parsedZone
+                } catch (e: Exception) {
+                    Log.w(TAG, "Could not parse legacy county URL, defaulting to 'all'", e)
+                    "all"
+                }
+            } else {
+                "all"
+            }
 
             val appWidgetManager = AppWidgetManager.getInstance(this)
             val componentName = ComponentName(this, AlertsWidget::class.java)
@@ -126,7 +140,6 @@ class AlertsUpdateService : Service() {
                                     saveAlerts(context, appWidgetId, serializedAlerts)
                                     val timestamp = SimpleDateFormat("h:mm a", Locale.US).format(Date())
                                     saveUpdatedTimestamp(context, appWidgetId, timestamp)
-
                                     // Send a broadcast to the widget provider to trigger an update
                                     val intent = Intent(context, AlertsWidget.DataFetchedReceiver::class.java).apply {
                                         action = AlertsWidget.DATA_FETCHED
