@@ -18,45 +18,39 @@ class AlertsWidgetFactory(private val context: Context, intent: Intent) :
         AppWidgetManager.EXTRA_APPWIDGET_ID,
         AppWidgetManager.INVALID_APPWIDGET_ID
     )
+    private var alerts: List<NWSAlert> = emptyList()
 
     override fun onCreate() {
-        // No-op
+        // No-op. All initialization is done in onDataSetChanged.
     }
 
     override fun onDataSetChanged() {
-        // This is called by the system when notifyAppWidgetViewDataChanged is called.
-        // We no longer need to load data here, as it will be loaded on-demand
-        // in getCount() and getViewAt() to ensure correctness for each widget.
-    }
-
-    override fun onDestroy() {
-        // No-op
-    }
-
-    private fun getAlertsForThisWidget(): List<NWSAlert> {
-        // Helper function to load data synchronously for this specific widget instance
-        return runBlocking {
+        // This is the key lifecycle method. It's called by the system when the data has changed.
+        // We load the data for our specific widget ID here.
+        Log.i("AlertsWidgetFactory", "onDataSetChanged for widget $appWidgetId")
+        runBlocking {
             val serializedAlerts = loadAlerts(context, appWidgetId)
-            Json.decodeFromString(serializedAlerts)
+            alerts = Json.decodeFromString(serializedAlerts)
         }
     }
 
+    override fun onDestroy() {
+        // No-op.
+    }
+
     override fun getCount(): Int {
-        // Load data on-demand to get the correct count for this specific widget.
-        return getAlertsForThisWidget().size
+        return alerts.size
     }
 
     override fun getViewAt(position: Int): RemoteViews {
-        // Load data on-demand to get the correct item for this specific widget.
-        val alerts = getAlertsForThisWidget()
         val views = RemoteViews(context.packageName, R.layout.alerts_widget_list_item)
 
-        // Ensure we don't go out of bounds if the data changes between getCount() and here
         if (position < alerts.size) {
             val alert = alerts[position]
             views.setTextViewText(R.id.alert_item_text, alert.getEvent())
             Log.i("AlertsWidgetFactory", "Widget $appWidgetId: loaded view for '${alert.getEvent()}' at position $position")
         }
+
         return views
     }
 

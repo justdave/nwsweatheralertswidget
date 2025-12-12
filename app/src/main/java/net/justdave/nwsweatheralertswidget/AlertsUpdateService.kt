@@ -126,8 +126,13 @@ class AlertsUpdateService : Service() {
                                     saveAlerts(context, appWidgetId, serializedAlerts)
                                     val timestamp = SimpleDateFormat("h:mm a", Locale.US).format(Date())
                                     saveUpdatedTimestamp(context, appWidgetId, timestamp)
-                                    @Suppress("DEPRECATION") // need this for API 24 unfortunately
-                                    appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.widget_parsed_events)
+
+                                    // Send a broadcast to the widget provider to trigger an update
+                                    val intent = Intent(context, AlertsWidget.DataFetchedReceiver::class.java).apply {
+                                        action = AlertsWidget.DATA_FETCHED
+                                        putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                                    }
+                                    context.sendBroadcast(intent)
                                 }
                             }, { error ->
                                 Log.e(TAG, "Failed to fetch alerts for widget $appWidgetId: ", error)
