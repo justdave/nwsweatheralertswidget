@@ -29,19 +29,11 @@
         </receiver>
 
         <receiver
-            android:name=".BootReceiver"
+            android:name=".BroadcastReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-
-        <receiver
-            android:name=".AppUpdateReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>

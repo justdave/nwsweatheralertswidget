@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import net.justdave.nwsweatheralertswidget.AlertsUpdateService
 import net.justdave.nwsweatheralertswidget.NWSAPI
 import net.justdave.nwsweatheralertswidget.R
 import net.justdave.nwsweatheralertswidget.objects.NWSArea
@@ -40,6 +41,12 @@ class AlertsWidgetConfigureActivity : AppCompatActivity() {
                 area.toString()
             }
             saveWidgetPrefs(context, appWidgetId, area.id, zone.id, title)
+
+            // Trigger an immediate update of the service
+            val serviceIntent = Intent(context, AlertsUpdateService::class.java).apply {
+                addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
+            }
+            context.startForegroundService(serviceIntent)
 
             // It is the responsibility of the configuration activity to update the app widget
             val appWidgetManager = AppWidgetManager.getInstance(context)

@@ -15,7 +15,15 @@ import net.justdave.nwsweatheralertswidget.AlertsDisplayFragment
 import net.justdave.nwsweatheralertswidget.AlertsUpdateService
 import net.justdave.nwsweatheralertswidget.R
 
+/**
+ * Implementation of App Widget functionality.
+ * App Widget Configuration implemented in [AlertsWidgetConfigureActivity]
+ */
 class AlertsWidget : AppWidgetProvider() {
+    /**
+     * This is called to update the widget at intervals defined by the updatePeriodMillis attribute in the
+     * AppWidgetProviderInfo. It is also called when the user adds the widget.
+     */
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -28,7 +36,11 @@ class AlertsWidget : AppWidgetProvider() {
         }
     }
 
+    /**
+     * This is called when an instance of the App Widget is deleted from the App Widget host.
+     */
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
+        // When the user deletes a widget, delete the preference associated with it.
         for (appWidgetId in appWidgetIds) {
             CoroutineScope(Dispatchers.Main).launch {
                 deleteWidgetPrefs(context, appWidgetId)
@@ -36,6 +48,9 @@ class AlertsWidget : AppWidgetProvider() {
         }
     }
 
+    /**
+     * This is called when the first instance of the App Widget is created.
+     */
     override fun onEnabled(context: Context) {
         // Use AlarmManager to reliably start the service from the background
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -48,7 +63,7 @@ class AlertsWidget : AppWidgetProvider() {
             intent,
             PendingIntent.FLAG_IMMUTABLE
         )
-        // Set the alarm to go off immediately
+        // Set the alarm to go off immediately to start the service
         alarmManager.set(
             AlarmManager.ELAPSED_REALTIME,
             SystemClock.elapsedRealtime(),
@@ -56,12 +71,18 @@ class AlertsWidget : AppWidgetProvider() {
         )
     }
 
+    /**
+     * This is called when the last instance of the App Widget is deleted.
+     */
     override fun onDisabled(context: Context) {
         // Stop the service when the last widget is removed
         context.stopService(Intent(context, AlertsUpdateService::class.java))
     }
 }
 
+/**
+ * Updates a single widget instance.
+ */
 internal suspend fun updateAppWidget(
     context: Context,
     appWidgetManager: AppWidgetManager,
@@ -69,21 +90,28 @@ internal suspend fun updateAppWidget(
 ) {
     val prefs = loadWidgetPrefs(context, appWidgetId)
     val widgetText = prefs["title"] ?: context.getString(R.string.appwidget_text)
+    // Construct the RemoteViews object
     val views = RemoteViews(context.packageName, R.layout.alerts_widget)
     views.setTextViewText(R.id.widget_title, widgetText)
 
+    // Set up the intent that starts the AlertsWidgetService, which will
+    // provide the views for this collection.
     val intent = Intent(context, AlertsWidgetService::class.java).apply {
         putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
     }
     views.setRemoteAdapter(R.id.widget_parsed_events, intent)
+
+    // Set the empty view to be displayed when the collection is empty
     views.setEmptyView(R.id.widget_parsed_events, android.R.id.empty)
 
+    // This section makes the widget title clickable
     val pendingIntent: PendingIntent = Intent(context, AlertsDisplayFragment::class.java)
-        .let { intent ->
-            PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        .let { titleIntent ->
+            PendingIntent.getActivity(context, 0, titleIntent, PendingIntent.FLAG_IMMUTABLE)
         }
     views.setOnClickPendingIntent(R.id.widget_title, pendingIntent)
 
+    // Instruct the widget manager to update the widget
     appWidgetManager.updateAppWidget(appWidgetId, views)
     appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.widget_parsed_events)
 }

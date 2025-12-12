@@ -3,7 +3,6 @@ package net.justdave.nwsweatheralertswidget.widget
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import kotlinx.coroutines.runBlocking
@@ -42,7 +41,6 @@ class AlertsWidgetFactory(private val context: Context, intent: Intent) :
     override fun getViewAt(position: Int): RemoteViews {
         val views = RemoteViews(context.packageName, R.layout.alerts_widget_list_item)
         views.setTextViewText(R.id.alert_item_text, alerts[position].getEvent())
-        Log.i("AlertsWidgetFactory", "loaded view for " + alerts[position].getEvent())
         return views
     }
 
