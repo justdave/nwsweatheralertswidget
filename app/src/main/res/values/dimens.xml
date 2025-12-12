@@ -5,8 +5,8 @@
     <dimen name="activity_vertical_margin">3dp</dimen>
     <dimen name="widget_margin_top">4dp</dimen>
     <dimen name="widget_margin_bottom">4dp</dimen>
-    <dimen name="widget_margin_left">4dp</dimen>
-    <dimen name="widget_margin_right">4dp</dimen>
+    <dimen name="widget_margin_start">4dp</dimen>
+    <dimen name="widget_margin_end">4dp</dimen>
 
     <!--
 Refer to App Widget Documentation for margin information

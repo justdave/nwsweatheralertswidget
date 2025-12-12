@@ -101,9 +101,11 @@ internal suspend fun updateAppWidget(
 ) {
     val prefs = loadWidgetPrefs(context, appWidgetId)
     val widgetText = prefs["title"] ?: context.getString(R.string.appwidget_text)
+    val updatedText = prefs["updated"] ?: "Never"
     // Construct the RemoteViews object
     val views = RemoteViews(context.packageName, R.layout.alerts_widget)
     views.setTextViewText(R.id.widget_title, widgetText)
+    views.setTextViewText(R.id.widget_updated_timestamp, "Last updated: ".plus(updatedText))
 
     // Set up the intent that starts the AlertsWidgetService, which will
     // provide the views for this collection. This intent needs to be unique for each widget.

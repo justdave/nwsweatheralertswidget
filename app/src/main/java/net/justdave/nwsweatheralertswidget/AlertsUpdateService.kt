@@ -23,7 +23,11 @@ import net.justdave.nwsweatheralertswidget.objects.NWSZone
 import net.justdave.nwsweatheralertswidget.widget.AlertsWidget
 import net.justdave.nwsweatheralertswidget.widget.loadWidgetPrefs
 import net.justdave.nwsweatheralertswidget.widget.saveAlerts
+import net.justdave.nwsweatheralertswidget.widget.saveUpdatedTimestamp
 import net.justdave.nwsweatheralertswidget.widget.saveWidgetPrefs
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
 
@@ -117,6 +121,8 @@ class AlertsUpdateService : Service() {
                                     Log.i(TAG, "Fetched ".plus(response.size).plus(" alerts for widget $appWidgetId"))
                                     val serializedAlerts = Json.encodeToString(response)
                                     saveAlerts(context, appWidgetId, serializedAlerts)
+                                    val timestamp = SimpleDateFormat("h:mm a", Locale.US).format(Date())
+                                    saveUpdatedTimestamp(context, appWidgetId, timestamp)
                                     @Suppress("DEPRECATION") // need this for API 24 unfortunately
                                     appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.widget_parsed_events)
                                 }

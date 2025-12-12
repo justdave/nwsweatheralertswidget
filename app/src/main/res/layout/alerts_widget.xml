@@ -4,10 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginBottom="@dimen/widget_margin_bottom"
-    android:layout_marginLeft="@dimen/widget_margin_left"
-    android:layout_marginRight="@dimen/widget_margin_right"
-    android:layout_marginStart="@dimen/widget_margin_left"
-    android:layout_marginEnd="@dimen/widget_margin_right"
+    android:layout_marginStart="@dimen/widget_margin_start"
+    android:layout_marginEnd="@dimen/widget_margin_end"
     android:layout_marginTop="@dimen/widget_margin_top"
     android:background="@drawable/widget_frame">
 
@@ -38,6 +36,18 @@
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingTop="0dp" />
+
+        <TextView
+            android:id="@+id/widget_updated_timestamp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/semigray"
+            android:gravity="center_vertical|center_horizontal"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="2dp"
+            android:text="@string/loading"
+            android:textColor="@color/white" />
     </LinearLayout>
 
     <TextView
