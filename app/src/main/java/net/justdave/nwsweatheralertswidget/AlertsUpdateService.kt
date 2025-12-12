@@ -12,7 +12,6 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.android.volley.Response
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -76,14 +75,17 @@ class AlertsUpdateService : Service() {
                         nwsapi.getActiveAlerts(
                             NWSArea(area, ""),
                             NWSZone(zone, ""),
-                            Response.Listener { response ->
+                            { response ->
                                 CoroutineScope(Dispatchers.IO).launch {
                                     Log.i(TAG, "Fetched ".plus(response.size).plus(" alerts for widget $appWidgetId"))
                                     val serializedAlerts = Json.encodeToString(response)
                                     saveAlerts(context, appWidgetId, serializedAlerts)
+                                    // This is deprecated, but the replacement has a different signature and
+                                    // is not a drop-in replacement.
+                                    @Suppress("DEPRECATION")
                                     appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.widget_parsed_events)
                                 }
-                            }, Response.ErrorListener { error ->
+                            }, { error ->
                                 Log.e(TAG, "Failed to fetch alerts for widget $appWidgetId: ", error)
                             }
                         )
@@ -102,7 +104,7 @@ class AlertsUpdateService : Service() {
             val channel = NotificationChannel(
                 channelId, title, NotificationManager.IMPORTANCE_LOW
             )
-            val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager = applicationContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
         return NotificationCompat.Builder(applicationContext, channelId)

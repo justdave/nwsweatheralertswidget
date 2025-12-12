@@ -109,6 +109,7 @@ internal suspend fun updateAppWidget(
     val intent = Intent(context, AlertsWidgetService::class.java).apply {
         putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
     }
+    @Suppress("DEPRECATION")
     views.setRemoteAdapter(R.id.widget_parsed_events, intent)
 
     // Set the empty view to be displayed when the collection is empty
@@ -123,5 +124,6 @@ internal suspend fun updateAppWidget(
 
     // Instruct the widget manager to update the widget
     appWidgetManager.updateAppWidget(appWidgetId, views)
+    @Suppress("DEPRECATION")
     appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.widget_parsed_events)
 }

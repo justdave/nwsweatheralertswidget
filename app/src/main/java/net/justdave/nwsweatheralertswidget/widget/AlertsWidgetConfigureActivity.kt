@@ -36,7 +36,7 @@ class AlertsWidgetConfigureActivity : AppCompatActivity() {
             // When the button is clicked, store the string locally
             val area = appWidgetArea.selectedItem as NWSArea
             val zone = appWidgetZone.selectedItem as NWSZone
-            val title = if (zone.id != "all" && zone.toString() != "Loading...") {
+            val title = if (zone.id != "all" && zone.toString() != getString(R.string.loading)) {
                 zone.toString()
             } else {
                 area.toString()
@@ -77,7 +77,7 @@ class AlertsWidgetConfigureActivity : AppCompatActivity() {
             } else {
                 val area = parent.getItemAtPosition(position) as NWSArea
                 val loadingMenu = ArrayList<NWSZone>()
-                loadingMenu.add(NWSZone("all", "Loading..."))
+                loadingMenu.add(NWSZone("all", getString(R.string.loading)))
                 appWidgetZone.adapter = ArrayAdapter(
                     applicationContext,
                     R.layout.spinner_layout,
@@ -155,7 +155,7 @@ class AlertsWidgetConfigureActivity : AppCompatActivity() {
 
             // If the title is not the default, we are reconfiguring
             if (title != getString(R.string.appwidget_text)) {
-                addButton.text = "Save"
+                addButton.setText(R.string.save)
             }
 
             appWidgetArea.setSelection(findSpinnerIndex(appWidgetArea, areaId))
