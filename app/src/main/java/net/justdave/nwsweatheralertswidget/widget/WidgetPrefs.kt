@@ -12,55 +12,44 @@ import net.justdave.nwsweatheralertswidget.R
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
+// Functions for saving and loading the widget's configuration (title, area, zone)
 suspend fun saveWidgetPrefs(context: Context, appWidgetId: Int, areaId: String, zoneId: String, title: String) {
-    val areaKey = stringPreferencesKey("appwidget_area_$appWidgetId")
-    val zoneKey = stringPreferencesKey("appwidget_zone_$appWidgetId")
-    val titleKey = stringPreferencesKey("appwidget_title_$appWidgetId")
-    context.dataStore.edit { settings ->
-        settings[areaKey] = areaId
-        settings[zoneKey] = zoneId
-        settings[titleKey] = title
+    context.dataStore.edit {
+        it[stringPreferencesKey("appwidget_area_$appWidgetId")] = areaId
+        it[stringPreferencesKey("appwidget_zone_$appWidgetId")] = zoneId
+        it[stringPreferencesKey("appwidget_title_$appWidgetId")] = title
     }
 }
 
-suspend fun loadWidgetPrefs(context: Context, appWidgetId: Int): Map<String, String> {
-    val areaKey = stringPreferencesKey("appwidget_area_$appWidgetId")
-    val zoneKey = stringPreferencesKey("appwidget_zone_$appWidgetId")
-    val titleKey = stringPreferencesKey("appwidget_title_$appWidgetId")
-    val flow = context.dataStore.data.map {
+suspend fun loadWidgetPrefs(context: Context, appWidgetId: Int): Map<String, String?> {
+    return context.dataStore.data.map {
         mapOf(
-            "area" to (it[areaKey] ?: "us-all"),
-            "zone" to (it[zoneKey] ?: "all"),
-            "title" to (it[titleKey] ?: context.getString(R.string.appwidget_text))
+            "area" to it[stringPreferencesKey("appwidget_area_$appWidgetId")],
+            "zone" to it[stringPreferencesKey("appwidget_zone_$appWidgetId")],
+            "title" to it[stringPreferencesKey("appwidget_title_$appWidgetId")]
         )
-    }
-    return flow.first()
+    }.first()
 }
 
+// Functions for saving and loading the fetched alerts for a specific widget
 suspend fun saveAlerts(context: Context, appWidgetId: Int, alerts: String) {
-    val alertsKey = stringPreferencesKey("appwidget_alerts_$appWidgetId")
-    context.dataStore.edit { settings ->
-        settings[alertsKey] = alerts
+    context.dataStore.edit {
+        it[stringPreferencesKey("appwidget_alerts_$appWidgetId")] = alerts
     }
 }
 
 suspend fun loadAlerts(context: Context, appWidgetId: Int): String {
-    val alertsKey = stringPreferencesKey("appwidget_alerts_$appWidgetId")
-    val flow = context.dataStore.data.map {
-        it[alertsKey] ?: "[]"
-    }
-    return flow.first()
+    return context.dataStore.data.map {
+        it[stringPreferencesKey("appwidget_alerts_$appWidgetId")] ?: "[]"
+    }.first()
 }
 
+// Function to clean up all preferences for a deleted widget
 suspend fun deleteWidgetPrefs(context: Context, appWidgetId: Int) {
-    val areaKey = stringPreferencesKey("appwidget_area_$appWidgetId")
-    val zoneKey = stringPreferencesKey("appwidget_zone_$appWidgetId")
-    val titleKey = stringPreferencesKey("appwidget_title_$appWidgetId")
-    val alertsKey = stringPreferencesKey("appwidget_alerts_$appWidgetId")
     context.dataStore.edit {
-        it.remove(areaKey)
-        it.remove(zoneKey)
-        it.remove(titleKey)
-        it.remove(alertsKey)
+        it.remove(stringPreferencesKey("appwidget_area_$appWidgetId"))
+        it.remove(stringPreferencesKey("appwidget_zone_$appWidgetId"))
+        it.remove(stringPreferencesKey("appwidget_title_$appWidgetId"))
+        it.remove(stringPreferencesKey("appwidget_alerts_$appWidgetId"))
     }
 }

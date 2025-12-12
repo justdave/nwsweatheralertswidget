@@ -41,7 +41,7 @@ class AlertsWidgetFactory(private val context: Context, intent: Intent) :
 
     override fun getViewAt(position: Int): RemoteViews {
         val views = RemoteViews(context.packageName, R.layout.alerts_widget_list_item)
-        views.setTextViewText(R.id.appwidget_text, alerts[position].getEvent())
+        views.setTextViewText(R.id.alert_item_text, alerts[position].getEvent())
         Log.i("AlertsWidgetFactory", "loaded view for " + alerts[position].getEvent())
         return views
     }

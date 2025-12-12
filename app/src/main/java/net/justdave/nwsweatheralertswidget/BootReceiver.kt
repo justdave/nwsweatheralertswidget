@@ -7,17 +7,16 @@ import android.content.Context
 import android.content.Intent
 import android.os.SystemClock
 
-class AppUpdateReceiver : BroadcastReceiver() {
+class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action == Intent.ACTION_MY_PACKAGE_REPLACED) {
-            // App has been updated, re-schedule the background service
+        if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             val serviceIntent = Intent(context, AlertsUpdateService::class.java).apply {
                 addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
             }
             val pendingIntent = PendingIntent.getForegroundService(
                 context,
-                3, // Unique request code
+                2, // Unique request code
                 serviceIntent,
                 PendingIntent.FLAG_IMMUTABLE
             )

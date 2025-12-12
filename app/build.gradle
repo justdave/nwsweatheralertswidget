@@ -75,7 +75,6 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0'
     implementation 'com.google.android.material:material:1.13.0'
     implementation 'androidx.datastore:datastore-preferences:1.2.0'
-    implementation 'androidx.work:work-runtime-ktx:2.11.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.robolectric:robolectric:4.16'

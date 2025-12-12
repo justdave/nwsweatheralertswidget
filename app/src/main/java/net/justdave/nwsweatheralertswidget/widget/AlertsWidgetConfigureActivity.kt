@@ -10,19 +10,13 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
-import androidx.work.Data
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import net.justdave.nwsweatheralertswidget.AlertsUpdateWorker
 import net.justdave.nwsweatheralertswidget.NWSAPI
 import net.justdave.nwsweatheralertswidget.R
 import net.justdave.nwsweatheralertswidget.objects.NWSArea
 import net.justdave.nwsweatheralertswidget.objects.NWSZone
-import java.util.concurrent.TimeUnit
 
 /**
  * The configuration screen for the [AlertsWidget] AppWidget.
@@ -46,17 +40,6 @@ class AlertsWidgetConfigureActivity : AppCompatActivity() {
                 area.toString()
             }
             saveWidgetPrefs(context, appWidgetId, area.id, zone.id, title)
-
-            // Schedule the background work
-            val workManager = WorkManager.getInstance(context)
-            val workRequest = PeriodicWorkRequestBuilder<AlertsUpdateWorker>(5, TimeUnit.MINUTES)
-                .setInputData(Data.Builder().putInt(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId).build())
-                .build()
-            workManager.enqueueUniquePeriodicWork(
-                "AlertsUpdateWorker_$appWidgetId",
-                ExistingPeriodicWorkPolicy.REPLACE,
-                workRequest
-            )
 
             // It is the responsibility of the configuration activity to update the app widget
             val appWidgetManager = AppWidgetManager.getInstance(context)
