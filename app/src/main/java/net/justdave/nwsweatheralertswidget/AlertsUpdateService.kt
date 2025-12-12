@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.content.edit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,6 +23,7 @@ import net.justdave.nwsweatheralertswidget.objects.NWSZone
 import net.justdave.nwsweatheralertswidget.widget.AlertsWidget
 import net.justdave.nwsweatheralertswidget.widget.loadWidgetPrefs
 import net.justdave.nwsweatheralertswidget.widget.saveAlerts
+import net.justdave.nwsweatheralertswidget.widget.saveWidgetPrefs
 import java.util.Timer
 import java.util.TimerTask
 
@@ -37,18 +39,53 @@ class AlertsUpdateService : Service() {
     override fun onCreate() {
         super.onCreate()
         Log.i(TAG, "Service creating")
-        nwsapi = NWSAPI.getInstance(applicationContext)
-        timer = Timer("NWSServiceTimer")
-        timer.schedule(updateTask, 100L, 900 * 1000L) // 15 minutes
 
+        // Start the service in the foreground immediately.
         val notification = createNotification()
         startForeground(NOTIFICATION_ID, notification)
+
+        // Launch a background coroutine to handle initialization.
+        CoroutineScope(Dispatchers.IO).launch {
+            // First, ensure any legacy settings are migrated.
+            migrateLegacySettings()
+
+            // After migration, initialize the API and schedule the recurring update task.
+            nwsapi = NWSAPI.getInstance(applicationContext)
+            timer = Timer("NWSServiceTimer")
+            timer.schedule(updateTask, 100L, 900 * 1000L) // 15 minutes
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Log.i(TAG, "Service destroying")
         timer.cancel()
+    }
+
+    private suspend fun migrateLegacySettings() {
+        val sharedPreferencesName = "${packageName}_preferences"
+        val sharedPreferences = getSharedPreferences(sharedPreferencesName, MODE_PRIVATE)
+
+        if (sharedPreferences.contains("feed_state")) {
+            Log.i(TAG, "Found legacy settings, migrating...")
+            val area = sharedPreferences.getString("feed_state", "us-all") ?: "us-all"
+            val zone = sharedPreferences.getString("feed_county", "all") ?: "all"
+
+            val appWidgetManager = AppWidgetManager.getInstance(this)
+            val componentName = ComponentName(this, AlertsWidget::class.java)
+            val appWidgetIds = appWidgetManager.getAppWidgetIds(componentName)
+
+            if (appWidgetIds.isNotEmpty()) {
+                for (appWidgetId in appWidgetIds) {
+                    // Save the legacy settings to the new DataStore format for each widget
+                    saveWidgetPrefs(this, appWidgetId, area, zone, "NWS Alerts")
+                }
+            }
+
+            // Clear the legacy settings to ensure migration only runs once
+            sharedPreferences.edit { clear() }
+            Log.i(TAG, "Migration complete.")
+        }
     }
 
     private val updateTask = object : TimerTask() {
@@ -80,9 +117,7 @@ class AlertsUpdateService : Service() {
                                     Log.i(TAG, "Fetched ".plus(response.size).plus(" alerts for widget $appWidgetId"))
                                     val serializedAlerts = Json.encodeToString(response)
                                     saveAlerts(context, appWidgetId, serializedAlerts)
-                                    // This is deprecated, but the replacement has a different signature and
-                                    // is not a drop-in replacement.
-                                    @Suppress("DEPRECATION")
+                                    @Suppress("DEPRECATION") // need this for API 24 unfortunately
                                     appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.widget_parsed_events)
                                 }
                             }, { error ->
