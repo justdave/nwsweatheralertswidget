@@ -18,7 +18,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import net.justdave.nwsweatheralertswidget.objects.NWSArea
 import net.justdave.nwsweatheralertswidget.objects.NWSZone
 import net.justdave.nwsweatheralertswidget.widget.AlertsWidget
@@ -136,7 +135,7 @@ class AlertsUpdateService : Service() {
                             { response ->
                                 CoroutineScope(Dispatchers.IO).launch {
                                     Log.i(TAG, "Fetched ".plus(response.size).plus(" alerts for widget $appWidgetId"))
-                                    val serializedAlerts = Json.encodeToString(response)
+                                    val serializedAlerts = lenientJson.encodeToString(response)
                                     saveAlerts(context, appWidgetId, serializedAlerts)
                                     val timestamp = SimpleDateFormat("h:mm a", Locale.US).format(Date())
                                     saveUpdatedTimestamp(context, appWidgetId, timestamp)

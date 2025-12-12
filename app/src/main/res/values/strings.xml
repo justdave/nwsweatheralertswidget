@@ -35,5 +35,7 @@
     <string name="loading">Loading…</string>
     <string name="save">Save</string>
     <string name="app_usage_instructions">This app provides a home screen widget. To use it, please long-press on your home screen, choose the \"Widgets\" option, and select the NWS Weather Alerts Widget from the list.</string>
+    <string name="detail_unparseable_date">(unparseable date)</string>
+    <string name="detail_no_expiration">No expiration date.</string>
 
 </resources>

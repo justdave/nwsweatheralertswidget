@@ -7,9 +7,10 @@ import android.util.Log
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.json.Json
 import net.justdave.nwsweatheralertswidget.R
+import net.justdave.nwsweatheralertswidget.lenientJson
 import net.justdave.nwsweatheralertswidget.objects.NWSAlert
+
 
 class AlertsWidgetFactory(private val context: Context, intent: Intent) :
     RemoteViewsService.RemoteViewsFactory {
@@ -30,7 +31,7 @@ class AlertsWidgetFactory(private val context: Context, intent: Intent) :
         Log.i("AlertsWidgetFactory", "onDataSetChanged for widget $appWidgetId")
         runBlocking {
             val serializedAlerts = loadAlerts(context, appWidgetId)
-            alerts = Json.decodeFromString(serializedAlerts)
+            alerts = lenientJson.decodeFromString(serializedAlerts)
         }
     }
 
@@ -47,10 +48,20 @@ class AlertsWidgetFactory(private val context: Context, intent: Intent) :
 
         if (position < alerts.size) {
             val alert = alerts[position]
-            views.setTextViewText(R.id.alert_item_text, alert.getEvent())
+            views.setTextViewText(R.id.alert_item_text, alert.event)
             views.setImageViewResource(R.id.alert_item_icon, alert.getIcon())
             views.setInt(R.id.alert_item_layout, "setBackgroundResource", alert.getBackground())
-            Log.i("AlertsWidgetFactory", "Widget $appWidgetId: loaded view for '${alert.getEvent()}' at position $position")
+
+            // This intent is used to "fill in" the pending intent template set on the ListView.
+            // It only needs to contain the data that is unique to this specific item.
+            val fillInIntent = Intent().apply {
+                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                putExtra("alert_id", alert.id)
+            }
+
+            views.setOnClickFillInIntent(R.id.alert_item_layout, fillInIntent)
+
+            Log.i("AlertsWidgetFactory", "Widget $appWidgetId: loaded view for '${alert.event}' at position $position")
         }
 
         return views

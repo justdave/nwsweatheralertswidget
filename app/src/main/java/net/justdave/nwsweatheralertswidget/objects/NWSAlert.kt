@@ -1,80 +1,60 @@
 package net.justdave.nwsweatheralertswidget.objects
 
-import android.os.Parcel
 import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import net.justdave.nwsweatheralertswidget.R
 import org.json.JSONObject
 
+@Parcelize
 @Serializable
-class NWSAlert() : Parcelable {
-    @Transient private var blob = JSONObject()
-    @Transient private var properties = JSONObject()
-    private var headline = ""
-    private var description = ""
-    private var id = ""
-    private var updated = ""
-    private var published = ""
-    private var title = ""
-    private var link = ""
-    private var summary = ""
-    private var event = ""
-    private var effective = ""
-    private var expires = ""
-    private var status = ""
-    private var msgType = ""
-    private var category = ""
-    private var urgency = ""
-    private var severity = ""
-    private var certainty = ""
-    private var areaDesc = ""
+data class NWSAlert(
+    val rawData: String = "", // Store the raw JSON string
+    val headline: String = "",
+    val description: String = "",
+    val instruction: String = "",
+    val id: String = "",
+    val sent: String = "",
+    val effective: String = "",
+    val onset: String = "",
+    val expires: String = "",
+    val ends: String = "",
+    val title: String = "",
+    val link: String = "",
+    val summary: String = "",
+    val event: String = "",
+    val status: String = "",
+    val msgType: String = "",
+    val category: String = "",
+    val urgency: String = "",
+    val severity: String = "",
+    val certainty: String = "",
+    val areaDesc: String = ""
+) : Parcelable {
 
-    constructor(parcel: Parcel) : this(JSONObject(parcel.readString()!!))
-
-    constructor(data: JSONObject) : this() {
-        blob = data
-        properties = data.optJSONObject("properties") ?: JSONObject()
-        headline = properties.optString("headline", "Unknown Alert")
-        description = properties.optString("description", "No description provided")
-        id = properties.optString("id", "")
-        updated = properties.optString("sent", "")
-        published = properties.optString("sent", "")
-        title = properties.optString("event", "")
-        link = blob.optString("id", "")
-        summary = properties.optString("description", "")
-        event = properties.optString("event", "")
-        effective = properties.optString("effective", "")
-        expires = properties.optString("expires", "")
-        status = properties.optString("status", "")
-        msgType = properties.optString("messageType", "")
-        category = properties.optString("category", "")
-        urgency = properties.optString("urgency", "")
-        severity = properties.optString("severity", "")
-        certainty = properties.optString("certainty", "")
-        areaDesc = properties.optString("areaDesc", "")
-    }
-
-    fun getBlob(): JSONObject = blob
-    fun getProperties(): JSONObject = properties
-    fun getHeadline(): String = headline
-    fun getDescription(): String = description
-    fun getId(): String = id
-    fun getUpdated(): String = updated
-    fun getPublished(): String = published
-    fun getTitle(): String = title
-    fun getLink(): String = link
-    fun getSummary(): String = summary
-    fun getEvent(): String = event
-    fun getEffective(): String = effective
-    fun getExpires(): String = expires
-    fun getStatus(): String = status
-    fun getMsgType(): String = msgType
-    fun getCategory(): String = category
-    fun getUrgency(): String = urgency
-    fun getSeverity(): String = severity
-    fun getCertainty(): String = certainty
-    fun getAreaDesc(): String = areaDesc
+    constructor(data: JSONObject) : this(
+        rawData = data.toString(),
+        headline = data.optJSONObject("properties")?.optString("headline", "Unknown Alert") ?: "Unknown Alert",
+        description = data.optJSONObject("properties")?.optString("description", "No description provided") ?: "No description provided",
+        instruction = data.optJSONObject("properties")?.optString("instruction", "No instructions provided") ?: "No instructions provided",
+        id = data.optJSONObject("properties")?.optString("id", "") ?: "",
+        sent = data.optJSONObject("properties")?.optString("sent", "") ?: "",
+        effective = data.optJSONObject("properties")?.optString("effective", "") ?: "",
+        onset = data.optJSONObject("properties")?.optString("onset", "") ?: "",
+        expires = data.optJSONObject("properties")?.optString("expires", "") ?: "",
+        ends = data.optJSONObject("properties")?.optString("ends", "") ?: "",
+        title = data.optJSONObject("properties")?.optString("event", "") ?: "",
+        link = data.optString("id", ""),
+        summary = data.optJSONObject("properties")?.optString("description", "") ?: "",
+        event = data.optJSONObject("properties")?.optString("event", "") ?: "",
+        status = data.optJSONObject("properties")?.optString("status", "") ?: "",
+        msgType = data.optJSONObject("properties")?.optString("messageType", "") ?: "",
+        category = data.optJSONObject("properties")?.optString("category", "") ?: "",
+        urgency = data.optJSONObject("properties")?.optString("urgency", "") ?: "",
+        severity = data.optJSONObject("properties")?.optString("severity", "") ?: "",
+        certainty = data.optJSONObject("properties")?.optString("certainty", "") ?: "",
+        areaDesc = data.optJSONObject("properties")?.optString("areaDesc", "") ?: ""
+    )
 
     fun getIcon(): Int {
         var icon = R.drawable.nws_logo
@@ -128,26 +108,12 @@ class NWSAlert() : Parcelable {
         return background
     }
 
+    fun getRawDataForDisplay(): String {
+        // Format the raw JSON for display
+        return JSONObject(rawData).toString(2)
+    }
+
     override fun toString(): String {
         return headline
     }
-
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(blob.toString())
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object CREATOR : Parcelable.Creator<NWSAlert> {
-        override fun createFromParcel(parcel: Parcel): NWSAlert {
-            return NWSAlert(parcel)
-        }
-
-        override fun newArray(size: Int): Array<NWSAlert?> {
-            return arrayOfNulls(size)
-        }
-    }
-
 }

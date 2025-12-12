@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/detail_action_showxml"
+        android:orderInCategory="100"
+        android:title="@string/detail_action_showxml"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/detail_action_hidexml"
+        android:orderInCategory="100"
+        android:visibility="gone"
+        android:title="@string/detail_action_hidexml"
+        app:showAsAction="never" />
+</menu>

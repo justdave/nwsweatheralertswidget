@@ -14,15 +14,34 @@ import android.widget.RemoteViews
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import net.justdave.nwsweatheralertswidget.AlertDetailActivity
 import net.justdave.nwsweatheralertswidget.AlertsDisplayFragment
 import net.justdave.nwsweatheralertswidget.AlertsUpdateService
 import net.justdave.nwsweatheralertswidget.R
+
 
 /**
  * Implementation of App Widget functionality.
  * App Widget Configuration implemented in [AlertsWidgetConfigureActivity]
  */
 class AlertsWidget : AppWidgetProvider() {
+
+    override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action == ACTION_SHOW_DETAILS) {
+            val appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
+            val alertId = intent.getStringExtra("alert_id")
+            if (alertId != null) {
+                val detailIntent = Intent(context, AlertDetailActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                    putExtra("alert_id", alertId)
+                }
+                context.startActivity(detailIntent)
+            }
+        }
+        super.onReceive(context, intent)
+    }
+
     /**
      * This is called to update the widget at intervals defined by the updatePeriodMillis attribute in the
      * AppWidgetProviderInfo. It is also called when the user adds the widget.
@@ -90,6 +109,10 @@ class AlertsWidget : AppWidgetProvider() {
         // Stop the service when the last widget is removed
         context.stopService(Intent(context, AlertsUpdateService::class.java))
     }
+
+    companion object {
+        private const val ACTION_SHOW_DETAILS = "net.justdave.nwsweatheralertswidget.ACTION_SHOW_DETAILS"
+    }
 }
 
 /**
@@ -130,11 +153,24 @@ internal suspend fun updateAppWidget(
     views.setRemoteAdapter(R.id.widget_parsed_events, intent)
 
     // This section makes the widget title clickable
-    val pendingIntent: PendingIntent = Intent(context, AlertsDisplayFragment::class.java)
+    val titlePendingIntent: PendingIntent = Intent(context, AlertsDisplayFragment::class.java)
         .let { titleIntent ->
             PendingIntent.getActivity(context, 0, titleIntent, PendingIntent.FLAG_IMMUTABLE)
         }
-    views.setOnClickPendingIntent(R.id.widget_title, pendingIntent)
+    views.setOnClickPendingIntent(R.id.widget_title, titlePendingIntent)
+
+    // This section makes the list items clickable
+    val itemIntent = Intent(context, AlertsWidget::class.java).apply {
+        action = "net.justdave.nwsweatheralertswidget.ACTION_SHOW_DETAILS"
+    }
+    val itemPendingIntent = PendingIntent.getBroadcast(
+        context,
+        appWidgetId, // Use the appWidgetId as the request code for uniqueness
+        itemIntent,
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+    )
+    views.setPendingIntentTemplate(R.id.widget_parsed_events, itemPendingIntent)
+
 
     // Instruct the widget manager to update the widget
     appWidgetManager.updateAppWidget(appWidgetId, views)
