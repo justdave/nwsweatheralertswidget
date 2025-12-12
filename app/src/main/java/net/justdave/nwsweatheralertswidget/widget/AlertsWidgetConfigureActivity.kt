@@ -46,12 +46,13 @@ class AlertsWidgetConfigureActivity : AppCompatActivity() {
             }
             saveWidgetPrefs(context, appWidgetId, area.id, zone.id, title)
 
-            // Trigger an immediate update of the service
+            // Force the service to restart to pick up configuration changes immediately.
             val serviceIntent = Intent(context, AlertsUpdateService::class.java).apply {
                 addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
             }
+            context.stopService(serviceIntent) // Stop it first
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(serviceIntent)
+                context.startForegroundService(serviceIntent) // Then start it again
             } else {
                 context.startService(serviceIntent)
             }

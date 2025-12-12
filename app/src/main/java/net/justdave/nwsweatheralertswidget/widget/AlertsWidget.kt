@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.SystemClock
 import android.widget.RemoteViews
@@ -105,9 +106,11 @@ internal suspend fun updateAppWidget(
     views.setTextViewText(R.id.widget_title, widgetText)
 
     // Set up the intent that starts the AlertsWidgetService, which will
-    // provide the views for this collection.
+    // provide the views for this collection. This intent needs to be unique for each widget.
     val intent = Intent(context, AlertsWidgetService::class.java).apply {
         putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+        // Add the app widget ID to the intent's data to make it unique
+        data = Uri.fromParts("content", appWidgetId.toString(), null)
     }
     @Suppress("DEPRECATION")
     views.setRemoteAdapter(R.id.widget_parsed_events, intent)

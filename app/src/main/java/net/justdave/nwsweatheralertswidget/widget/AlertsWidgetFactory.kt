@@ -3,6 +3,7 @@ package net.justdave.nwsweatheralertswidget.widget
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import kotlinx.coroutines.runBlocking
@@ -17,30 +18,45 @@ class AlertsWidgetFactory(private val context: Context, intent: Intent) :
         AppWidgetManager.EXTRA_APPWIDGET_ID,
         AppWidgetManager.INVALID_APPWIDGET_ID
     )
-    private var alerts: List<NWSAlert> = emptyList()
 
     override fun onCreate() {
-        // Connect to data source
+        // No-op
     }
 
     override fun onDataSetChanged() {
-        runBlocking {
-            val serializedAlerts = loadAlerts(context, appWidgetId)
-            alerts = Json.decodeFromString(serializedAlerts)
-        }
+        // This is called by the system when notifyAppWidgetViewDataChanged is called.
+        // We no longer need to load data here, as it will be loaded on-demand
+        // in getCount() and getViewAt() to ensure correctness for each widget.
     }
 
     override fun onDestroy() {
-        // Close data source
+        // No-op
+    }
+
+    private fun getAlertsForThisWidget(): List<NWSAlert> {
+        // Helper function to load data synchronously for this specific widget instance
+        return runBlocking {
+            val serializedAlerts = loadAlerts(context, appWidgetId)
+            Json.decodeFromString(serializedAlerts)
+        }
     }
 
     override fun getCount(): Int {
-        return alerts.size
+        // Load data on-demand to get the correct count for this specific widget.
+        return getAlertsForThisWidget().size
     }
 
     override fun getViewAt(position: Int): RemoteViews {
+        // Load data on-demand to get the correct item for this specific widget.
+        val alerts = getAlertsForThisWidget()
         val views = RemoteViews(context.packageName, R.layout.alerts_widget_list_item)
-        views.setTextViewText(R.id.alert_item_text, alerts[position].getEvent())
+
+        // Ensure we don't go out of bounds if the data changes between getCount() and here
+        if (position < alerts.size) {
+            val alert = alerts[position]
+            views.setTextViewText(R.id.alert_item_text, alert.getEvent())
+            Log.i("AlertsWidgetFactory", "Widget $appWidgetId: loaded view for '${alert.getEvent()}' at position $position")
+        }
         return views
     }
 
@@ -57,6 +73,7 @@ class AlertsWidgetFactory(private val context: Context, intent: Intent) :
     }
 
     override fun hasStableIds(): Boolean {
-        return true
+        // The list content can change, so IDs are not stable.
+        return false
     }
 }
