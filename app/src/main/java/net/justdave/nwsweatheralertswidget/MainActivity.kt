@@ -4,11 +4,13 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 
 class MainActivity : AppCompatActivity() {
@@ -17,7 +19,7 @@ class MainActivity : AppCompatActivity() {
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
+    ) { _ ->
         // We don't need to do anything here, the service will start either way
         // but this is required by the contract
     }
@@ -29,6 +31,31 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.my_toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         //supportActionBar?.setLogo(R.mipmap.app_icon)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.alerts_display_options, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        when (item.itemId) {
+            R.id.option_debug -> {
+                navController.navigate(R.id.debugFragment)
+                return true
+            }
+            R.id.action_about -> {
+                val aboutDialog = AboutDialog(this)
+                aboutDialog.show()
+                return true
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
     private fun askNotificationPermission() {
@@ -51,7 +78,7 @@ class MainActivity : AppCompatActivity() {
         savedInstanceState: Bundle?
     ) {
         super.onPostCreate(savedInstanceState)
-        navController = Navigation.findNavController(this, R.id.my_nav_host_fragment)
+        navController = this.findNavController(R.id.my_nav_host_fragment)
         NavigationUI.setupActionBarWithNavController(this, navController)
         //NavigationUI.setupWithNavController(navigationView, navController)
     }
