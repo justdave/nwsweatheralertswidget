@@ -29,7 +29,6 @@ class AlertDetailActivity : AppCompatActivity() {
     private lateinit var instructions: TextView
     private lateinit var target: TextView
     private lateinit var rawData: TextView
-    private lateinit var scroller: ScrollView
     private lateinit var rawScroller: ScrollView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +43,6 @@ class AlertDetailActivity : AppCompatActivity() {
         instructions = findViewById(R.id.detail_instructions)
         target = findViewById(R.id.detail_target)
         rawData = findViewById(R.id.event_raw_xml)
-        scroller = findViewById(R.id.detail_main_scroller)
         rawScroller = findViewById(R.id.event_raw_scroller)
 
         val appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
@@ -80,7 +78,6 @@ class AlertDetailActivity : AppCompatActivity() {
     }
 
     private fun updateUi(data: NWSAlert) {
-        scroller.isVisible = true
         event.text = data.event
         description.text = data.description
         instructions.text = data.instruction
