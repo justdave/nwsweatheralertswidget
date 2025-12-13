@@ -12,7 +12,7 @@ import net.justdave.nwsweatheralertswidget.lenientJson
 import net.justdave.nwsweatheralertswidget.objects.NWSAlert
 
 
-class AlertsWidgetFactory(private val context: Context, intent: Intent) :
+class NWSWidgetFactory(private val context: Context, intent: Intent) :
     RemoteViewsService.RemoteViewsFactory {
 
     private val appWidgetId: Int = intent.getIntExtra(
@@ -28,7 +28,7 @@ class AlertsWidgetFactory(private val context: Context, intent: Intent) :
     override fun onDataSetChanged() {
         // This is the key lifecycle method. It's called by the system when the data has changed.
         // We load the data for our specific widget ID here.
-        Log.i("AlertsWidgetFactory", "onDataSetChanged for widget $appWidgetId")
+        Log.i("NWSWidgetFactory", "onDataSetChanged for widget $appWidgetId")
         runBlocking {
             val serializedAlerts = loadAlerts(context, appWidgetId)
             alerts = lenientJson.decodeFromString(serializedAlerts)
@@ -61,7 +61,7 @@ class AlertsWidgetFactory(private val context: Context, intent: Intent) :
 
             views.setOnClickFillInIntent(R.id.alert_item_layout, fillInIntent)
 
-            Log.i("AlertsWidgetFactory", "Widget $appWidgetId: loaded view for '${alert.event}' at position $position")
+            Log.i("NWSWidgetFactory", "Widget $appWidgetId: loaded view for '${alert.event}' at position $position")
         }
 
         return views

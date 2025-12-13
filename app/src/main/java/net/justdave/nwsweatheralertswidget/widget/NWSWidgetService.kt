@@ -3,8 +3,8 @@ package net.justdave.nwsweatheralertswidget.widget
 import android.content.Intent
 import android.widget.RemoteViewsService
 
-class AlertsWidgetService : RemoteViewsService() {
+class NWSWidgetService : RemoteViewsService() {
     override fun onGetViewFactory(intent: Intent): RemoteViewsFactory {
-        return AlertsWidgetFactory(applicationContext, intent)
+        return NWSWidgetFactory(applicationContext, intent)
     }
 }

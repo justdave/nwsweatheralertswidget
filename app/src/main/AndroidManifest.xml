@@ -22,7 +22,7 @@
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
         tools:targetApi="33">
 
-        <receiver android:name=".widget.AlertsWidget"
+        <receiver android:name=".NWSWidgetProvider"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -44,14 +44,14 @@
         </receiver>
 
         <service
-            android:name=".widget.AlertsWidgetService"
+            android:name=".widget.NWSWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <service
             android:name=".AlertsUpdateService"
             android:foregroundServiceType="dataSync" />
 
-        <activity android:name=".widget.AlertsWidgetConfigureActivity"
+        <activity android:name=".widget.NWSWidgetConfigureActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />

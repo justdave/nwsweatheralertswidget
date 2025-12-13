@@ -10,6 +10,9 @@ import net.justdave.nwsweatheralertswidget.objects.NWSAlert
 import net.justdave.nwsweatheralertswidget.objects.NWSArea
 import net.justdave.nwsweatheralertswidget.objects.NWSZone
 import org.json.JSONObject
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 // The documentation for this API is at https://www.weather.gov/documentation/services-web-api
 
@@ -144,6 +147,12 @@ class NWSAPI constructor(context: Context) {
         listener.onResponse(areaList)
     }
 
+    suspend fun getAreas(): ArrayList<NWSArea> = suspendCoroutine { continuation ->
+        getAreas { response ->
+            continuation.resume(response)
+        }
+    }
+
     fun getZones(area: NWSArea, listener: Response.Listener<ArrayList<NWSZone>>) {
         val countyList = ArrayList<NWSZone>()
         countyList.add(NWSZone("all", "All"))
@@ -172,6 +181,12 @@ class NWSAPI constructor(context: Context) {
                 listener.onResponse(countyList)
             })
             requestQueue.add(req)
+        }
+    }
+
+    suspend fun getZones(area: NWSArea): ArrayList<NWSZone> = suspendCoroutine { continuation ->
+        getZones(area) { response ->
+            continuation.resume(response)
         }
     }
 
@@ -205,5 +220,13 @@ class NWSAPI constructor(context: Context) {
             listener.onResponse(alertList)
         }, errorListener)
         requestQueue.add(req)
+    }
+
+    suspend fun getActiveAlerts(area: NWSArea, zone: NWSZone): List<NWSAlert> = suspendCoroutine { continuation ->
+        getActiveAlerts(area, zone, { response ->
+            continuation.resume(response)
+        }, { error ->
+            continuation.resumeWithException(error)
+        })
     }
 }

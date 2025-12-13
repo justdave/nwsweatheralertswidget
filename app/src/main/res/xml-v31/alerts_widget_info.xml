@@ -5,7 +5,7 @@
     android:updatePeriodMillis="86400000"
     android:previewImage="@mipmap/app_icon"
     android:initialLayout="@layout/alerts_widget"
-    android:configure="net.justdave.nwsweatheralertswidget.widget.AlertsWidgetConfigureActivity"
+    android:configure="net.justdave.nwsweatheralertswidget.widget.NWSWidgetConfigureActivity"
     android:widgetFeatures="reconfigurable"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen">

@@ -1,4 +1,4 @@
-package net.justdave.nwsweatheralertswidget.widget
+package net.justdave.nwsweatheralertswidget
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -14,17 +14,19 @@ import android.widget.RemoteViews
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import net.justdave.nwsweatheralertswidget.AlertDetailActivity
-import net.justdave.nwsweatheralertswidget.AlertsDisplayFragment
-import net.justdave.nwsweatheralertswidget.AlertsUpdateService
-import net.justdave.nwsweatheralertswidget.R
-
+import net.justdave.nwsweatheralertswidget.widget.NWSWidgetService
+import net.justdave.nwsweatheralertswidget.widget.deleteWidgetPrefs
+import net.justdave.nwsweatheralertswidget.widget.loadWidgetPrefs
 
 /**
  * Implementation of App Widget functionality.
- * App Widget Configuration implemented in [AlertsWidgetConfigureActivity]
+ * App Widget Configuration implemented in [.widget.NWSWidgetConfigureActivity]
+ *
+ * Theoretically this should be in the widget folder, but we lose backward
+ * compatibility with existing widgets from 1.x versions if we move it. This
+ * file can never be moved without breaking any existing widgets.
  */
-class AlertsWidget : AppWidgetProvider() {
+class NWSWidgetProvider : AppWidgetProvider() {
 
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == ACTION_SHOW_DETAILS) {
@@ -142,9 +144,9 @@ internal suspend fun updateAppWidget(
         views.setViewVisibility(R.id.widget_empty_view, View.VISIBLE)
     }
 
-    // Set up the intent that starts the AlertsWidgetService, which will
+    // Set up the intent that starts the NWSWidgetService, which will
     // provide the views for this collection. This intent needs to be unique for each widget.
-    val intent = Intent(context, AlertsWidgetService::class.java).apply {
+    val intent = Intent(context, NWSWidgetService::class.java).apply {
         putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
         // Add the app widget ID to the intent's data to make it unique
         data = Uri.fromParts("content", appWidgetId.toString(), null)
@@ -153,14 +155,14 @@ internal suspend fun updateAppWidget(
     views.setRemoteAdapter(R.id.widget_parsed_events, intent)
 
     // This section makes the widget title clickable
-    val titlePendingIntent: PendingIntent = Intent(context, AlertsDisplayFragment::class.java)
+    val titlePendingIntent: PendingIntent = Intent(context, MainActivity::class.java)
         .let { titleIntent ->
             PendingIntent.getActivity(context, 0, titleIntent, PendingIntent.FLAG_IMMUTABLE)
         }
     views.setOnClickPendingIntent(R.id.widget_title, titlePendingIntent)
 
     // This section makes the list items clickable
-    val itemIntent = Intent(context, AlertsWidget::class.java).apply {
+    val itemIntent = Intent(context, NWSWidgetProvider::class.java).apply {
         action = "net.justdave.nwsweatheralertswidget.ACTION_SHOW_DETAILS"
     }
     val itemPendingIntent = PendingIntent.getBroadcast(

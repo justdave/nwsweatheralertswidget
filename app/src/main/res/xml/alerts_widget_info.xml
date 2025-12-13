@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:minWidth="40dp"
     android:minHeight="40dp"
     android:updatePeriodMillis="86400000"
     android:previewImage="@mipmap/app_icon"
     android:initialLayout="@layout/alerts_widget"
-    android:configure="net.justdave.nwsweatheralertswidget.widget.AlertsWidgetConfigureActivity"
-    android:reconfigurable="true"
+    android:configure="net.justdave.nwsweatheralertswidget.widget.NWSWidgetConfigureActivity"
     android:widgetFeatures="reconfigurable"
     android:resizeMode="horizontal|vertical"
-    android:widgetCategory="home_screen">
+    android:widgetCategory="home_screen"
+    tools:ignore="UnusedAttribute">
 </appwidget-provider>
