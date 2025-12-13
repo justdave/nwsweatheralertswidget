@@ -44,5 +44,9 @@
     <string name="debug_display_widget">Widget</string>
     <string name="previous">Previous</string>
     <string name="next">Next</string>
+    <string name="notification_instructions_title">Minimizing the notification icon</string>
+    <string name="notification_instructions_tiramisu">On Android 13 and later, you can minimize the notification by long-pressing on it, tapping the gear icon, tapping the notification category (NWS Weather Alerts Widget), and enabling the \"Minimize\" option.</string>
+    <string name="notification_instructions_android_12">On Android 12, you can minimize the notification by long-pressing on it, tapping on Settings, tapping on the notification category (NWS Weather Alerts Widget), and enabling the \"Minimize\" option.</string>
+    <string name="notification_instructions_oreo">On Android 8–11, you can minimize the notification by long-pressing on it, choosing \"All Categories\", tapping on \"NWS Weather Alerts Widget\", selecting \"Importance\", and choosing \"Low\".</string>
 
 </resources>
