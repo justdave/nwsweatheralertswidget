@@ -18,6 +18,8 @@ import net.justdave.nwsweatheralertswidget.databinding.DebugFragmentBinding
 import net.justdave.nwsweatheralertswidget.objects.NWSAlert
 import net.justdave.nwsweatheralertswidget.objects.NWSArea
 import net.justdave.nwsweatheralertswidget.objects.NWSZone
+import net.justdave.nwsweatheralertswidget.widget.loadDebugPrefs
+import net.justdave.nwsweatheralertswidget.widget.saveDebugPrefs
 
 class DebugFragment : Fragment() {
 
@@ -26,8 +28,6 @@ class DebugFragment : Fragment() {
     private val binding get() = _binding!!
 
     private var cachedAlerts: List<NWSAlert>? = null
-    private var cachedArea: String? = null
-    private var cachedZone: String? = null
     private var fullJson: String = ""
     private var currentPage: Int = 0
     private val pageSize: Int = 2000 // characters
@@ -42,125 +42,111 @@ class DebugFragment : Fragment() {
         viewModel = ViewModelProvider(this)[DebugViewModel::class.java]
         viewModel.initializeContext(requireActivity().applicationContext)
         binding.debugRecyclerView.layoutManager = LinearLayoutManager(context)
+
         lifecycleScope.launch {
-            try {
-                viewModel.getAreaPopupContent { response ->
-                    val adapter = ArrayAdapter(
-                        requireActivity().applicationContext,
-                        R.layout.spinner_layout,
-                        response
-                    )
-                    binding.areaPopup.adapter = adapter
-                    binding.areaPopup.setSelection(0)
-                }
-                viewModel.getZonePopupContent(binding.areaPopup.selectedItem as NWSArea) { response ->
-                    binding.zonePopup.adapter = ArrayAdapter(
-                        requireActivity().applicationContext,
-                        R.layout.spinner_layout,
-                        response
-                    )
-                    binding.zonePopup.setSelection(0)
-                }
-                binding.areaPopup.onItemSelectedListener =
-                    object : AdapterView.OnItemSelectedListener {
-                        override fun onItemSelected(
-                            parent: AdapterView<*>,
-                            view: View?,
-                            position: Int,
-                            id: Long
-                        ) {
-                            if (parent.getItemAtPosition(position) == "") {
-                                binding.areaPopup.setSelection(0)
-                            } else {
-                                val area = parent.getItemAtPosition(position) as NWSArea
-                                val loadingMenu = ArrayList<NWSZone>()
-                                loadingMenu.add(NWSZone("all","Loading..."))
-                                binding.zonePopup.adapter = ArrayAdapter(
-                                    requireActivity().applicationContext,
-                                    R.layout.spinner_layout,
-                                    loadingMenu
-                                )
-                                viewModel.getZonePopupContent(area) { response ->
-                                    binding.zonePopup.adapter = ArrayAdapter(
-                                        requireActivity().applicationContext,
-                                        R.layout.spinner_layout,
-                                        response
-                                    )
-                                    binding.zonePopup.setSelection(0)
-                                }
-                            }
-                        }
+            val (savedAreaId, savedZoneId) = loadDebugPrefs(requireContext())
+            viewModel.getAreaPopupContent { areas ->
+                val areaAdapter = ArrayAdapter(requireContext(), R.layout.spinner_layout, areas)
+                binding.areaPopup.adapter = areaAdapter
+                val areaIndex = areas.indexOfFirst { it.id == savedAreaId }
+                binding.areaPopup.onItemSelectedListener = null // Disable listener
+                binding.areaPopup.setSelection(if (areaIndex != -1) areaIndex else 0)
 
-                        override fun onNothingSelected(parent: AdapterView<*>?) {}
-                    }
-                binding.displayFormatGroup.setOnCheckedChangeListener { _, _ -> renderDebugContent(cachedAlerts) }
-                binding.submitButton.setOnClickListener {
-                    val area = binding.areaPopup.selectedItem as NWSArea
-                    val zone = binding.zonePopup.selectedItem as NWSZone
-
-                    if (cachedArea == area.id && cachedZone == zone.id) {
-                        renderDebugContent(cachedAlerts)
-                        return@setOnClickListener
-                    }
-
-                    binding.debugText.setText(R.string.loading)
-                    when (binding.displayFormatGroup.checkedRadioButtonId) {
-                        R.id.radio_text, R.id.radio_json -> {
-                            binding.debugRecyclerView.visibility = View.GONE
-                            binding.debugTextScrollView.visibility = View.VISIBLE
-                            binding.paginationControls.visibility = if (binding.displayFormatGroup.checkedRadioButtonId == R.id.radio_json) View.VISIBLE else View.GONE
-                        }
-                        R.id.radio_widget -> {
-                            binding.debugTextScrollView.visibility = View.GONE
-                            binding.paginationControls.visibility = View.GONE
-                            binding.debugRecyclerView.visibility = View.VISIBLE
-                            binding.debugRecyclerView.adapter = DebugAlertsAdapter(emptyList())
-                        }
-                    }
-
-                    viewModel.getDebugContent(area, zone, { response ->
-                        cachedAlerts = response
-                        cachedArea = area.id
-                        cachedZone = zone.id
-                        fullJson = response.joinToString(separator = ",\n", prefix = "[\n", postfix = "\n]") { alert ->
-                            alert.getRawDataForDisplay().prependIndent("  ")
-                        }
-                        currentPage = 0
-                        renderDebugContent(response)
-                    }, { error ->
-                        cachedAlerts = null
-                        cachedArea = null
-                        cachedZone = null
-                        fullJson = ""
-                        currentPage = 0
-                        binding.debugRecyclerView.visibility = View.GONE
-                        binding.debugTextScrollView.visibility = View.VISIBLE
-                        binding.paginationControls.visibility = View.GONE
-                        binding.debugText.setText(error.toString(), TextView.BufferType.NORMAL)
-                    })
+                val selectedArea = binding.areaPopup.selectedItem as NWSArea
+                viewModel.getZonePopupContent(selectedArea) { zones ->
+                    val zoneAdapter = ArrayAdapter(requireContext(), R.layout.spinner_layout, zones)
+                    binding.zonePopup.adapter = zoneAdapter
+                    val zoneIndex = zones.indexOfFirst { it.id == savedZoneId }
+                    binding.zonePopup.setSelection(if (zoneIndex != -1) zoneIndex else 0)
+                    binding.areaPopup.onItemSelectedListener = areaSelectedListener // Re-enable listener
                 }
-                binding.previousButton.setOnClickListener {
-                    if (currentPage > 0) {
-                        currentPage--
-                        renderDebugContent(cachedAlerts)
-                    }
-                }
-                binding.nextButton.setOnClickListener {
-                    val maxPage = (fullJson.length - 1) / pageSize
-                    if (currentPage < maxPage) {
-                        currentPage++
-                        renderDebugContent(cachedAlerts)
-                    }
-                }
-                binding.demoAllAlertsButton.setOnClickListener {
-                    findNavController().navigate(R.id.action_debugFragment_to_alertTypesFragment)
-                }
-            } finally {
-                // foo
             }
         }
-        val view = binding.root
-        return view
+
+        binding.displayFormatGroup.setOnCheckedChangeListener { _, _ -> renderDebugContent(cachedAlerts) }
+        binding.submitButton.setOnClickListener {
+            val area = binding.areaPopup.selectedItem as NWSArea
+            val zone = binding.zonePopup.selectedItem as NWSZone
+
+            lifecycleScope.launch {
+                val (savedAreaId, savedZoneId) = loadDebugPrefs(requireContext())
+                if (cachedAlerts != null && savedAreaId == area.id && savedZoneId == zone.id) {
+                    renderDebugContent(cachedAlerts)
+                    return@launch
+                }
+            }
+
+            binding.debugText.setText(R.string.loading)
+            when (binding.displayFormatGroup.checkedRadioButtonId) {
+                R.id.radio_text, R.id.radio_json -> {
+                    binding.debugRecyclerView.visibility = View.GONE
+                    binding.debugEmptyView.visibility = View.GONE
+                    binding.debugTextScrollView.visibility = View.VISIBLE
+                    binding.paginationControls.visibility = if (binding.displayFormatGroup.checkedRadioButtonId == R.id.radio_json) View.VISIBLE else View.GONE
+                }
+                R.id.radio_widget -> {
+                    binding.debugTextScrollView.visibility = View.GONE
+                    binding.paginationControls.visibility = View.GONE
+                    binding.debugRecyclerView.visibility = View.VISIBLE
+                    binding.debugEmptyView.visibility = View.VISIBLE
+                    binding.debugRecyclerView.adapter = DebugAlertsAdapter(emptyList())
+                }
+            }
+
+            viewModel.getDebugContent(area, zone, { response ->
+                cachedAlerts = response
+                lifecycleScope.launch {
+                    saveDebugPrefs(requireContext(), area.id, zone.id)
+                }
+                fullJson = response.joinToString(separator = ",\n", prefix = "[\n", postfix = "\n]") { alert ->
+                    alert.getRawDataForDisplay().prependIndent("  ")
+                }
+                currentPage = 0
+                renderDebugContent(response)
+            }, { error ->
+                cachedAlerts = null
+                binding.debugRecyclerView.visibility = View.GONE
+                binding.debugEmptyView.visibility = View.GONE
+                binding.debugTextScrollView.visibility = View.VISIBLE
+                binding.paginationControls.visibility = View.GONE
+                binding.debugText.text = error.toString()
+            })
+        }
+        binding.previousButton.setOnClickListener {
+            if (currentPage > 0) {
+                currentPage--
+                renderDebugContent(cachedAlerts)
+            }
+        }
+        binding.nextButton.setOnClickListener {
+            val maxPage = (fullJson.length - 1) / pageSize
+            if (currentPage < maxPage) {
+                currentPage++
+                renderDebugContent(cachedAlerts)
+            }
+        }
+        binding.demoAllAlertsButton.setOnClickListener {
+            findNavController().navigate(R.id.action_debugFragment_to_alertTypesFragment)
+        }
+        return binding.root
+    }
+
+    private val areaSelectedListener = object : AdapterView.OnItemSelectedListener {
+        override fun onItemSelected(
+            parent: AdapterView<*>,
+            view: View?,
+            position: Int,
+            id: Long
+        ) {
+            val area = parent.getItemAtPosition(position) as NWSArea
+            viewModel.getZonePopupContent(area) { zones ->
+                val newZoneAdapter = ArrayAdapter(requireContext(), R.layout.spinner_layout, zones)
+                binding.zonePopup.adapter = newZoneAdapter
+                binding.zonePopup.setSelection(0)
+            }
+        }
+
+        override fun onNothingSelected(parent: AdapterView<*>?) {}
     }
 
     private fun renderDebugContent(alerts: List<NWSAlert>?) {
@@ -168,6 +154,7 @@ class DebugFragment : Fragment() {
         when (binding.displayFormatGroup.checkedRadioButtonId) {
             R.id.radio_text -> {
                 binding.debugRecyclerView.visibility = View.GONE
+                binding.debugEmptyView.visibility = View.GONE
                 binding.debugTextScrollView.visibility = View.VISIBLE
                 binding.paginationControls.visibility = View.GONE
                 val sb = StringBuilder()
@@ -179,6 +166,7 @@ class DebugFragment : Fragment() {
             }
             R.id.radio_json -> {
                 binding.debugRecyclerView.visibility = View.GONE
+                binding.debugEmptyView.visibility = View.GONE
                 binding.debugTextScrollView.visibility = View.VISIBLE
                 binding.paginationControls.visibility = View.VISIBLE
                 val start = currentPage * pageSize
@@ -190,8 +178,14 @@ class DebugFragment : Fragment() {
             R.id.radio_widget -> {
                 binding.debugTextScrollView.visibility = View.GONE
                 binding.paginationControls.visibility = View.GONE
-                binding.debugRecyclerView.visibility = View.VISIBLE
-                binding.debugRecyclerView.adapter = DebugAlertsAdapter(alerts)
+                if (alerts.isEmpty()) {
+                    binding.debugRecyclerView.visibility = View.GONE
+                    binding.debugEmptyView.visibility = View.VISIBLE
+                } else {
+                    binding.debugRecyclerView.visibility = View.VISIBLE
+                    binding.debugEmptyView.visibility = View.GONE
+                    binding.debugRecyclerView.adapter = DebugAlertsAdapter(alerts)
+                }
             }
         }
     }

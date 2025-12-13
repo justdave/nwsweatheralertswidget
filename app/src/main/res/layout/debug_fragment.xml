@@ -115,6 +115,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/submit_button" />
 
+    <TextView
+        android:id="@+id/debug_empty_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:text="@string/alert_empty"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/pagination_controls"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/submit_button" />
+
     <LinearLayout
         android:id="@+id/pagination_controls"
         style="?android:attr/buttonBarStyle"

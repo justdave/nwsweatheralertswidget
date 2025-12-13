@@ -25,15 +25,11 @@ class DebugViewModel : ViewModel() {
     }
 
     fun getAreaPopupContent(listener: Response.Listener<ArrayList<NWSArea>>) {
-        return nwsapi.getAreas { response ->
-            listener.onResponse(response)
-        }
+        return nwsapi.getAreas(listener)
     }
 
     fun getZonePopupContent(area: NWSArea, listener: Response.Listener<ArrayList<NWSZone>>) {
-        return nwsapi.getZones(area) { response ->
-            listener.onResponse(response)
-        }
+        return nwsapi.getZones(area, listener)
     }
 
     fun getDebugContent(
@@ -42,11 +38,7 @@ class DebugViewModel : ViewModel() {
         listener: Response.Listener<List<NWSAlert>>,
         errorListener: Response.ErrorListener
     ) {
-        return nwsapi.getActiveAlerts(
-            area,
-            zone,
-            { response -> listener.onResponse(response) },
-            { error -> errorListener.onErrorResponse(error) })
+        return nwsapi.getActiveAlerts(area, zone, listener, errorListener)
     }
 
 }
