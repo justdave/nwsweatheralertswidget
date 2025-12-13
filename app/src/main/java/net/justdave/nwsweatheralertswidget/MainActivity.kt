@@ -5,8 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
+import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -33,6 +32,15 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         //supportActionBar?.setLogo(R.mipmap.app_icon)
 
+        findViewById<Button>(R.id.about_button).setOnClickListener {
+            val aboutDialog = AboutDialog(this)
+            aboutDialog.show()
+        }
+
+        findViewById<Button>(R.id.debug_button).setOnClickListener {
+            navController.navigate(R.id.debugFragment)
+        }
+
         // As a developer convenience, start the service if it isn't already running.
         if (!AlertsUpdateService.isRunning) {
             val serviceIntent = Intent(this, AlertsUpdateService::class.java).apply {
@@ -44,31 +52,6 @@ class MainActivity : AppCompatActivity() {
                 startService(serviceIntent)
             }
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.alerts_display_options, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        when (item.itemId) {
-            R.id.option_debug -> {
-                navController.navigate(R.id.debugFragment)
-                return true
-            }
-            R.id.action_about -> {
-                val aboutDialog = AboutDialog(this)
-                aboutDialog.show()
-                return true
-            }
-        }
-
-        return super.onOptionsItemSelected(item)
     }
 
     private fun askNotificationPermission() {

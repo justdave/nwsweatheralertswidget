@@ -70,11 +70,7 @@
         <activity
             android:name=".AlertDetailActivity"
             android:exported="true"
-            android:label="@string/activity_detail"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+            android:label="@string/activity_detail">
         </activity>
 
     </application>
