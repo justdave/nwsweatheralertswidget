@@ -38,5 +38,11 @@
     <string name="detail_unparseable_date">(unparseable date)</string>
     <string name="detail_no_expiration">No expiration date.</string>
     <string name="demo_all_alerts">Demo All Alert Types</string>
+    <string name="submit">Submit</string>
+    <string name="debug_display_text">Text</string>
+    <string name="debug_display_json">JSON</string>
+    <string name="debug_display_widget">Widget</string>
+    <string name="previous">Previous</string>
+    <string name="next">Next</string>
 
 </resources>

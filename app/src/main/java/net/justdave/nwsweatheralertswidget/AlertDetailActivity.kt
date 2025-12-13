@@ -1,6 +1,7 @@
 package net.justdave.nwsweatheralertswidget
 
 import android.appwidget.AppWidgetManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -48,10 +49,19 @@ class AlertDetailActivity : AppCompatActivity() {
 
         val appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
         val alertId = intent.getStringExtra("alert_id")
+        val directAlert : NWSAlert? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("alert", NWSAlert::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra("alert")
+        }
+
         Log.i(TAG, "Widget ID: $appWidgetId")
         Log.i(TAG, "Alert ID: $alertId")
 
-        if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID && alertId != null) {
+        if (directAlert != null) {
+            updateUi(directAlert)
+        } else if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID && alertId != null) {
             lifecycleScope.launch {
                 val serializedAlerts = loadAlerts(this@AlertDetailActivity, appWidgetId)
                 val alerts = lenientJson.decodeFromString<List<NWSAlert>>(serializedAlerts)
