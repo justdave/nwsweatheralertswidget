@@ -32,28 +32,28 @@ data class NWSAlert(
     val areaDesc: String = ""
 ) : Parcelable {
 
-    constructor(data: JSONObject) : this(
-        rawData = data.toString(),
-        headline = data.optJSONObject("properties")?.optString("headline", "Unknown Alert") ?: "Unknown Alert",
-        description = data.optJSONObject("properties")?.optString("description", "No description provided") ?: "No description provided",
-        instruction = data.optJSONObject("properties")?.optString("instruction", "No instructions provided") ?: "No instructions provided",
-        id = data.optJSONObject("properties")?.optString("id", "") ?: "",
-        sent = data.optJSONObject("properties")?.optString("sent", "") ?: "",
-        effective = data.optJSONObject("properties")?.optString("effective", "") ?: "",
-        onset = data.optJSONObject("properties")?.optString("onset", "") ?: "",
-        expires = data.optJSONObject("properties")?.optString("expires", "") ?: "",
-        ends = data.optJSONObject("properties")?.optString("ends", "") ?: "",
-        title = data.optJSONObject("properties")?.optString("event", "") ?: "",
-        link = data.optString("id", ""),
-        summary = data.optJSONObject("properties")?.optString("description", "") ?: "",
-        event = data.optJSONObject("properties")?.optString("event", "") ?: "",
-        status = data.optJSONObject("properties")?.optString("status", "") ?: "",
-        msgType = data.optJSONObject("properties")?.optString("messageType", "") ?: "",
-        category = data.optJSONObject("properties")?.optString("category", "") ?: "",
-        urgency = data.optJSONObject("properties")?.optString("urgency", "") ?: "",
-        severity = data.optJSONObject("properties")?.optString("severity", "") ?: "",
-        certainty = data.optJSONObject("properties")?.optString("certainty", "") ?: "",
-        areaDesc = data.optJSONObject("properties")?.optString("areaDesc", "") ?: ""
+    constructor(data: JSONObject? = null) : this(
+        rawData = data?.toString() ?: "",
+        headline = data?.optJSONObject("properties")?.optString("headline", "Unknown Alert") ?: "Unknown Alert",
+        description = data?.optJSONObject("properties")?.optString("description", "No description provided") ?: "No description provided",
+        instruction = data?.optJSONObject("properties")?.optString("instruction", "No instructions provided") ?: "No instructions provided",
+        id = data?.optJSONObject("properties")?.optString("id", "") ?: "",
+        sent = data?.optJSONObject("properties")?.optString("sent", "") ?: "",
+        effective = data?.optJSONObject("properties")?.optString("effective", "") ?: "",
+        onset = data?.optJSONObject("properties")?.optString("onset", "") ?: "",
+        expires = data?.optJSONObject("properties")?.optString("expires", "") ?: "",
+        ends = data?.optJSONObject("properties")?.optString("ends", "") ?: "",
+        title = data?.optJSONObject("properties")?.optString("event", "") ?: "",
+        link = data?.optString("id", "") ?: "",
+        summary = data?.optJSONObject("properties")?.optString("description", "") ?: "",
+        event = data?.optJSONObject("properties")?.optString("event", "") ?: "",
+        status = data?.optJSONObject("properties")?.optString("status", "") ?: "",
+        msgType = data?.optJSONObject("properties")?.optString("messageType", "") ?: "",
+        category = data?.optJSONObject("properties")?.optString("category", "") ?: "",
+        urgency = data?.optJSONObject("properties")?.optString("urgency", "") ?: "",
+        severity = data?.optJSONObject("properties")?.optString("severity", "") ?: "",
+        certainty = data?.optJSONObject("properties")?.optString("certainty", "") ?: "",
+        areaDesc = data?.optJSONObject("properties")?.optString("areaDesc", "") ?: ""
     )
 
     fun getIcon(): Int {

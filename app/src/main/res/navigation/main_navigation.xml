@@ -29,6 +29,15 @@
         android:id="@+id/debugFragment"
         android:name="net.justdave.nwsweatheralertswidget.DebugFragment"
         android:label="Debug Window"
-        tools:layout="@layout/debug_fragment" />
+        tools:layout="@layout/debug_fragment">
+        <action
+            android:id="@+id/action_debugFragment_to_alertTypesFragment"
+            app:destination="@id/alertTypesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/alertTypesFragment"
+        android:name="net.justdave.nwsweatheralertswidget.AlertTypesFragment"
+        android:label="Alert Types Demo"
+        tools:layout="@layout/alert_types_fragment" />
 
 </navigation>

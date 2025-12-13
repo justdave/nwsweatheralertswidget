@@ -190,6 +190,23 @@ class NWSAPI constructor(context: Context) {
         }
     }
 
+    suspend fun getAlertTypes(): List<String> = suspendCoroutine { continuation ->
+        val url = "$apiurl/alerts/types"
+        val alertTypes = ArrayList<String>()
+        val req = makeRequest(url, {
+            val types = it.optJSONArray("eventTypes")
+            if (types != null) {
+                for (i in 0 until types.length()) {
+                    alertTypes.add(types.getString(i))
+                }
+            }
+            continuation.resume(alertTypes)
+        }, {
+            continuation.resumeWithException(it)
+        })
+        requestQueue.add(req)
+    }
+
     fun getActiveAlerts(area: NWSArea, zone: NWSZone, listener: Response.Listener<List<NWSAlert>>, errorListener: Response.ErrorListener) {
         val alertList = ArrayList<NWSAlert>()
         val url = when {
