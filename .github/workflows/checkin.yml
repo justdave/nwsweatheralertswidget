@@ -24,12 +24,16 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
+      - name: Compare PRIVACY.md files
+        run: diff PRIVACY.md app/src/main/assets/PRIVACY.md
 
       - name: set up JDK 17
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v4
         with:
           java-version: 17
+          distribution: 'temurin'
 
       - name: Build with Gradle
         id: build
@@ -38,4 +42,3 @@ jobs:
       - name: Run Unit Tests
         id: tests
         run: ./gradlew test
-

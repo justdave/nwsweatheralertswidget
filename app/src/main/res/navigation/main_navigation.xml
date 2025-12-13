@@ -9,7 +9,11 @@
         android:id="@+id/instructionsFragment"
         android:name="net.justdave.nwsweatheralertswidget.InstructionsFragment"
         android:label="@string/app_name"
-        tools:layout="@layout/fragment_instructions" />
+        tools:layout="@layout/fragment_instructions" >
+        <action
+            android:id="@+id/action_instructionsFragment_to_privacyPolicyFragment"
+            app:destination="@id/privacyPolicyFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/alertsDisplayFragment"
@@ -39,5 +43,9 @@
         android:name="net.justdave.nwsweatheralertswidget.AlertTypesFragment"
         android:label="Alert Types Demo"
         tools:layout="@layout/alert_types_fragment" />
+    <fragment
+        android:id="@+id/privacyPolicyFragment"
+        android:name="net.justdave.nwsweatheralertswidget.PrivacyPolicyFragment"
+        android:label="Privacy Policy" />
 
 </navigation>

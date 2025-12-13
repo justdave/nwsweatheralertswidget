@@ -37,9 +37,7 @@ class AlertsDisplayFragment : Fragment() {
                         return true
                     }
                     R.id.action_about -> {
-                        val about = AboutDialog(requireActivity())
-                        about.setTitle(R.string.action_about)
-                        about.show()
+                        showAboutDialog(requireActivity(), findNavController())
                         return true
                     }
 
@@ -73,4 +71,3 @@ class AlertsDisplayFragment : Fragment() {
     }
 
 }
-

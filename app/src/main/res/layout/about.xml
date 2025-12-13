@@ -10,11 +10,13 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
             android:orientation="horizontal">
 
             <ImageView
@@ -46,7 +48,6 @@
             </LinearLayout>
         </LinearLayout>
 
-
         <TextView
             android:id="@+id/info_text"
             android:layout_width="match_parent"
@@ -58,13 +59,6 @@
             android:textSize="12sp"
             android:textStyle="italic" />
 
-        <Button
-            android:id="@+id/about_ok_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dip"
-            android:gravity="center"
-            android:text="@string/ok" />
     </LinearLayout>
 
 </ScrollView>

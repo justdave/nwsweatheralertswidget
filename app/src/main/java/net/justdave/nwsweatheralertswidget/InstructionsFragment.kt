@@ -23,13 +23,12 @@ class InstructionsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val notificationInstructionsTitle = view.findViewById<TextView>(R.id.notification_instructions_title)
         val tiramisuInstructions = view.findViewById<TextView>(R.id.notification_instructions_tiramisu)
         val android12Instructions = view.findViewById<TextView>(R.id.notification_instructions_android_12)
         val oreoInstructions = view.findViewById<TextView>(R.id.notification_instructions_oreo)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationInstructionsTitle.visibility = View.VISIBLE
+            view.findViewById<TextView>(R.id.notification_instructions_title).visibility = View.VISIBLE
             when {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
                     tiramisuInstructions.visibility = View.VISIBLE
@@ -44,8 +43,7 @@ class InstructionsFragment : Fragment() {
         }
 
         view.findViewById<Button>(R.id.about_button).setOnClickListener {
-            val aboutDialog = AboutDialog(requireContext())
-            aboutDialog.show()
+            showAboutDialog(requireContext(), findNavController())
         }
 
         view.findViewById<Button>(R.id.debug_button).setOnClickListener {
