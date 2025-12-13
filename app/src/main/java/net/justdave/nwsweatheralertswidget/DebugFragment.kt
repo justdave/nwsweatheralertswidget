@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.launch
 import net.justdave.nwsweatheralertswidget.databinding.DebugFragmentBinding
 import net.justdave.nwsweatheralertswidget.objects.NWSAlert
@@ -45,25 +46,38 @@ class DebugFragment : Fragment() {
 
         lifecycleScope.launch {
             val (savedAreaId, savedZoneId) = loadDebugPrefs(requireContext())
-            viewModel.getAreaPopupContent { areas ->
-                val areaAdapter = ArrayAdapter(requireContext(), R.layout.spinner_layout, areas)
+            viewModel.getAreaPopupContent {
+                val areaAdapter = ArrayAdapter(requireContext(), R.layout.spinner_layout, it)
                 binding.areaPopup.adapter = areaAdapter
-                val areaIndex = areas.indexOfFirst { it.id == savedAreaId }
-                binding.areaPopup.onItemSelectedListener = null // Disable listener
+                val areaIndex = it.indexOfFirst { area -> area.id == savedAreaId }
+                binding.areaPopup.onItemSelectedListener = null
                 binding.areaPopup.setSelection(if (areaIndex != -1) areaIndex else 0)
 
                 val selectedArea = binding.areaPopup.selectedItem as NWSArea
                 viewModel.getZonePopupContent(selectedArea) { zones ->
                     val zoneAdapter = ArrayAdapter(requireContext(), R.layout.spinner_layout, zones)
                     binding.zonePopup.adapter = zoneAdapter
-                    val zoneIndex = zones.indexOfFirst { it.id == savedZoneId }
+                    val zoneIndex = zones.indexOfFirst { zone -> zone.id == savedZoneId }
                     binding.zonePopup.setSelection(if (zoneIndex != -1) zoneIndex else 0)
-                    binding.areaPopup.onItemSelectedListener = areaSelectedListener // Re-enable listener
+                    binding.areaPopup.onItemSelectedListener = areaSelectedListener
                 }
             }
         }
 
-        binding.displayFormatGroup.setOnCheckedChangeListener { _, _ -> renderDebugContent(cachedAlerts) }
+        binding.displayFormatTabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                renderDebugContent(cachedAlerts)
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                // Do nothing
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                // Do nothing
+            }
+        })
+
         binding.submitButton.setOnClickListener {
             val area = binding.areaPopup.selectedItem as NWSArea
             val zone = binding.zonePopup.selectedItem as NWSZone
@@ -77,14 +91,14 @@ class DebugFragment : Fragment() {
             }
 
             binding.debugText.setText(R.string.loading)
-            when (binding.displayFormatGroup.checkedRadioButtonId) {
-                R.id.radio_text, R.id.radio_json -> {
+            when (binding.displayFormatTabs.selectedTabPosition) {
+                0, 1 -> {
                     binding.debugRecyclerView.visibility = View.GONE
                     binding.debugEmptyView.visibility = View.GONE
                     binding.debugTextScrollView.visibility = View.VISIBLE
-                    binding.paginationControls.visibility = if (binding.displayFormatGroup.checkedRadioButtonId == R.id.radio_json) View.VISIBLE else View.GONE
+                    binding.paginationControls.visibility = if (binding.displayFormatTabs.selectedTabPosition == 1) View.VISIBLE else View.GONE
                 }
-                R.id.radio_widget -> {
+                2 -> {
                     binding.debugTextScrollView.visibility = View.GONE
                     binding.paginationControls.visibility = View.GONE
                     binding.debugRecyclerView.visibility = View.VISIBLE
@@ -93,23 +107,23 @@ class DebugFragment : Fragment() {
                 }
             }
 
-            viewModel.getDebugContent(area, zone, { response ->
-                cachedAlerts = response
+            viewModel.getDebugContent(area, zone, {
+                cachedAlerts = it
                 lifecycleScope.launch {
                     saveDebugPrefs(requireContext(), area.id, zone.id)
                 }
-                fullJson = response.joinToString(separator = ",\n", prefix = "[\n", postfix = "\n]") { alert ->
+                fullJson = it.joinToString(separator = ",\n", prefix = "[\n", postfix = "\n]") { alert ->
                     alert.getRawDataForDisplay().prependIndent("  ")
                 }
                 currentPage = 0
-                renderDebugContent(response)
-            }, { error ->
+                renderDebugContent(it)
+            }, {
                 cachedAlerts = null
                 binding.debugRecyclerView.visibility = View.GONE
                 binding.debugEmptyView.visibility = View.GONE
                 binding.debugTextScrollView.visibility = View.VISIBLE
                 binding.paginationControls.visibility = View.GONE
-                binding.debugText.text = error.toString()
+                binding.debugText.text = it.toString()
             })
         }
         binding.previousButton.setOnClickListener {
@@ -151,8 +165,8 @@ class DebugFragment : Fragment() {
 
     private fun renderDebugContent(alerts: List<NWSAlert>?) {
         if (alerts == null) return
-        when (binding.displayFormatGroup.checkedRadioButtonId) {
-            R.id.radio_text -> {
+        when (binding.displayFormatTabs.selectedTabPosition) {
+            0 -> {
                 binding.debugRecyclerView.visibility = View.GONE
                 binding.debugEmptyView.visibility = View.GONE
                 binding.debugTextScrollView.visibility = View.VISIBLE
@@ -164,7 +178,7 @@ class DebugFragment : Fragment() {
                 }
                 binding.debugText.setText(sb.toString(), TextView.BufferType.NORMAL)
             }
-            R.id.radio_json -> {
+            1 -> {
                 binding.debugRecyclerView.visibility = View.GONE
                 binding.debugEmptyView.visibility = View.GONE
                 binding.debugTextScrollView.visibility = View.VISIBLE
@@ -175,7 +189,7 @@ class DebugFragment : Fragment() {
                 binding.previousButton.isEnabled = currentPage > 0
                 binding.nextButton.isEnabled = end < fullJson.length
             }
-            R.id.radio_widget -> {
+            2 -> {
                 binding.debugTextScrollView.visibility = View.GONE
                 binding.paginationControls.visibility = View.GONE
                 if (alerts.isEmpty()) {
