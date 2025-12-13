@@ -172,7 +172,7 @@ class DebugFragment : Fragment() {
                 binding.debugTextScrollView.visibility = View.VISIBLE
                 binding.paginationControls.visibility = View.GONE
                 val sb = StringBuilder()
-                sb.append("There are currently ").append(alerts.size).append(" active alerts")
+                sb.append(resources.getQuantityString(R.plurals.debug_alert_count, alerts.size, alerts.size))
                 alerts.forEach { alert ->
                     sb.append("\n").append(alert.toString())
                 }

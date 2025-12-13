@@ -185,7 +185,7 @@ class AlertsUpdateService : Service() {
         return NotificationCompat.Builder(applicationContext, channelId)
             .setContentTitle(title)
             .setTicker(title)
-            .setContentText("Fetching weather alerts...")
+            .setContentText(getString(R.string.notification_text))
             .setSmallIcon(R.mipmap.app_icon)
             .setOngoing(true)
             .build()
