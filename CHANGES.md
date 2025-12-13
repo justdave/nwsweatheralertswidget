@@ -1,6 +1,6 @@
 # NWS Weather Alerts Widget Change History
 
-## Version 2.0 (unreleased)
+## Version 2.0 (Dec 13, 2025)
 
 * Almost ground up rewrite in Kotlin
 * Target modern Android versions
@@ -8,6 +8,7 @@
 * Use NWS's new REST API
 * Can now have multiple widgets each with their own location, and widgets are reconfigurable.
 * Last update date is now shown on the widget
+* in-app screens now look better in landscape mode
 
 ## Version 1.2.1-fdroid1 (Dec 3, 2025)
 
