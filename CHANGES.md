@@ -1,6 +1,6 @@
 # NWS Weather Alerts Widget Change History
 
-## Version 2.0.1 (unreleased)
+## Version 2.1 (Dec 14, 2025)
 
 * About dialog, widget configuration screen, and debug screen are now readable in Dark mode.
 * Update interval is now 5 minutes instead of 15 (just like in version 1.x)
