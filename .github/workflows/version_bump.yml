@@ -1,0 +1,36 @@
+name: Bump Version Suffix
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+(.[0-9]+)?' # Run on tags like v1.2 or v1.2.3
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+
+      - name: Update versionName in build.gradle
+        # This script appends a '+' to the end of the versionName string
+        run: |
+          awk '/versionName/ {sub(/\'$/, "+\'")} 1' app/build.gradle > app/build.gradle.tmp && mv app/build.gradle.tmp app/build.gradle
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit and push changes
+        env:
+          NEW_VERSION: ${{ env.VERSION }}+
+        run: |
+          git add app/build.gradle
+          git commit -m "updating version to $NEW_VERSION for development"
+          # Pushing to the 'master' branch as used in other workflows
+          git push origin HEAD:master
