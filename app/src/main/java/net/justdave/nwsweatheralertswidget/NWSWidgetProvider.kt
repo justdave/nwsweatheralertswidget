@@ -15,6 +15,7 @@ import android.widget.RemoteViews
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import net.justdave.nwsweatheralertswidget.widget.NWSWidgetConfigureActivity
 import net.justdave.nwsweatheralertswidget.widget.NWSWidgetService
 import net.justdave.nwsweatheralertswidget.widget.deleteWidgetPrefs
 import net.justdave.nwsweatheralertswidget.widget.loadWidgetPrefs
@@ -164,6 +165,19 @@ internal suspend fun updateAppWidget(
     } else {
         views.setViewVisibility(R.id.widget_parsed_events, View.GONE)
         views.setViewVisibility(R.id.widget_empty_view, View.VISIBLE)
+    }
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+        views.setViewVisibility(R.id.widget_reconfigure_button, View.VISIBLE)
+        val configureIntent = Intent(context, NWSWidgetConfigureActivity::class.java).apply {
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            context, appWidgetId, configureIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        views.setOnClickPendingIntent(R.id.widget_reconfigure_button, pendingIntent)
+    } else {
+        views.setViewVisibility(R.id.widget_reconfigure_button, View.GONE)
     }
 
     // Set up the intent that starts the NWSWidgetService, which will
