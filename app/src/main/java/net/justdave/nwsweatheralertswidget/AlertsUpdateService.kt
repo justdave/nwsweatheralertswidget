@@ -118,7 +118,7 @@ class AlertsUpdateService : Service() {
                 for (appWidgetId in appWidgetIds) {
                     Log.i(TAG, "Migrating widget $appWidgetId with title \"$title\"")
                     // Save the legacy settings to the new DataStore format for each widget
-                    saveWidgetPrefs(this, appWidgetId, finalAreaId, finalZoneId, title)
+                    saveWidgetPrefs(this, appWidgetId, finalAreaId, finalZoneId, title, "semitransparent")
                 }
             }
 

@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.os.SystemClock
@@ -129,9 +130,30 @@ internal suspend fun updateAppWidget(
     val widgetText = prefs["title"] ?: context.getString(R.string.appwidget_text)
     val updatedText = prefs["updated"] ?: "Never"
     val alertCount = prefs["alert_count"]?.toInt() ?: 0
+    val theme = prefs["theme"] ?: "semitransparent"
 
     // Construct the RemoteViews object
     val views = RemoteViews(context.packageName, R.layout.alerts_widget)
+
+    // Set the theme
+    val (backgroundColor, textColor) = when (theme) {
+        "light" -> R.color.widget_background_light to R.color.widget_text_light
+        "dark" -> R.color.widget_background_dark to R.color.widget_text_dark
+        "semitransparent" -> R.drawable.semitransparent_background to R.color.widget_text_semitransparent
+        else -> {
+            // System theme
+            when (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+                Configuration.UI_MODE_NIGHT_YES -> R.color.widget_background_dark to R.color.widget_text_dark
+                else -> R.color.widget_background_light to R.color.widget_text_light
+            }
+        }
+    }
+    views.setInt(R.id.widget_layout, "setBackgroundResource", backgroundColor)
+    views.setTextColor(R.id.widget_title, context.getColor(textColor))
+    views.setTextColor(R.id.widget_updated_timestamp, context.getColor(textColor))
+    views.setTextColor(R.id.widget_empty_view, context.getColor(textColor))
+
+
     views.setTextViewText(R.id.widget_title, widgetText)
     views.setTextViewText(R.id.widget_updated_timestamp, "Last updated: ".plus(updatedText))
 

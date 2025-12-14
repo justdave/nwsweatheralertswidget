@@ -30,6 +30,7 @@ class NWSWidgetConfigureActivity : AppCompatActivity() {
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
     private lateinit var appWidgetArea: Spinner
     private lateinit var appWidgetZone: Spinner
+    private lateinit var appWidgetTheme: Spinner
     private lateinit var zoneLoadingSpinner: ProgressBar
     private lateinit var addButton: Button
     private lateinit var nwsapi: NWSAPI
@@ -41,12 +42,13 @@ class NWSWidgetConfigureActivity : AppCompatActivity() {
             // When the button is clicked, store the string locally
             val area = appWidgetArea.selectedItem as NWSArea
             val zone = appWidgetZone.selectedItem as NWSZone
+            val theme = appWidgetTheme.selectedItem as String
             val title = if (zone.id != "all" && zone.toString() != getString(R.string.loading)) {
                 zone.toString()
             } else {
                 area.toString()
             }
-            saveWidgetPrefs(context, appWidgetId, area.id, zone.id, title)
+            saveWidgetPrefs(context, appWidgetId, area.id, zone.id, title, theme.lowercase())
 
             // Force the service to restart to pick up configuration changes immediately.
             val serviceIntent = Intent(context, AlertsUpdateService::class.java).apply {
@@ -101,6 +103,7 @@ class NWSWidgetConfigureActivity : AppCompatActivity() {
         setContentView(R.layout.alerts_widget_configure)
         appWidgetArea = findViewById(R.id.appwidget_area)
         appWidgetZone = findViewById(R.id.appwidget_zone)
+        appWidgetTheme = findViewById(R.id.appwidget_theme)
         zoneLoadingSpinner = findViewById(R.id.zone_loading_spinner)
         addButton = findViewById(R.id.add_button)
 
@@ -126,6 +129,7 @@ class NWSWidgetConfigureActivity : AppCompatActivity() {
             val prefs = loadWidgetPrefs(this@NWSWidgetConfigureActivity, appWidgetId)
             val areaId = prefs["area"]
             val zoneId = prefs["zone"]
+            val theme = prefs["theme"]
             if (prefs["title"] != getString(R.string.appwidget_text)) {
                 addButton.setText(R.string.save)
             }
@@ -144,6 +148,12 @@ class NWSWidgetConfigureActivity : AppCompatActivity() {
             // Now that zones are populated, find the stored zone and select it
             val zoneIndex = findSpinnerIndex(appWidgetZone, zoneId)
             appWidgetZone.setSelection(zoneIndex)
+
+            // Set up the theme spinner
+            val themes = resources.getStringArray(R.array.widget_themes)
+            appWidgetTheme.adapter = ArrayAdapter(applicationContext, R.layout.spinner_layout, themes)
+            val themeIndex = themes.indexOf(theme?.replaceFirstChar { it.uppercase() })
+            appWidgetTheme.setSelection(if (themeIndex != -1) themeIndex else 0)
 
             // Re-enable the listener for user interaction
             appWidgetArea.onItemSelectedListener = areaSelectedListener

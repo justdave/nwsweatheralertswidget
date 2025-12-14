@@ -23,6 +23,11 @@
     <string name="widget_title">Current Active NWS Alerts</string>
     <string name="choose_area">Choose State or Area</string>
     <string name="choose_zone">Choose County or Zone</string>
+    <string name="choose_theme">Choose a theme</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_semitransparent">Semitransparent</string>
+    <string name="theme_system">Follow System</string>
     <string name="detail_retrieval">Retreiving alert detail&#8230;</string>
     <string name="detail_target">Target Area:</string>
     <string name="detail_expires">Expires:</string>
