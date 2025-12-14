@@ -1,5 +1,9 @@
 # NWS Weather Alerts Widget Change History
 
+## Version 2.0.1 (unreleased)
+
+* About dialog is readable in Dark mode now
+
 ## Version 2.0 (Dec 13, 2025)
 
 * Almost ground up rewrite in Kotlin

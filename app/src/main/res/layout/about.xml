@@ -48,16 +48,16 @@
             </LinearLayout>
         </LinearLayout>
 
+
         <TextView
             android:id="@+id/info_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dip"
             android:gravity="center_horizontal"
+            android:linksClickable="true"
             android:textAlignment="center"
-            android:textColor="#444444"
-            android:textSize="12sp"
-            android:textStyle="italic" />
+            android:textSize="12sp" />
 
     </LinearLayout>
 
