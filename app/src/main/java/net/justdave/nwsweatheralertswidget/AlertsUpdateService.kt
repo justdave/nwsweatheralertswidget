@@ -17,7 +17,6 @@ import androidx.core.net.toUri
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.serialization.encodeToString
 import net.justdave.nwsweatheralertswidget.objects.NWSArea
 import net.justdave.nwsweatheralertswidget.objects.NWSZone
 import net.justdave.nwsweatheralertswidget.widget.loadWidgetPrefs
@@ -56,7 +55,7 @@ class AlertsUpdateService : Service() {
 
             // After migration, initialize the API and schedule the recurring update task.
             timer = Timer("NWSServiceTimer")
-            timer?.schedule(updateTask, 100L, 900 * 1000L) // 15 minutes
+            timer?.schedule(updateTask, 100L, 300 * 1000L) // 15 minutes
         }
     }
 

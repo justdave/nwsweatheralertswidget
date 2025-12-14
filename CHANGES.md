@@ -3,6 +3,7 @@
 ## Version 2.0.1 (unreleased)
 
 * About dialog is readable in Dark mode now
+* Update interval is now 5 minutes instead of 15
 
 ## Version 2.0 (Dec 13, 2025)
 
