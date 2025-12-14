@@ -3,6 +3,7 @@
 ## unreleased changes
 
 * More dark mode readability fixes.
+* Text in the Alert Detail screen can now be selected and copied.
 
 ## Version 2.1 (Dec 14, 2025)
 
