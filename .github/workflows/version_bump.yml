@@ -21,6 +21,10 @@ jobs:
         run: |
           awk '/versionName/ {sub(/\'$/, "+\'")} 1' app/build.gradle > app/build.gradle.tmp && mv app/build.gradle.tmp app/build.gradle
 
+      - name: Increment versionCode
+        run: |
+          awk '/versionCode/ {match($0, /[0-9]+/); num=substr($0, RSTART, RLENGTH); sub(num, num+1)} 1' app/build.gradle > app/build.gradle.tmp && mv app/build.gradle.tmp app/build.gradle
+
       - name: Configure Git
         run: |
           git config user.name "github-actions[bot]"
