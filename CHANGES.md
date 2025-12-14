@@ -4,6 +4,7 @@
 
 * About dialog is readable in Dark mode now
 * Update interval is now 5 minutes instead of 15
+* Back button behavior on Android 12 from a widget-launched detail screen is now correct
 
 ## Version 2.0 (Dec 13, 2025)
 

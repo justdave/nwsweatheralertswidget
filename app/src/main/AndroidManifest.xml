@@ -70,7 +70,9 @@
         <activity
             android:name=".AlertDetailActivity"
             android:exported="true"
-            android:label="@string/activity_detail">
+            android:label="@string/activity_detail"
+            android:taskAffinity=""
+            android:excludeFromRecents="true">
         </activity>
 
     </application>
