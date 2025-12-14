@@ -33,12 +33,12 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:gravity="center_vertical"
-                android:shadowColor="@color/white"
+                android:shadowColor="@color/alert_detail_title_shadow"
                 android:shadowDx="0"
                 android:shadowDy="0"
                 android:shadowRadius="5"
                 android:text="@string/detail_retrieval"
-                android:textColor="@color/black"
+                android:textColor="@color/alert_detail_title_text"
                 android:textSize="24sp" />
         </LinearLayout>
 
