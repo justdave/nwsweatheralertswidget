@@ -1,5 +1,9 @@
 # NWS Weather Alerts Widget Change History
 
+## unreleased changes
+
+* More dark mode readability fixes.
+
 ## Version 2.1 (Dec 14, 2025)
 
 * About dialog, widget configuration screen, and debug screen are now readable in Dark mode.
