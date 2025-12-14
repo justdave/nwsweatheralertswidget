@@ -98,7 +98,7 @@ class NWSWidgetConfigureActivity : AppCompatActivity() {
         // out of the widget placement if the user presses the back button.
         setResult(RESULT_CANCELED)
 
-        nwsapi = NWSAPI.getInstance(applicationContext)
+        nwsapi = NWSAPI.getInstance(this@NWSWidgetConfigureActivity)
 
         setContentView(R.layout.alerts_widget_configure)
         appWidgetArea = findViewById(R.id.appwidget_area)
@@ -136,7 +136,7 @@ class NWSWidgetConfigureActivity : AppCompatActivity() {
 
             // Set up the area spinner
             val areas = nwsapi.getAreas()
-            appWidgetArea.adapter = ArrayAdapter(applicationContext, R.layout.spinner_layout, areas)
+            appWidgetArea.adapter = ArrayAdapter(this@NWSWidgetConfigureActivity, R.layout.spinner_layout, areas)
             val areaIndex = findSpinnerIndex(appWidgetArea, areaId)
 
             // Disable the listener, set the selection, then fetch the zones for that area
@@ -151,7 +151,7 @@ class NWSWidgetConfigureActivity : AppCompatActivity() {
 
             // Set up the theme spinner
             val themes = resources.getStringArray(R.array.widget_themes)
-            appWidgetTheme.adapter = ArrayAdapter(applicationContext, R.layout.spinner_layout, themes)
+            appWidgetTheme.adapter = ArrayAdapter(this@NWSWidgetConfigureActivity, R.layout.spinner_layout, themes)
             val themeIndex = themes.indexOf(theme?.replaceFirstChar { it.uppercase() })
             appWidgetTheme.setSelection(if (themeIndex != -1) themeIndex else 0)
 
@@ -168,7 +168,7 @@ class NWSWidgetConfigureActivity : AppCompatActivity() {
         addButton.isEnabled = false
         val loadingMenu = arrayListOf(NWSZone("all", getString(R.string.loading)))
         appWidgetZone.adapter = ArrayAdapter(
-            applicationContext,
+            this@NWSWidgetConfigureActivity,
             R.layout.spinner_layout,
             loadingMenu
         )
@@ -177,7 +177,7 @@ class NWSWidgetConfigureActivity : AppCompatActivity() {
         val zones = nwsapi.getZones(area)
         Log.i("WidgetConfigure", "Zones: $zones")
         appWidgetZone.adapter = ArrayAdapter(
-            applicationContext,
+            this@NWSWidgetConfigureActivity,
             R.layout.spinner_layout,
             zones
         )
