@@ -1,5 +1,9 @@
 # NWS Weather Alerts Widget Change History
 
+## Unreleased Changes
+
+* 
+
 ## Version 2.2.1 (Dec 18, 2025)
 
 * Change permission structure for Play Store requirements. On Android 12 and later, you will need to launch the app and grant permissions for alarms after updating. It'll work without it, but the widget may only update whenever Android feels like it until you do.

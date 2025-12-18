@@ -17,6 +17,16 @@ jobs:
         id: get_version
         run: echo "VERSION=${{ github.event.release.tag_name }}" | sed 's/^v//' >> $GITHUB_ENV
 
+      - name: Update CHANGES.md
+        run: |
+          # Insert a new "Unreleased Changes" section after the main title
+          sed -i'.bak' '/^# NWS Weather Alerts Widget Change History/a\
+          \
+          ## Unreleased Changes\
+          \
+          * \
+          ' CHANGES.md
+
       - name: Update versionName in build.gradle
         # This script appends a '+' to the end of the versionName string
         run: |
@@ -35,7 +45,7 @@ jobs:
         env:
           NEW_VERSION: ${{ env.VERSION }}+
         run: |
-          git add app/build.gradle
+          git add app/build.gradle CHANGES.md
           git commit -m "updating version to $NEW_VERSION for development"
           # Pushing to the 'master' branch as used in other workflows
           git push origin HEAD:master
