@@ -1,5 +1,6 @@
 package net.justdave.nwsweatheralertswidget
 
+import android.app.AlarmManager
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -11,6 +12,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import android.os.SystemClock
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.edit
@@ -27,44 +29,39 @@ import net.justdave.nwsweatheralertswidget.widget.saveWidgetPrefs
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import java.util.Timer
-import java.util.TimerTask
 
 class AlertsUpdateService : Service() {
 
-    private var timer: Timer? = null
     private lateinit var nwsapi: NWSAPI
 
     override fun onBind(intent: Intent): IBinder? {
         return null
     }
 
-    override fun onCreate() {
-        super.onCreate()
-        Log.i(TAG, "Service creating")
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.i(TAG, "Service starting")
         isRunning = true
 
         // Start the service in the foreground immediately.
         val notification = createNotification()
         startForeground(NOTIFICATION_ID, notification)
 
-        // Launch a background coroutine to handle initialization.
+        // Launch a background coroutine to handle initialization and the main work.
         CoroutineScope(Dispatchers.IO).launch {
-            // First, ensure any legacy settings are migrated.
             nwsapi = NWSAPI.getInstance(applicationContext)
             migrateLegacySettings()
+            updateTask()
 
-            // After migration, initialize the API and schedule the recurring update task.
-            timer = Timer("NWSServiceTimer")
-            timer?.schedule(updateTask, 100L, 300 * 1000L) // 15 minutes
+            // Schedule the next alarm and then stop the service
+            scheduleNextUpdate()
+            stopSelf(startId)
         }
+        return START_STICKY
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Log.i(TAG, "Service destroying")
-        timer?.cancel()
-        timer = null
         isRunning = false
     }
 
@@ -129,46 +126,62 @@ class AlertsUpdateService : Service() {
         }
     }
 
-    private val updateTask = object : TimerTask() {
-        override fun run() {
-            Log.i(TAG, "Update task running")
-            val context: Context = applicationContext
-            val appWidgetManager = AppWidgetManager.getInstance(context)
-            val thisWidget = ComponentName(context, NWSWidgetProvider::class.java)
-            val appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget)
+    private suspend fun updateTask() {
+        Log.i(TAG, "Update task running")
+        val context: Context = applicationContext
+        val appWidgetManager = AppWidgetManager.getInstance(context)
+        val thisWidget = ComponentName(context, NWSWidgetProvider::class.java)
+        val appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget)
 
-            if (appWidgetIds.isEmpty()) {
-                Log.i(TAG, "No widgets to update, stopping self.")
-                stopSelf()
-                return
-            }
+        if (appWidgetIds.isEmpty()) {
+            Log.i(TAG, "No widgets to update, stopping self.")
+            stopSelf()
+            return
+        }
 
-            for (appWidgetId in appWidgetIds) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    try {
-                        val prefs = loadWidgetPrefs(context, appWidgetId)
-                        val areaId = prefs["area"] ?: "us-all"
-                        val zoneId = prefs["zone"] ?: "all"
+        for (appWidgetId in appWidgetIds) {
+            try {
+                val prefs = loadWidgetPrefs(context, appWidgetId)
+                val areaId = prefs["area"] ?: "us-all"
+                val zoneId = prefs["zone"] ?: "all"
 
-                        val alerts = nwsapi.getActiveAlerts(NWSArea(areaId, ""), NWSZone(zoneId, ""))
-                        Log.i(TAG, "Fetched ".plus(alerts.size).plus(" alerts for widget $appWidgetId"))
-                        val serializedAlerts = lenientJson.encodeToString(alerts)
-                        saveAlerts(context, appWidgetId, serializedAlerts)
-                        val timestamp = SimpleDateFormat("h:mm a", Locale.US).format(Date())
-                        saveUpdatedTimestamp(context, appWidgetId, timestamp)
+                val alerts = nwsapi.getActiveAlerts(NWSArea(areaId, ""), NWSZone(zoneId, ""))
+                Log.i(TAG, "Fetched ".plus(alerts.size).plus(" alerts for widget $appWidgetId"))
+                val serializedAlerts = lenientJson.encodeToString(alerts)
+                saveAlerts(context, appWidgetId, serializedAlerts)
+                val timestamp = SimpleDateFormat("h:mm a", Locale.US).format(Date())
+                saveUpdatedTimestamp(context, appWidgetId, timestamp)
 
-                        // Send the standard APPWIDGET_UPDATE broadcast to trigger the widget's onUpdate method.
-                        val intent = Intent(context, NWSWidgetProvider::class.java).apply {
-                            action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-                            putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, intArrayOf(appWidgetId))
-                        }
-                        context.sendBroadcast(intent)
-
-                    } catch (e: Exception) {
-                        Log.e(TAG, "Update failed for widget $appWidgetId", e)
-                    }
+                // Send the standard APPWIDGET_UPDATE broadcast to trigger the widget's onUpdate method.
+                val intent = Intent(context, NWSWidgetProvider::class.java).apply {
+                    action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, intArrayOf(appWidgetId))
                 }
+                context.sendBroadcast(intent)
+
+            } catch (e: Exception) {
+                Log.e(TAG, "Update failed for widget $appWidgetId", e)
             }
+        }
+    }
+
+    private fun scheduleNextUpdate() {
+        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+        val intent = Intent(this, AlertsUpdateService::class.java)
+        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            PendingIntent.getForegroundService(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        } else {
+            PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        }
+
+        val triggerAtMillis = SystemClock.elapsedRealtime() + (5 * 60 * 1000)
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtMillis, pendingIntent)
+            Log.i(TAG, "Next exact update scheduled for 5 minutes from now.")
+        } else {
+            alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtMillis, pendingIntent)
+            Log.i(TAG, "Next inexact update scheduled for 5 minutes from now.")
         }
     }
 

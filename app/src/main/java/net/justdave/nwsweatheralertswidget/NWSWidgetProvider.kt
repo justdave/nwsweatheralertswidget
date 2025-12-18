@@ -78,40 +78,37 @@ class NWSWidgetProvider : AppWidgetProvider() {
      * This is called when the first instance of the App Widget is created.
      */
     override fun onEnabled(context: Context) {
-        // Use AlarmManager to reliably start the service from the background
+        // Schedule an immediate alarm to kick off the update chain.
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, AlertsUpdateService::class.java).apply {
-            addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
-        }
+        val intent = Intent(context, AlertsUpdateService::class.java)
         val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            PendingIntent.getForegroundService(
-                context,
-                1, // Unique request code
-                intent,
-                PendingIntent.FLAG_IMMUTABLE
-            )
+            PendingIntent.getForegroundService(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         } else {
-            PendingIntent.getService(
-                context,
-                1, // Unique request code
-                intent,
-                PendingIntent.FLAG_IMMUTABLE
-            )
+            PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         }
-        // Set the alarm to go off immediately to start the service
-        alarmManager.set(
-            AlarmManager.ELAPSED_REALTIME,
-            SystemClock.elapsedRealtime(),
-            pendingIntent
-        )
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), pendingIntent)
+        } else {
+            alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), pendingIntent)
+        }
     }
 
     /**
      * This is called when the last instance of the App Widget is deleted.
      */
     override fun onDisabled(context: Context) {
-        // Stop the service when the last widget is removed
-        context.stopService(Intent(context, AlertsUpdateService::class.java))
+        // Cancel the repeating alarm.
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, AlertsUpdateService::class.java)
+        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            PendingIntent.getForegroundService(context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_NO_CREATE)
+        } else {
+            PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_NO_CREATE)
+        }
+        if (pendingIntent != null) {
+            alarmManager.cancel(pendingIntent)
+            pendingIntent.cancel()
+        }
     }
 
     companion object {

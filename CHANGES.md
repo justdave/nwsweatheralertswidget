@@ -6,7 +6,7 @@
 * Text in the Alert Detail screen can now be selected and copied.
 * UI no longer appears behind the system navigation bar on some devices.
 * Default alert background is now gray instead of transparent, so you can actually read the text on it.
-* App opens when you tap the notification.
+* Use AlarmManager instead of Timer so Doze doesn't kill our update task. This means there's no longer a persistent notification, the notification only shows while the data update is actually running.
 
 ## Version 2.1 (Dec 14, 2025)
 

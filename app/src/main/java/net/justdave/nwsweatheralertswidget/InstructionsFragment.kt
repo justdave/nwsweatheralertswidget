@@ -1,12 +1,10 @@
 package net.justdave.nwsweatheralertswidget
 
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 
@@ -22,25 +20,6 @@ class InstructionsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val tiramisuInstructions = view.findViewById<TextView>(R.id.notification_instructions_tiramisu)
-        val android12Instructions = view.findViewById<TextView>(R.id.notification_instructions_android_12)
-        val oreoInstructions = view.findViewById<TextView>(R.id.notification_instructions_oreo)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            view.findViewById<TextView>(R.id.notification_instructions_title).visibility = View.VISIBLE
-            when {
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
-                    tiramisuInstructions.visibility = View.VISIBLE
-                }
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-                    android12Instructions.visibility = View.VISIBLE
-                }
-                else -> {
-                    oreoInstructions.visibility = View.VISIBLE
-                }
-            }
-        }
 
         view.findViewById<Button>(R.id.about_button).setOnClickListener {
             showAboutDialog(requireContext(), findNavController())
