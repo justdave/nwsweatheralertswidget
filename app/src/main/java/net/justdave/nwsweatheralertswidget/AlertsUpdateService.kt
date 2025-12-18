@@ -3,6 +3,7 @@ package net.justdave.nwsweatheralertswidget
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
@@ -181,11 +182,17 @@ class AlertsUpdateService : Service() {
             val notificationManager = applicationContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
+
+        val pendingIntent = Intent(this, MainActivity::class.java).let {
+            PendingIntent.getActivity(this, 0, it, PendingIntent.FLAG_IMMUTABLE)
+        }
+
         return NotificationCompat.Builder(applicationContext, channelId)
             .setContentTitle(title)
             .setTicker(title)
             .setContentText(getString(R.string.notification_text))
             .setSmallIcon(R.mipmap.app_icon)
+            .setContentIntent(pendingIntent)
             .setOngoing(true)
             .build()
     }
