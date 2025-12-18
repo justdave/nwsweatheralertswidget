@@ -20,7 +20,7 @@ jobs:
       - name: Update versionName in build.gradle
         # This script appends a '+' to the end of the versionName string
         run: |
-          awk '/versionName/ {sub(/\'$/, "+\'")} 1' app/build.gradle > app/build.gradle.tmp && mv app/build.gradle.tmp app/build.gradle
+          awk '/versionName/ {sub(/\x27$/, "+\x27")} 1' app/build.gradle > app/build.gradle.tmp && mv app/build.gradle.tmp app/build.gradle
 
       - name: Increment versionCode
         run: |
