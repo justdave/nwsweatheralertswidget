@@ -90,7 +90,7 @@ data class NWSAlert(
     }
 
     fun getBackground(): Int {
-        var background = R.drawable.black_button
+        var background = R.drawable.grey_button
         if (event.contains("Fire") || event.contains("Dust")) {
             background = R.drawable.orange_button
         }
