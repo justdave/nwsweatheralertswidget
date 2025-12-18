@@ -5,6 +5,8 @@
 * More dark mode readability fixes.
 * Text in the Alert Detail screen can now be selected and copied.
 * UI no longer appears behind the system navigation bar on some devices.
+* Default alert background is now gray instead of transparent, so you can actually read the text on it.
+* App opens when you tap the notification.
 
 ## Version 2.1 (Dec 14, 2025)
 
