@@ -1,6 +1,6 @@
 # NWS Weather Alerts Widget Change History
 
-## unreleased changes
+## Version 2.2 (Dec 18, 2025)
 
 * More dark mode readability fixes.
 * Text in the Alert Detail screen can now be selected and copied.
