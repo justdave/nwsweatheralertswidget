@@ -7,6 +7,7 @@
     android:padding="16dp">
 
     <TextView
+        android:id="@+id/app_usage_instructions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawablePadding="24dp"
@@ -15,10 +16,52 @@
         android:textAlignment="center"
         android:textSize="18sp"
         app:drawableTopCompat="@mipmap/app_icon"
-        app:layout_constraintBottom_toTopOf="@+id/button_bar"
+        app:layout_constraintBottom_toTopOf="@+id/exact_alarm_card"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/exact_alarm_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:visibility="gone"
+        app:cardCornerRadius="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/button_bar"
+        app:layout_constraintTop_toBottomOf="@+id/app_usage_instructions">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/exact_alarm_permission_title"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/exact_alarm_permission_body"
+                android:textAlignment="center" />
+
+            <Button
+                android:id="@+id/grant_alarm_permission_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:text="@string/grant_permission" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
     <LinearLayout
         android:id="@+id/button_bar"
