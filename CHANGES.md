@@ -2,7 +2,7 @@
 
 ## Unreleased Changes
 
-* 
+* Use a bold-face font for alert titles on the widget to make them easier to read.
 
 ## Version 2.2.1 (Dec 18, 2025)
 
