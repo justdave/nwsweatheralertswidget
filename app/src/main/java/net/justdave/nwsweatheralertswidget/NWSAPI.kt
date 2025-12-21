@@ -41,6 +41,10 @@ class NWSAPI constructor(context: Context) {
         Volley.newRequestQueue(context.applicationContext)
     }
 
+    private data class CachedZones(val timestamp: Long, val zones: ArrayList<NWSZone>)
+    private val zoneCache = HashMap<String, CachedZones>()
+    private val zoneCacheDuration = 3600000L * 24 // 24 hours
+
     private fun makeRequest(
         url: String,
         listener: Response.Listener<JSONObject>,
@@ -154,6 +158,15 @@ class NWSAPI constructor(context: Context) {
     }
 
     fun getZones(area: NWSArea, listener: Response.Listener<ArrayList<NWSZone>>) {
+        if (zoneCache.containsKey(area.id)) {
+            val cached = zoneCache[area.id]
+            if (cached != null && System.currentTimeMillis() - cached.timestamp < zoneCacheDuration) {
+                Log.i("NWSAPI", "Returning cached zones for ${area.id}")
+                listener.onResponse(cached.zones)
+                return
+            }
+        }
+
         val countyList = ArrayList<NWSZone>()
         countyList.add(NWSZone("all", "All"))
         if (area.id == "us-all" || area.id == "marine") {
@@ -175,6 +188,7 @@ class NWSAPI constructor(context: Context) {
                     }
                 }
                 Log.i("NWSAPI", "Returning: $countyList")
+                zoneCache[area.id] = CachedZones(System.currentTimeMillis(), countyList)
                 listener.onResponse(countyList)
             }, { error ->
                 Log.i("NWSAPI", "Error: $error")
