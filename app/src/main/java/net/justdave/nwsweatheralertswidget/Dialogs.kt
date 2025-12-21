@@ -39,5 +39,10 @@ fun showAboutDialog(context: Context, navController: NavController) {
         dialog.dismiss()
     }
 
+    builder.setNegativeButton("Changelog") { dialog, _ ->
+        navController.navigate(R.id.changelogFragment)
+        dialog.dismiss()
+    }
+
     builder.create().show()
 }

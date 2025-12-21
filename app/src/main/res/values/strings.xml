@@ -58,5 +58,6 @@
         <item quantity="other">There are currently %d active alerts</item>
     </plurals>
     <string name="notification_text">Monitoring for weather alerts…</string>
+    <string name="changelog_error">Error loading changelog.</string>
 
 </resources>
