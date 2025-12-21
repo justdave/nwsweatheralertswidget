@@ -4,6 +4,7 @@
 
 * Use a bold-face font for alert titles on the widget to make them easier to read.
 * Added a user-facing changelog in the app. Find it in the About box.
+* Widget now shows "Loading" instead of a bare white background at boot until it loads.
 
 ## Version 2.2.1 (Dec 18, 2025)
 

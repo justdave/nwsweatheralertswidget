@@ -8,7 +8,7 @@
         android:id="@+id/widget_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/widget_frame"
+        android:background="@drawable/semitransparent_background"
         android:orientation="vertical">
 
         <TextView
@@ -32,7 +32,8 @@
             android:paddingBottom="@dimen/activity_vertical_margin"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="0dp" />
+            android:paddingTop="0dp"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/widget_empty_view"
@@ -41,11 +42,11 @@
             android:layout_weight="1"
             android:gravity="center"
             android:padding="6dip"
-            android:text="@string/alert_empty"
+            android:text="@string/loading"
             android:textAlignment="center"
-            android:textColor="@android:color/black"
+            android:textColor="@color/widget_text_semitransparent"
             android:textSize="16sp"
-            android:visibility="gone" />
+            android:visibility="visible" />
 
         <TextView
             android:id="@+id/widget_updated_timestamp"

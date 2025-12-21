@@ -126,7 +126,7 @@ internal suspend fun updateAppWidget(
 ) {
     val prefs = loadWidgetPrefs(context, appWidgetId)
     val widgetText = prefs["title"] ?: context.getString(R.string.appwidget_text)
-    val updatedText = prefs["updated"] ?: "Never"
+    val updatedText = prefs["updated"]
     val alertCount = prefs["alert_count"]?.toInt() ?: 0
     val theme = prefs["theme"] ?: "semitransparent"
 
@@ -153,15 +153,24 @@ internal suspend fun updateAppWidget(
 
 
     views.setTextViewText(R.id.widget_title, widgetText)
-    views.setTextViewText(R.id.widget_updated_timestamp, "Last updated: ".plus(updatedText))
+    if (updatedText != null) {
+        views.setTextViewText(R.id.widget_updated_timestamp, "Last updated: ".plus(updatedText))
+    } else {
+        views.setTextViewText(R.id.widget_updated_timestamp, context.getString(R.string.loading))
+    }
 
     // Manually control the visibility of the list and the empty view
-    if (alertCount > 0) {
+    if (updatedText == null) {
+        views.setViewVisibility(R.id.widget_parsed_events, View.GONE)
+        views.setViewVisibility(R.id.widget_empty_view, View.VISIBLE)
+        views.setTextViewText(R.id.widget_empty_view, context.getString(R.string.loading))
+    } else if (alertCount > 0) {
         views.setViewVisibility(R.id.widget_parsed_events, View.VISIBLE)
         views.setViewVisibility(R.id.widget_empty_view, View.GONE)
     } else {
         views.setViewVisibility(R.id.widget_parsed_events, View.GONE)
         views.setViewVisibility(R.id.widget_empty_view, View.VISIBLE)
+        views.setTextViewText(R.id.widget_empty_view, context.getString(R.string.alert_empty))
     }
 
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
