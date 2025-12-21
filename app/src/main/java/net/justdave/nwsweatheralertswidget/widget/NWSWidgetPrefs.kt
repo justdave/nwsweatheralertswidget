@@ -16,17 +16,15 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 // Define preference keys as functions to ensure uniqueness
 private fun areaKey(appWidgetId: Int) = stringPreferencesKey("appwidget_area_$appWidgetId")
 private fun zoneKey(appWidgetId: Int) = stringPreferencesKey("appwidget_zone_$appWidgetId")
-private fun titleKey(appWidgetId: Int) = stringPreferencesKey("appwidget_title_$appWidgetId")
 private fun themeKey(appWidgetId: Int) = stringPreferencesKey("appwidget_theme_$appWidgetId")
 private fun alertsKey(appWidgetId: Int) = stringPreferencesKey("appwidget_alerts_$appWidgetId")
 private fun updatedKey(appWidgetId: Int) = stringPreferencesKey("appwidget_updated_$appWidgetId")
 
-// Functions for saving and loading the widget's configuration (title, area, zone, theme)
-suspend fun saveWidgetPrefs(context: Context, appWidgetId: Int, areaId: String, zoneId: String, title: String, theme: String) {
+// Functions for saving and loading the widget's configuration (area, zone, theme)
+suspend fun saveWidgetPrefs(context: Context, appWidgetId: Int, areaId: String, zoneId: String, theme: String) {
     context.dataStore.edit {
         it[areaKey(appWidgetId)] = areaId
         it[zoneKey(appWidgetId)] = zoneId
-        it[titleKey(appWidgetId)] = title
         it[themeKey(appWidgetId)] = theme
     }
 }
@@ -37,7 +35,6 @@ suspend fun loadWidgetPrefs(context: Context, appWidgetId: Int): Map<String, Str
         val alerts = prefs[alertsKey(appWidgetId)] ?: "[]"
         map["area"] = prefs[areaKey(appWidgetId)]
         map["zone"] = prefs[zoneKey(appWidgetId)]
-        map["title"] = prefs[titleKey(appWidgetId)]
         map["theme"] = prefs[themeKey(appWidgetId)] ?: "semitransparent"
         map["updated"] = prefs[updatedKey(appWidgetId)]
         map["alert_count"] = lenientJson.decodeFromString<List<NWSAlert>>(alerts).size.toString()
@@ -70,7 +67,6 @@ suspend fun deleteWidgetPrefs(context: Context, appWidgetId: Int) {
     context.dataStore.edit {
         it.remove(areaKey(appWidgetId))
         it.remove(zoneKey(appWidgetId))
-        it.remove(titleKey(appWidgetId))
         it.remove(themeKey(appWidgetId))
         it.remove(alertsKey(appWidgetId))
         it.remove(updatedKey(appWidgetId))

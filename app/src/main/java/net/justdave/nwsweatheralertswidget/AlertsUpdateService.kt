@@ -95,28 +95,10 @@ class AlertsUpdateService : Service() {
             val appWidgetIds = appWidgetManager.getAppWidgetIds(componentName)
 
             if (appWidgetIds.isNotEmpty()) {
-                // Since all widgets shared the same settings in 1.x, we only need to determine the title once.
-                val allAreas = nwsapi.getAreas()
-                val matchedArea = allAreas.firstOrNull { it.id.equals(areaId, ignoreCase = true) }
-                var finalAreaId = areaId
-                var finalZoneId = zoneId
-                val title = if (matchedArea != null) {
-                    finalAreaId = matchedArea.id // Use the correctly-cased ID
-                    val allZones = nwsapi.getZones(matchedArea)
-                    val matchedZone = allZones.firstOrNull { it.id.equals(zoneId, ignoreCase = true) }
-                    if (matchedZone != null) {
-                        finalZoneId = matchedZone.id // Use the correctly-cased ID
-                        if (matchedZone.id != "all") matchedZone.toString() else matchedArea.toString()
-                    } else {
-                        matchedArea.toString()
-                    }
-                } else {
-                    "NWS Alerts"
-                }
                 for (appWidgetId in appWidgetIds) {
-                    Log.i(TAG, "Migrating widget $appWidgetId with title \"$title\"")
+                    Log.i(TAG, "Migrating widget $appWidgetId")
                     // Save the legacy settings to the new DataStore format for each widget
-                    saveWidgetPrefs(this, appWidgetId, finalAreaId, finalZoneId, title, "semitransparent")
+                    saveWidgetPrefs(this, appWidgetId, areaId, zoneId, "semitransparent")
                 }
             }
 

@@ -43,12 +43,7 @@ class NWSWidgetConfigureActivity : AppCompatActivity() {
             val area = appWidgetArea.selectedItem as NWSArea
             val zone = appWidgetZone.selectedItem as NWSZone
             val theme = appWidgetTheme.selectedItem as String
-            val title = if (zone.id != "all" && zone.toString() != getString(R.string.loading)) {
-                zone.toString()
-            } else {
-                area.toString()
-            }
-            saveWidgetPrefs(context, appWidgetId, area.id, zone.id, title, theme.lowercase())
+            saveWidgetPrefs(context, appWidgetId, area.id, zone.id, theme.lowercase())
 
             // Force the service to restart to pick up configuration changes immediately.
             val serviceIntent = Intent(context, AlertsUpdateService::class.java).apply {
@@ -130,9 +125,6 @@ class NWSWidgetConfigureActivity : AppCompatActivity() {
             val areaId = prefs["area"]
             val zoneId = prefs["zone"]
             val theme = prefs["theme"]
-            if (prefs["title"] != getString(R.string.appwidget_text)) {
-                addButton.setText(R.string.save)
-            }
 
             // Set up the area spinner
             val areas = nwsapi.getAreas()

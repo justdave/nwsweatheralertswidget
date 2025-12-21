@@ -15,6 +15,8 @@ import android.widget.RemoteViews
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import net.justdave.nwsweatheralertswidget.objects.NWSArea
+import net.justdave.nwsweatheralertswidget.objects.NWSZone
 import net.justdave.nwsweatheralertswidget.widget.NWSWidgetConfigureActivity
 import net.justdave.nwsweatheralertswidget.widget.NWSWidgetService
 import net.justdave.nwsweatheralertswidget.widget.deleteWidgetPrefs
@@ -125,10 +127,25 @@ internal suspend fun updateAppWidget(
     appWidgetId: Int
 ) {
     val prefs = loadWidgetPrefs(context, appWidgetId)
-    val widgetText = prefs["title"] ?: context.getString(R.string.appwidget_text)
+    val areaId = prefs["area"]
+    val zoneId = prefs["zone"]
     val updatedText = prefs["updated"]
     val alertCount = prefs["alert_count"]?.toInt() ?: 0
     val theme = prefs["theme"] ?: "semitransparent"
+
+    // Dynamically generate the widget title
+    val nwsapi = NWSAPI.getInstance(context)
+    val areas = nwsapi.getAreas()
+    val area = areas.firstOrNull { it.id == areaId } ?: NWSArea("", "")
+    val zones = nwsapi.getZones(area)
+    val zone = zones.firstOrNull { it.id == zoneId } ?: NWSZone("", "")
+    val locationName = if (zone.id != "all" && zone.toString().isNotEmpty()) {
+        zone.toString()
+    } else {
+        area.toString()
+    }
+    // "Current NWS Weather Alerts for $locationName" but potentially localized.
+    val widgetText = context.getString(R.string.widget_title_format, context.getString(R.string.widget_title), locationName)
 
     // Construct the RemoteViews object
     val views = RemoteViews(context.packageName, R.layout.alerts_widget)
