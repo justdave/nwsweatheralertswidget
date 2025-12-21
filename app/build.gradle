@@ -14,8 +14,8 @@ android {
         applicationId = "net.justdave.nwsweatheralertswidget"
         minSdkVersion 24
         targetSdkVersion 36
-        versionCode = 24
-        versionName = '2.2.2'
+        versionCode = 25
+        versionName = '2.2.2+'
         multiDexEnabled = true
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

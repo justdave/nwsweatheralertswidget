@@ -1,5 +1,10 @@
 # NWS Weather Alerts Widget Change History
 
+## Unreleased Changes
+
+* 
+
+
 ## Version 2.2.2 (Dec 21, 2025)
 
 * Use a bold-face font for alert titles on the widget to make them easier to read.
