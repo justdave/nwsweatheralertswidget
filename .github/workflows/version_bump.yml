@@ -24,8 +24,7 @@ jobs:
           \
           ## Unreleased Changes\
           \
-          * \
-          ' CHANGES.md
+          * ' CHANGES.md
 
       - name: Update versionName in build.gradle
         # This script appends a '+' to the end of the versionName string
