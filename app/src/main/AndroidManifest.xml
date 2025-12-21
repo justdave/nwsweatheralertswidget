@@ -24,7 +24,7 @@
         tools:targetApi="33">
 
         <receiver android:name=".NWSWidgetProvider"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="net.justdave.nwsweatheralertswidget.ACTION_SHOW_DETAILS" />

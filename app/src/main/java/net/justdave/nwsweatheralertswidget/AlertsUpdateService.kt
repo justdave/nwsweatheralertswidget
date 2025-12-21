@@ -40,6 +40,13 @@ class AlertsUpdateService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.i(TAG, "Service starting")
+        // Check if an update is already in progress
+        if (isUpdateInProgress) {
+            Log.i(TAG, "Update already in progress, stopping duplicate service call.")
+            stopSelf(startId)
+            return START_NOT_STICKY
+        }
+        isUpdateInProgress = true
         isRunning = true
 
         // Start the service in the foreground immediately.
@@ -54,6 +61,7 @@ class AlertsUpdateService : Service() {
 
             // Schedule the next alarm and then stop the service
             scheduleNextUpdate()
+            isUpdateInProgress = false
             stopSelf(startId)
         }
         return START_STICKY
@@ -117,7 +125,6 @@ class AlertsUpdateService : Service() {
 
         if (appWidgetIds.isEmpty()) {
             Log.i(TAG, "No widgets to update, stopping self.")
-            stopSelf()
             return
         }
 
@@ -197,5 +204,6 @@ class AlertsUpdateService : Service() {
         private const val NOTIFICATION_ID = 1
         var isRunning = false
             private set
+        var isUpdateInProgress = false
     }
 }
