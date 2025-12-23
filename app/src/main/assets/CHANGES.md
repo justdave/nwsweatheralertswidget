@@ -1,6 +1,6 @@
 # NWS Weather Alerts Widget Change History
 
-## Version 2.2.3 (Dev 22, 2025)
+## Version 2.2.3 (Dec 22, 2025)
 
 * Fixes a crash at boot on Android 14+
 
