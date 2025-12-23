@@ -2,8 +2,7 @@
 
 ## Unreleased Changes
 
-* 
-
+* Fixes a crash at boot on Android 14+
 
 ## Version 2.2.2 (Dec 21, 2025)
 

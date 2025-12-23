@@ -51,7 +51,12 @@ class AlertsUpdateService : Service() {
 
         // Start the service in the foreground immediately.
         val notification = createNotification()
-        startForeground(NOTIFICATION_ID, notification)
+        try {
+            startForeground(NOTIFICATION_ID, notification)
+            Log.i(TAG, "Started foreground service")
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to start foreground service, continuing in background: ${e.message}")
+        }
 
         // Launch a background coroutine to handle initialization and the main work.
         CoroutineScope(Dispatchers.IO).launch {
