@@ -173,7 +173,7 @@ class NWSAPI constructor(context: Context) {
             listener.onResponse(countyList)
         } else {
             val req = makeRequest("$apiurl/zones/county?area=${area.id}", { response ->
-                Log.i("NWSAPI", "Response: $response")
+                // Log.i("NWSAPI", "Response: $response")
                 // TODO: check response for error codes
                 val features = response.optJSONArray("features")
                 if (features != null) {
@@ -187,7 +187,7 @@ class NWSAPI constructor(context: Context) {
                         )
                     }
                 }
-                Log.i("NWSAPI", "Returning: $countyList")
+                // Log.i("NWSAPI", "Returning: $countyList")
                 zoneCache[area.id] = CachedZones(System.currentTimeMillis(), countyList)
                 listener.onResponse(countyList)
             }, { error ->

@@ -32,7 +32,7 @@ class BroadcastReceiver : BroadcastReceiver() {
             Log.i("BroadcastReceiver","Exactly scheduling initial update task in 0 seconds.")
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerTime, pendingIntent)
         } else {
-            Log.i("BroadcastReceiver","Inexactly setting initial update tast in 0 seconds.")
+            Log.i("BroadcastReceiver","Inexactly setting initial update task in 0 seconds.")
             alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerTime, pendingIntent)
         }
     }
