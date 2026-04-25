@@ -168,7 +168,7 @@ class AlertsUpdateService : Service() {
             PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         }
 
-        val triggerAtMillis = SystemClock.elapsedRealtime() + (5 * 60 * 1000)
+        val triggerAtMillis = SystemClock.elapsedRealtime() + (1 * 60 * 1000)
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()) {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtMillis, pendingIntent)
