@@ -1,8 +1,9 @@
 # NWS Weather Alerts Widget Change History
 
-## Unreleased Changes
+## Version 2.2.4 (Apr 25, 2026)
 
-* 
+* Target SDK 37 / Android 17
+* Change polling interval from 5 minutes to 1 minute. Online discussions seem to indicate that still won't exceed the API limits, and it provides faster updates for fast-changing weather info.
 
 ## Version 2.2.3 (Dec 22, 2025)
 
