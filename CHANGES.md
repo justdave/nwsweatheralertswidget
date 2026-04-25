@@ -1,5 +1,9 @@
 # NWS Weather Alerts Widget Change History
 
+## Unreleased Changes
+
+* 
+
 ## Version 2.2.4 (Apr 25, 2026)
 
 * Target SDK 37 / Android 17
