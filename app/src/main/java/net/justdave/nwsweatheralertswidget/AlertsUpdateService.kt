@@ -181,7 +181,7 @@ class AlertsUpdateService : Service() {
 
     private fun createNotification(): Notification {
         val channelId = "NWSWeatherAlertsWidget"
-        val title = "NWS Weather Alerts Widget"
+        val title = getString(R.string.notification_title)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId, title, NotificationManager.IMPORTANCE_LOW

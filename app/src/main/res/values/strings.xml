@@ -57,6 +57,7 @@
         <item quantity="one">There is currently 1 active alert</item>
         <item quantity="other">There are currently %d active alerts</item>
     </plurals>
+    <string name="notification_title">Polling NWS for weather alerts</string>
     <string name="notification_text">Monitoring for weather alerts…</string>
     <string name="changelog_error">Error loading changelog.</string>
     <string name="widget_title_format">%1$s for %2$s</string>
