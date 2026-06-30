@@ -1,5 +1,9 @@
 # NWS Weather Alerts Widget Change History
 
+## Unreleased Changes
+
+* 
+
 ## Version 2.3 (Jun 30, 2026)
 
 * Changed the title of the persistent notification during updates to say what we're actually doing instead of just having the name of the app.
