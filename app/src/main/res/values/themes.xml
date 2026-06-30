@@ -1,3 +1,9 @@
 <resources>
-
+    <!-- Base application theme. -->
+    <style name="Theme.NWSWeatherAlertsWidget" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <item name="colorPrimary">#2196F3</item>
+        <item name="colorSecondary">#03DAC6</item>
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
+    </style>
 </resources>

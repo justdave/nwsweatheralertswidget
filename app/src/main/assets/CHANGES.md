@@ -3,6 +3,10 @@
 ## Unreleased Changes
 
 * Changed the title of the persistent notification during updates to say what we're actually doing instead of just having the name of the app.
+* Major overhaul of the Alert Detail screen, it now pulls some key information out of the alert and puts it in cards at the top for easy access.
+* Material 3 design for the main app screens.
+* Lots of new icons for more event types (fewer generic NWS logos!)
+* "Advisory" events are now orange, to indicate they're more important than a Watch (yellow) but less important than a Warning (red).
 
 ## Version 2.2.4 (Apr 25, 2026)
 

@@ -11,7 +11,11 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.Spinner
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -87,6 +91,7 @@ class NWSWidgetConfigureActivity : AppCompatActivity() {
 
 
     public override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         // Set the result to CANCELED.  This will cause the widget host to cancel
@@ -96,6 +101,16 @@ class NWSWidgetConfigureActivity : AppCompatActivity() {
         nwsapi = NWSAPI.getInstance(this@NWSWidgetConfigureActivity)
 
         setContentView(R.layout.alerts_widget_configure)
+
+        val toolbar = findViewById<Toolbar>(R.id.configure_toolbar)
+        setSupportActionBar(toolbar)
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+
         appWidgetArea = findViewById(R.id.appwidget_area)
         appWidgetZone = findViewById(R.id.appwidget_zone)
         appWidgetTheme = findViewById(R.id.appwidget_theme)

@@ -29,7 +29,13 @@ data class NWSAlert(
     val urgency: String = "",
     val severity: String = "",
     val certainty: String = "",
-    val areaDesc: String = ""
+    val areaDesc: String = "",
+    val maxWindGust: String = "",
+    val maxHailSize: String = "",
+    val thunderstormDamageThreat: String = "",
+    val tornadoDetection: String = "",
+    val hailThreat: String = "",
+    val windThreat: String = ""
 ) : Parcelable {
 
     constructor(data: JSONObject? = null) : this(
@@ -53,56 +59,79 @@ data class NWSAlert(
         urgency = data?.optJSONObject("properties")?.optString("urgency", "") ?: "",
         severity = data?.optJSONObject("properties")?.optString("severity", "") ?: "",
         certainty = data?.optJSONObject("properties")?.optString("certainty", "") ?: "",
-        areaDesc = data?.optJSONObject("properties")?.optString("areaDesc", "") ?: ""
+        areaDesc = data?.optJSONObject("properties")?.optString("areaDesc", "") ?: "",
+        maxWindGust = data?.optJSONObject("properties")?.optJSONObject("parameters")?.optJSONArray("maxWindGust")?.optString(0, "") ?: "",
+        maxHailSize = data?.optJSONObject("properties")?.optJSONObject("parameters")?.optJSONArray("maxHailSize")?.optString(0, "") ?: "",
+        thunderstormDamageThreat = data?.optJSONObject("properties")?.optJSONObject("parameters")?.optJSONArray("thunderstormDamageThreat")?.optString(0, "") ?: "",
+        tornadoDetection = data?.optJSONObject("properties")?.optJSONObject("parameters")?.optJSONArray("tornadoDetection")?.optString(0, "") ?: "",
+        hailThreat = data?.optJSONObject("properties")?.optJSONObject("parameters")?.optJSONArray("hailThreat")?.optString(0, "") ?: "",
+        windThreat = data?.optJSONObject("properties")?.optJSONObject("parameters")?.optJSONArray("windThreat")?.optString(0, "") ?: ""
     )
 
     fun getIcon(): Int {
         var icon = R.drawable.nws_logo
-        if (event.contains("Fire") || event.contains("Red Flag")) {
+        val eventLower = event.lowercase()
+        if (eventLower.contains("fire") || eventLower.contains("red flag")) {
             icon = R.drawable.fire
         }
-        if (event.contains("Surf") || event.contains("Tsunami")) {
+        if (eventLower.contains("surf") || eventLower.contains("tsunami") || eventLower.contains("hazardous seas")) {
             icon = R.drawable.wave
         }
-        if (event.contains("Winter") || event.contains("Snow")) {
+        if (eventLower.contains("winter") || eventLower.contains("snow")) {
             icon = R.drawable.winter
         }
-        if (event.contains("Blizzard")) {
+        if (eventLower.contains("blizzard")) {
             icon = R.drawable.blizzard
         }
-        if (event.contains("Wind")) {
+        if (eventLower.contains("wind") || eventLower.contains("gale")) {
             icon = R.drawable.windy
         }
-        if (event.contains("Flood")) {
+        if ((eventLower.contains("hurricane") || eventLower.contains("tropical") || eventLower.contains("typhoon")) && !eventLower.contains("wind")) {
+            icon = R.drawable.hurricane
+        }
+        if (eventLower.contains("flood")) {
             icon = R.drawable.flood
         }
-        if (event.contains("Ice") || event.contains("Freezing") || event.contains("Freeze") || event.contains("Frost")
-            || event.contains("Sleet")) {
+        if (eventLower.contains("water") || eventLower.contains("hydrologic")) {
+            icon = R.drawable.water
+        }
+        if (eventLower.contains("ice") || eventLower.contains("freezing") || eventLower.contains("freeze") || eventLower.contains("frost")
+            || eventLower.contains("sleet") || eventLower.contains("cold")) {
             icon = R.drawable.ice
         }
-        if (event.contains("Thunderstorm")) {
+        if (eventLower.contains("thunderstorm")) {
             icon = R.drawable.thunderstorm
         }
-        if (event.contains("Tornado")) {
+        if (eventLower.contains("tornado")) {
             icon = R.drawable.tornado
+        }
+        if (eventLower.contains("volcano") || eventLower.contains("ashfall")) {
+            icon = R.drawable.volcano
+        }
+        if (eventLower.contains("heat") || eventLower.contains("temperature")) {
+            icon = R.drawable.heat
         }
         return icon
     }
 
     fun getBackground(): Int {
         var background = R.drawable.grey_button
-        if (event.contains("Fire") || event.contains("Dust")) {
+        val eventLower = event.lowercase()
+        if (eventLower.contains("fire") || eventLower.contains("dust") || eventLower.contains("heat")) {
             background = R.drawable.orange_button
         }
-        if (event.contains("Winter") || event.contains("Wind") || event.contains("Blizzard") || event.contains("Flood")
-            || event.contains("Hydro") || event.contains("Snow") || event.contains("Rain") || event.contains("Marine")
-            || event.contains("Surf")) {
+        if (eventLower.contains("winter") || eventLower.contains("wind") || eventLower.contains("blizzard") || eventLower.contains("flood")
+            || eventLower.contains("hydro") || eventLower.contains("snow") || eventLower.contains("rain") || eventLower.contains("marine")
+            || eventLower.contains("surf")) {
             background = R.drawable.blue_button
         }
-        if (event.contains("Watch")) {
+        if (eventLower.contains("watch")) {
             background = R.drawable.yellow_button
         }
-        if (event.contains("Warning")) {
+        if (eventLower.contains("advisory")) {
+            background = R.drawable.orange_button
+        }
+        if (eventLower.contains("warning")) {
             background = R.drawable.red_button
         }
         return background
@@ -111,6 +140,20 @@ data class NWSAlert(
     fun getRawDataForDisplay(): String {
         // Format the raw JSON for display
         return JSONObject(rawData).toString(2)
+    }
+
+    fun getSmartDescription(): String = smartUnwrap(description)
+    fun getSmartInstruction(): String = smartUnwrap(instruction)
+
+    private fun smartUnwrap(text: String): String {
+        if (text.isEmpty()) return ""
+        // Replace single newlines with spaces, but keep double newlines (paragraphs)
+        // and keep newlines that are followed by a bullet point (* or -).
+        // and keep newlines that are preceded by an ellipsis (...).
+        // Also normalize line endings to \n
+        return text.replace("\r\n", "\n")
+            .replace(Regex("(?<!\\n|\\.{3})\\n(?!\\n|\\s*[*•\\-])"), " ")
+            .trim()
     }
 
     override fun toString(): String {

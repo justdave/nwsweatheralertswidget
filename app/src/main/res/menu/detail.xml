@@ -2,15 +2,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/detail_action_showxml"
+        android:id="@+id/detail_action_showjson"
         android:orderInCategory="100"
-        android:title="@string/detail_action_showxml"
+        android:title="@string/detail_action_showjson"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/detail_action_hidexml"
+        android:id="@+id/detail_action_hidejson"
         android:orderInCategory="100"
         android:visibility="gone"
-        android:title="@string/detail_action_hidexml"
+        android:title="@string/detail_action_hidejson"
         app:showAsAction="never" />
 </menu>
