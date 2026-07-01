@@ -40,32 +40,32 @@ data class NWSAlert(
 
     constructor(data: JSONObject? = null) : this(
         rawData = data?.toString() ?: "",
-        headline = data?.optJSONObject("properties")?.optString("headline", "Unknown Alert") ?: "Unknown Alert",
-        description = data?.optJSONObject("properties")?.optString("description", "No description provided") ?: "No description provided",
-        instruction = data?.optJSONObject("properties")?.optString("instruction", "No instructions provided") ?: "No instructions provided",
-        id = data?.optJSONObject("properties")?.optString("id", "") ?: "",
-        sent = data?.optJSONObject("properties")?.optString("sent", "") ?: "",
-        effective = data?.optJSONObject("properties")?.optString("effective", "") ?: "",
-        onset = data?.optJSONObject("properties")?.optString("onset", "") ?: "",
-        expires = data?.optJSONObject("properties")?.optString("expires", "") ?: "",
-        ends = data?.optJSONObject("properties")?.optString("ends", "") ?: "",
-        title = data?.optJSONObject("properties")?.optString("event", "") ?: "",
-        link = data?.optString("id", "") ?: "",
-        summary = data?.optJSONObject("properties")?.optString("description", "") ?: "",
-        event = data?.optJSONObject("properties")?.optString("event", "") ?: "",
-        status = data?.optJSONObject("properties")?.optString("status", "") ?: "",
-        msgType = data?.optJSONObject("properties")?.optString("messageType", "") ?: "",
-        category = data?.optJSONObject("properties")?.optString("category", "") ?: "",
-        urgency = data?.optJSONObject("properties")?.optString("urgency", "") ?: "",
-        severity = data?.optJSONObject("properties")?.optString("severity", "") ?: "",
-        certainty = data?.optJSONObject("properties")?.optString("certainty", "") ?: "",
-        areaDesc = data?.optJSONObject("properties")?.optString("areaDesc", "") ?: "",
-        maxWindGust = data?.optJSONObject("properties")?.optJSONObject("parameters")?.optJSONArray("maxWindGust")?.optString(0, "") ?: "",
-        maxHailSize = data?.optJSONObject("properties")?.optJSONObject("parameters")?.optJSONArray("maxHailSize")?.optString(0, "") ?: "",
-        thunderstormDamageThreat = data?.optJSONObject("properties")?.optJSONObject("parameters")?.optJSONArray("thunderstormDamageThreat")?.optString(0, "") ?: "",
-        tornadoDetection = data?.optJSONObject("properties")?.optJSONObject("parameters")?.optJSONArray("tornadoDetection")?.optString(0, "") ?: "",
-        hailThreat = data?.optJSONObject("properties")?.optJSONObject("parameters")?.optJSONArray("hailThreat")?.optString(0, "") ?: "",
-        windThreat = data?.optJSONObject("properties")?.optJSONObject("parameters")?.optJSONArray("windThreat")?.optString(0, "") ?: ""
+        headline = data?.optJSONObject("properties")?.optString("headline", "").sanitizeNull() ?: "",
+        description = data?.optJSONObject("properties")?.optString("description", "").sanitizeNull() ?: "",
+        instruction = data?.optJSONObject("properties")?.optString("instruction", "").sanitizeNull() ?: "",
+        id = data?.optJSONObject("properties")?.optString("id", "").sanitizeNull() ?: "",
+        sent = data?.optJSONObject("properties")?.optString("sent", "").sanitizeNull() ?: "",
+        effective = data?.optJSONObject("properties")?.optString("effective", "").sanitizeNull() ?: "",
+        onset = data?.optJSONObject("properties")?.optString("onset", "").sanitizeNull() ?: "",
+        expires = data?.optJSONObject("properties")?.optString("expires", "").sanitizeNull() ?: "",
+        ends = data?.optJSONObject("properties")?.optString("ends", "").sanitizeNull() ?: "",
+        title = data?.optJSONObject("properties")?.optString("event", "").sanitizeNull() ?: "",
+        link = data?.optString("id", "").sanitizeNull() ?: "",
+        summary = data?.optJSONObject("properties")?.optString("description", "").sanitizeNull() ?: "",
+        event = data?.optJSONObject("properties")?.optString("event", "").sanitizeNull() ?: "",
+        status = data?.optJSONObject("properties")?.optString("status", "").sanitizeNull() ?: "",
+        msgType = data?.optJSONObject("properties")?.optString("messageType", "").sanitizeNull() ?: "",
+        category = data?.optJSONObject("properties")?.optString("category", "").sanitizeNull() ?: "",
+        urgency = data?.optJSONObject("properties")?.optString("urgency", "").sanitizeNull() ?: "",
+        severity = data?.optJSONObject("properties")?.optString("severity", "").sanitizeNull() ?: "",
+        certainty = data?.optJSONObject("properties")?.optString("certainty", "").sanitizeNull() ?: "",
+        areaDesc = data?.optJSONObject("properties")?.optString("areaDesc", "").sanitizeNull() ?: "",
+        maxWindGust = data?.optJSONObject("properties")?.optJSONObject("parameters")?.optJSONArray("maxWindGust")?.optString(0, "").sanitizeNull() ?: "",
+        maxHailSize = data?.optJSONObject("properties")?.optJSONObject("parameters")?.optJSONArray("maxHailSize")?.optString(0, "").sanitizeNull() ?: "",
+        thunderstormDamageThreat = data?.optJSONObject("properties")?.optJSONObject("parameters")?.optJSONArray("thunderstormDamageThreat")?.optString(0, "").sanitizeNull() ?: "",
+        tornadoDetection = data?.optJSONObject("properties")?.optJSONObject("parameters")?.optJSONArray("tornadoDetection")?.optString(0, "").sanitizeNull() ?: "",
+        hailThreat = data?.optJSONObject("properties")?.optJSONObject("parameters")?.optJSONArray("hailThreat")?.optString(0, "").sanitizeNull() ?: "",
+        windThreat = data?.optJSONObject("properties")?.optJSONObject("parameters")?.optJSONArray("windThreat")?.optString(0, "").sanitizeNull() ?: ""
     )
 
     fun getIcon(): Int {
@@ -162,7 +162,7 @@ data class NWSAlert(
     fun getSmartInstruction(): String = smartUnwrap(instruction)
 
     private fun smartUnwrap(text: String): String {
-        if (text.isEmpty()) return ""
+        if (text.isEmpty() || text == "null" || text == "No instructions provided" || text == "No description provided") return ""
         // Replace single newlines with spaces, but keep double newlines (paragraphs)
         // and keep newlines that are followed by a bullet point (* or -).
         // and keep newlines that are preceded by an ellipsis (...).
@@ -175,4 +175,8 @@ data class NWSAlert(
     override fun toString(): String {
         return headline
     }
+}
+
+private fun String?.sanitizeNull(): String? {
+    return if (this == "null") "" else this
 }
