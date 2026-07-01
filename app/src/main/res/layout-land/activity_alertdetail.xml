@@ -55,7 +55,9 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/params_guideline"

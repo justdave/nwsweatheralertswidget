@@ -5,6 +5,7 @@
 * Fixed an issue with the Alert Detail screen failing to load content from the new alert if you looked at two different alerts back to back
 * Cleaned up the header on the Alert Details screen to waste less space.
 * Reconfiguring a widget now correctly shows the previous configuration and the button says "Save" instead of "Add"
+* Fixed an issue on older devices where the Alert Detail would open scrolled partway down preventing you from seeing the info at the top.
 
 ## Version 2.3 (Jun 30, 2026)
 
