@@ -29,7 +29,9 @@ import java.util.Locale
 
 class AlertDetailActivity : AppCompatActivity() {
 
-    private lateinit var event: TextView
+    private lateinit var toolbar: Toolbar
+    private lateinit var toolbarTitle: TextView
+    private lateinit var toolbarIcon: ImageView
     private lateinit var expires: TextView
     private lateinit var description: TextView
     private lateinit var instructions: TextView
@@ -40,7 +42,6 @@ class AlertDetailActivity : AppCompatActivity() {
     private lateinit var rawScroller: ScrollView
     private lateinit var rawDivider: android.view.View
 
-    private lateinit var headerLayout: android.view.View
     private lateinit var paramsCard: android.view.View
     private lateinit var windGust: TextView
     private lateinit var hailSize: TextView
@@ -63,9 +64,12 @@ class AlertDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alertdetail)
 
-        val toolbar = findViewById<Toolbar>(R.id.detail_toolbar)
+        toolbar = findViewById(R.id.detail_toolbar)
+        toolbarTitle = findViewById(R.id.toolbar_title)
+        toolbarIcon = findViewById(R.id.toolbar_icon)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(false) // Using our custom TextView
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -73,7 +77,6 @@ class AlertDetailActivity : AppCompatActivity() {
             insets
         }
 
-        event = findViewById(R.id.detail_event)
         expires = findViewById(R.id.detail_expires)
         description = findViewById(R.id.detail_description)
         instructions = findViewById(R.id.detail_instructions)
@@ -84,7 +87,6 @@ class AlertDetailActivity : AppCompatActivity() {
         rawScroller = findViewById(R.id.event_raw_scroller)
         rawDivider = findViewById(R.id.detail_raw_divider)
 
-        headerLayout = findViewById(R.id.detail_header_layout)
         paramsCard = findViewById(R.id.detail_params_card)
         windGust = findViewById(R.id.detail_wind_gust)
         hailSize = findViewById(R.id.detail_hail_size)
@@ -151,7 +153,23 @@ class AlertDetailActivity : AppCompatActivity() {
     }
 
     private fun updateUi(data: NWSAlert) {
-        event.text = data.event
+        toolbarTitle.text = data.event
+        toolbarIcon.setImageResource(data.getIcon())
+
+        val backgroundColorRes = data.getBackgroundColor()
+        toolbar.setBackgroundResource(backgroundColorRes)
+
+        // Adjust text color based on background
+        // Red and Blue get white text, others (Yellow, Orange, Grey) get black text
+        if (backgroundColorRes == R.color.nws_red || backgroundColorRes == R.color.nws_blue) {
+            toolbarTitle.setTextColor(android.graphics.Color.WHITE)
+            toolbar.navigationIcon?.setTint(android.graphics.Color.WHITE)
+            toolbar.overflowIcon?.setTint(android.graphics.Color.WHITE)
+        } else {
+            toolbarTitle.setTextColor(android.graphics.Color.BLACK)
+            toolbar.navigationIcon?.setTint(android.graphics.Color.BLACK)
+            toolbar.overflowIcon?.setTint(android.graphics.Color.BLACK)
+        }
 
         val smartDesc = data.getSmartDescription()
         description.text = smartDesc
@@ -164,7 +182,6 @@ class AlertDetailActivity : AppCompatActivity() {
         instructionsHeader.isVisible = smartInstr.isNotEmpty()
 
         target.text = getString(R.string.detail_target, data.areaDesc)
-        headerLayout.setBackgroundResource(data.getBackground())
 
         val expiresString = data.expires
         if (expiresString.isNotEmpty()) {
@@ -243,8 +260,6 @@ class AlertDetailActivity : AppCompatActivity() {
         paramsCard.isVisible = hasParams
 
         rawData.text = data.getRawDataForDisplay()
-        val image = findViewById<ImageView>(R.id.detail_icon)
-        image.setImageResource(data.getIcon())
         Log.i(TAG, "Activity Updated.")
     }
 

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/detail_toolbar"
@@ -12,394 +11,423 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        app:contentInsetStartWithNavigation="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-    <LinearLayout
-        android:id="@+id/detail_header_layout"
-        android:layout_width="match_parent"
-        android:layout_height="?android:attr/listPreferredItemHeight"
-        android:orientation="horizontal"
-        android:padding="8dp"
-        tools:ignore="UseCompoundDrawables">
-
-        <ImageView
-            android:id="@+id/detail_icon"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginEnd="12dp"
-            android:layout_marginStart="0dp"
-            android:contentDescription="@string/icon"
-            android:src="@drawable/nws_logo" />
-
-        <TextView
-            android:id="@+id/detail_event"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:shadowColor="@color/alert_detail_title_shadow"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="5"
-            android:text="@string/detail_retrieval"
-            android:textColor="@color/alert_detail_title_text"
-            android:textSize="22sp"
-            android:fontFamily="sans-serif-black"
-            android:textStyle="bold" />
-    </LinearLayout>
+            android:orientation="horizontal">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="horizontal"
-        android:baselineAligned="false">
+            <ImageView
+                android:id="@+id/toolbar_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="@null"
+                android:scaleType="centerInside" />
 
-        <ScrollView
-            android:id="@+id/detail_main_scroller"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:fillViewport="true">
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/toolbar_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <ScrollView
+        android:id="@+id/detail_main_scroller"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/detail_raw_divider"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/detail_toolbar">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/params_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                app:layout_constraintGuide_percent="0.5" />
+
+            <!-- Left Column: Where and Description -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/where_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:layout_constraintEnd_toStartOf="@+id/params_guideline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:strokeColor="?attr/colorOutline"
+                app:strokeWidth="1dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <ImageView
+                        android:id="@+id/where_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_location_pin"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="?attr/colorPrimary" />
+
+                    <TextView
+                        android:id="@+id/detail_target"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/where_icon"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Where: Dane, WI" />
+
+                    <TextView
+                        android:id="@+id/detail_expires"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:textSize="13sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@id/detail_target"
+                        app:layout_constraintTop_toBottomOf="@id/detail_target"
+                        tools:text="Expires: Saturday, April 25, 2026 3:30 PM" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/detail_description_header"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:paddingBottom="8dp"
+                android:text="@string/detail_description"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/params_guideline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/where_card" />
+
+            <TextView
+                android:id="@+id/detail_description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:lineSpacingExtra="2dp"
+                android:paddingBottom="16dp"
+                android:textIsSelectable="true"
+                android:typeface="monospace"
+                app:layout_constraintEnd_toStartOf="@+id/params_guideline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/detail_description_header" />
+
+            <!-- Right Column: Params and Instructions -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/detail_params_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/params_guideline"
+                app:layout_constraintTop_toTopOf="parent"
+                app:strokeColor="?attr/colorOutline"
+                app:strokeWidth="1dp"
+                tools:visibility="visible">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:id="@+id/layout_tornado_detection"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:paddingEnd="16dp"
-                        android:paddingStart="0dp">
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingBottom="8dp"
+                        android:visibility="gone"
+                        tools:visibility="visible">
 
-                        <com.google.android.material.card.MaterialCardView
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:contentDescription="@null"
+                            android:paddingEnd="8dp"
+                            android:paddingStart="0dp"
+                            android:src="@drawable/tornado" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/detail_tornado_detection"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/detail_tornado_detection"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/group_wind"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="top"
+                        android:orientation="horizontal"
+                        android:paddingBottom="8dp"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:contentDescription="@null"
+                            android:paddingEnd="8dp"
+                            android:paddingStart="0dp"
+                            android:src="@drawable/windy" />
+
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="16dp"
-                            app:cardCornerRadius="12dp"
-                            app:cardElevation="2dp"
-                            app:strokeWidth="1dp"
-                            app:strokeColor="?attr/colorOutline">
+                            android:baselineAligned="false"
+                            android:orientation="vertical">
 
                             <LinearLayout
+                                android:id="@+id/layout_wind_gust"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:orientation="horizontal"
-                                android:gravity="center_vertical"
-                                android:padding="16dp">
+                                android:visibility="gone"
+                                tools:visibility="visible">
 
-                                <ImageView
-                                    android:layout_width="24dp"
-                                    android:layout_height="24dp"
-                                    android:layout_marginEnd="12dp"
-                                    android:src="@drawable/ic_location_pin"
-                                    app:tint="?attr/colorPrimary"
-                                    android:contentDescription="@null" />
-
-                                <LinearLayout
-                                    android:layout_width="match_parent"
+                                <TextView
+                                    android:layout_width="0dp"
                                     android:layout_height="wrap_content"
-                                    android:orientation="vertical">
+                                    android:layout_weight="1"
+                                    android:text="@string/detail_wind_gust"
+                                    android:textStyle="bold" />
 
-                                    <TextView
-                                        android:id="@+id/detail_target"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:textSize="15sp"
-                                        android:textStyle="bold"
-                                        android:paddingBottom="2dp"
-                                        tools:text="Where: Dane, WI" />
-
-                                    <TextView
-                                        android:id="@+id/detail_expires"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:textSize="13sp"
-                                        tools:text="Expires: Saturday, April 25, 2026 3:30 PM" />
-                                </LinearLayout>
+                                <TextView
+                                    android:id="@+id/detail_wind_gust"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textStyle="bold" />
                             </LinearLayout>
-                        </com.google.android.material.card.MaterialCardView>
 
-                        <TextView
-                            android:id="@+id/detail_description_header"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/detail_description"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            android:paddingBottom="8dp" />
+                            <LinearLayout
+                                android:id="@+id/layout_wind_threat"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:visibility="gone"
+                                tools:visibility="visible">
 
-                        <TextView
-                            android:id="@+id/detail_description"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textIsSelectable="true"
-                            android:typeface="monospace"
-                            android:paddingBottom="16dp"
-                            android:lineSpacingExtra="2dp" />
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="@string/detail_source"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/detail_wind_threat"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </LinearLayout>
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:id="@+id/group_hail"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:gravity="top"
+                        android:orientation="horizontal"
+                        android:paddingBottom="8dp"
+                        android:visibility="gone"
+                        tools:visibility="visible">
 
-                        <!-- Metadata parameters -->
-                        <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/detail_params_card"
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:contentDescription="@null"
+                            android:paddingEnd="8dp"
+                            android:paddingStart="0dp"
+                            android:src="@drawable/ice" />
+
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="16dp"
-                            app:cardCornerRadius="12dp"
-                            app:cardElevation="2dp"
-                            app:strokeWidth="1dp"
-                            app:strokeColor="?attr/colorOutline"
-                            android:visibility="gone"
-                            tools:visibility="visible">
+                            android:baselineAligned="false"
+                            android:orientation="vertical">
 
                             <LinearLayout
+                                android:id="@+id/layout_hail_size"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="vertical"
-                                android:padding="16dp">
+                                android:orientation="horizontal"
+                                android:visibility="gone"
+                                tools:visibility="visible">
 
-                                <LinearLayout
-                                    android:id="@+id/layout_tornado_detection"
-                                    android:layout_width="match_parent"
+                                <TextView
+                                    android:layout_width="0dp"
                                     android:layout_height="wrap_content"
-                                    android:orientation="horizontal"
-                                    android:gravity="center_vertical"
-                                    android:paddingBottom="8dp"
-                                    android:visibility="gone"
-                                    tools:visibility="visible">
-                                    <ImageView
-                                        android:layout_width="24dp"
-                                        android:layout_height="24dp"
-                                        android:src="@drawable/tornado"
-                                        android:paddingEnd="8dp"
-                                        android:paddingStart="0dp"
-                                        android:contentDescription="@null"/>
-                                    <TextView
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:text="@string/detail_tornado_detection"
-                                        android:textStyle="bold"/>
-                                    <TextView
-                                        android:id="@+id/detail_tornado_detection"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:textStyle="bold"/>
-                                </LinearLayout>
+                                    android:layout_weight="1"
+                                    android:text="@string/detail_hail_size"
+                                    android:textStyle="bold" />
 
-                                <LinearLayout
-                                    android:id="@+id/group_wind"
-                                    android:layout_width="match_parent"
+                                <TextView
+                                    android:id="@+id/detail_hail_size"
+                                    android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:orientation="horizontal"
-                                    android:gravity="top"
-                                    android:paddingBottom="8dp"
-                                    android:visibility="gone"
-                                    tools:visibility="visible">
-                                    <ImageView
-                                        android:layout_width="24dp"
-                                        android:layout_height="24dp"
-                                        android:src="@drawable/windy"
-                                        android:paddingEnd="8dp"
-                                        android:paddingStart="0dp"
-                                        android:contentDescription="@null"/>
-                                    <LinearLayout
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:orientation="vertical">
-                                        <LinearLayout
-                                            android:id="@+id/layout_wind_gust"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:orientation="horizontal"
-                                            android:visibility="gone"
-                                            tools:visibility="visible">
-                                            <TextView
-                                                android:layout_width="0dp"
-                                                android:layout_height="wrap_content"
-                                                android:layout_weight="1"
-                                                android:text="@string/detail_wind_gust"
-                                                android:textStyle="bold"/>
-                                            <TextView
-                                                android:id="@+id/detail_wind_gust"
-                                                android:layout_width="wrap_content"
-                                                android:layout_height="wrap_content"
-                                                android:textStyle="bold"/>
-                                        </LinearLayout>
-                                        <LinearLayout
-                                            android:id="@+id/layout_wind_threat"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:orientation="horizontal"
-                                            android:visibility="gone"
-                                            tools:visibility="visible">
-                                            <TextView
-                                                android:layout_width="0dp"
-                                                android:layout_height="wrap_content"
-                                                android:layout_weight="1"
-                                                android:text="@string/detail_source"
-                                                android:textStyle="bold"/>
-                                            <TextView
-                                                android:id="@+id/detail_wind_threat"
-                                                android:layout_width="wrap_content"
-                                                android:layout_height="wrap_content"
-                                                android:textStyle="bold"/>
-                                        </LinearLayout>
-                                    </LinearLayout>
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:id="@+id/group_hail"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="horizontal"
-                                    android:gravity="top"
-                                    android:paddingBottom="8dp"
-                                    android:visibility="gone"
-                                    tools:visibility="visible">
-                                    <ImageView
-                                        android:layout_width="24dp"
-                                        android:layout_height="24dp"
-                                        android:src="@drawable/ice"
-                                        android:paddingEnd="8dp"
-                                        android:paddingStart="0dp"
-                                        android:contentDescription="@null"/>
-                                    <LinearLayout
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:orientation="vertical">
-                                        <LinearLayout
-                                            android:id="@+id/layout_hail_size"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:orientation="horizontal"
-                                            android:visibility="gone"
-                                            tools:visibility="visible">
-                                            <TextView
-                                                android:layout_width="0dp"
-                                                android:layout_height="wrap_content"
-                                                android:layout_weight="1"
-                                                android:text="@string/detail_hail_size"
-                                                android:textStyle="bold"/>
-                                            <TextView
-                                                android:id="@+id/detail_hail_size"
-                                                android:layout_width="wrap_content"
-                                                android:layout_height="wrap_content"
-                                                android:textStyle="bold"/>
-                                        </LinearLayout>
-                                        <LinearLayout
-                                            android:id="@+id/layout_hail_threat"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:orientation="horizontal"
-                                            android:visibility="gone"
-                                            tools:visibility="visible">
-                                            <TextView
-                                                android:layout_width="0dp"
-                                                android:layout_height="wrap_content"
-                                                android:layout_weight="1"
-                                                android:text="@string/detail_source"
-                                                android:textStyle="bold"/>
-                                            <TextView
-                                                android:id="@+id/detail_hail_threat"
-                                                android:layout_width="wrap_content"
-                                                android:layout_height="wrap_content"
-                                                android:textStyle="bold"/>
-                                        </LinearLayout>
-                                    </LinearLayout>
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:id="@+id/layout_thunderstorm_damage"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="horizontal"
-                                    android:gravity="center_vertical"
-                                    android:visibility="gone"
-                                    tools:visibility="visible">
-                                    <ImageView
-                                        android:layout_width="24dp"
-                                        android:layout_height="24dp"
-                                        android:src="@drawable/thunderstorm"
-                                        android:paddingEnd="8dp"
-                                        android:paddingStart="0dp"
-                                        android:contentDescription="@null"/>
-                                    <TextView
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:text="@string/detail_thunderstorm_damage"
-                                        android:textStyle="bold"/>
-                                    <TextView
-                                        android:id="@+id/detail_thunderstorm_damage"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:textStyle="bold"/>
-                                </LinearLayout>
-
+                                    android:textStyle="bold" />
                             </LinearLayout>
-                        </com.google.android.material.card.MaterialCardView>
+
+                            <LinearLayout
+                                android:id="@+id/layout_hail_threat"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:visibility="gone"
+                                tools:visibility="visible">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="@string/detail_source"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/detail_hail_threat"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_thunderstorm_damage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:contentDescription="@null"
+                            android:paddingEnd="8dp"
+                            android:paddingStart="0dp"
+                            android:src="@drawable/thunderstorm" />
 
                         <TextView
-                            android:id="@+id/detail_instruction_header"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text="@string/detail_instructions"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            android:paddingBottom="8dp" />
+                            android:layout_weight="1"
+                            android:text="@string/detail_thunderstorm_damage"
+                            android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/detail_instructions"
-                            android:layout_width="match_parent"
+                            android:id="@+id/detail_thunderstorm_damage"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textIsSelectable="true"
-                            android:typeface="monospace"
-                            android:paddingBottom="16dp"
-                            android:lineSpacingExtra="2dp" />
+                            android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
-        </ScrollView>
-
-        <com.google.android.material.divider.MaterialDivider
-            android:id="@+id/detail_raw_divider"
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:visibility="gone" />
-
-        <ScrollView
-            android:id="@+id/event_raw_scroller"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:fillViewport="true"
-            android:padding="16dp"
-            android:scrollbars="vertical"
-            android:visibility="gone">
+            </com.google.android.material.card.MaterialCardView>
 
             <TextView
-                android:id="@+id/event_raw_json"
-                android:layout_width="match_parent"
+                android:id="@+id/detail_instruction_header"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:typeface="monospace" />
-        </ScrollView>
-    </LinearLayout>
+                android:paddingBottom="8dp"
+                android:text="@string/detail_instructions"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/params_guideline"
+                app:layout_constraintTop_toBottomOf="@id/detail_params_card" />
 
-</LinearLayout>
+            <TextView
+                android:id="@+id/detail_instructions"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:lineSpacingExtra="2dp"
+                android:paddingBottom="16dp"
+                android:textIsSelectable="true"
+                android:typeface="monospace"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/params_guideline"
+                app:layout_constraintTop_toBottomOf="@id/detail_instruction_header" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/detail_raw_divider"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/event_raw_scroller"
+        app:layout_constraintStart_toEndOf="@+id/detail_main_scroller"
+        app:layout_constraintTop_toBottomOf="@id/detail_toolbar" />
+
+    <ScrollView
+        android:id="@+id/event_raw_scroller"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:padding="16dp"
+        android:scrollbars="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@+id/detail_raw_divider"
+        app:layout_constraintTop_toBottomOf="@id/detail_toolbar">
+
+        <TextView
+            android:id="@+id/event_raw_json"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:typeface="monospace" />
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

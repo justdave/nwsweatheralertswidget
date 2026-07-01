@@ -86,13 +86,13 @@ data class NWSAlert(
         if (eventLower.contains("wind") || eventLower.contains("gale")) {
             icon = R.drawable.windy
         }
-        if (eventLower.contains("hurricane") && !eventLower.contains("wind")) {
+        if ((eventLower.contains("hurricane") || eventLower.contains("tropical") || eventLower.contains("typhoon")) && !eventLower.contains("wind")) {
             icon = R.drawable.hurricane
         }
         if (eventLower.contains("flood")) {
             icon = R.drawable.flood
         }
-        if (eventLower.contains("water")) {
+        if (eventLower.contains("water") || eventLower.contains("hydrologic")) {
             icon = R.drawable.water
         }
         if (eventLower.contains("ice") || eventLower.contains("freezing") || eventLower.contains("freeze") || eventLower.contains("frost")
@@ -105,6 +105,9 @@ data class NWSAlert(
         if (eventLower.contains("tornado")) {
             icon = R.drawable.tornado
         }
+        if (eventLower.contains("volcano") || eventLower.contains("ashfall")) {
+            icon = R.drawable.volcano
+        }
         if (eventLower.contains("heat") || eventLower.contains("temperature")) {
             icon = R.drawable.heat
         }
@@ -114,7 +117,13 @@ data class NWSAlert(
     fun getBackground(): Int {
         var background = R.drawable.grey_button
         val eventLower = event.lowercase()
-        if (eventLower.contains("fire") || eventLower.contains("dust") || eventLower.contains("heat")) {
+        if (eventLower.contains("warning")) {
+            return R.drawable.red_button
+        }
+        if (eventLower.contains("watch")) {
+            return R.drawable.yellow_button
+        }
+        if (eventLower.contains("fire") || eventLower.contains("dust") || eventLower.contains("heat") || eventLower.contains("advisory")) {
             background = R.drawable.orange_button
         }
         if (eventLower.contains("winter") || eventLower.contains("wind") || eventLower.contains("blizzard") || eventLower.contains("flood")
@@ -122,16 +131,26 @@ data class NWSAlert(
             || eventLower.contains("surf")) {
             background = R.drawable.blue_button
         }
-        if (eventLower.contains("watch")) {
-            background = R.drawable.yellow_button
-        }
-        if (eventLower.contains("advisory")) {
-            background = R.drawable.orange_button
-        }
-        if (eventLower.contains("warning")) {
-            background = R.drawable.red_button
-        }
         return background
+    }
+
+    fun getBackgroundColor(): Int {
+        val eventLower = event.lowercase()
+        if (eventLower.contains("warning")) {
+            return R.color.nws_red
+        }
+        if (eventLower.contains("watch")) {
+            return R.color.nws_yellow
+        }
+        if (eventLower.contains("fire") || eventLower.contains("dust") || eventLower.contains("heat") || eventLower.contains("advisory")) {
+            return R.color.nws_orange
+        }
+        if (eventLower.contains("winter") || eventLower.contains("wind") || eventLower.contains("blizzard") || eventLower.contains("flood")
+            || eventLower.contains("hydro") || eventLower.contains("snow") || eventLower.contains("rain") || eventLower.contains("marine")
+            || eventLower.contains("surf")) {
+            return R.color.nws_blue
+        }
+        return R.color.nws_grey
     }
 
     fun getRawDataForDisplay(): String {

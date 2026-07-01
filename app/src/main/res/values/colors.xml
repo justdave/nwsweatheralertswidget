@@ -15,4 +15,11 @@
     <color name="alert_detail_title_text">@color/black</color>
     <color name="alert_detail_title_shadow">@color/white</color>
 
+    <!-- NWS Colors for Toolbar -->
+    <color name="nws_red">#CC0000</color>
+    <color name="nws_yellow">#FFD700</color>
+    <color name="nws_orange">#FF8C00</color>
+    <color name="nws_blue">#0000FF</color>
+    <color name="nws_grey">#DDDDDD</color>
+
 </resources>
