@@ -86,13 +86,13 @@ data class NWSAlert(
         if (eventLower.contains("wind") || eventLower.contains("gale")) {
             icon = R.drawable.windy
         }
-        if ((eventLower.contains("hurricane") || eventLower.contains("tropical") || eventLower.contains("typhoon")) && !eventLower.contains("wind")) {
+        if (eventLower.contains("hurricane") && !eventLower.contains("wind")) {
             icon = R.drawable.hurricane
         }
         if (eventLower.contains("flood")) {
             icon = R.drawable.flood
         }
-        if (eventLower.contains("water") || eventLower.contains("hydrologic")) {
+        if (eventLower.contains("water")) {
             icon = R.drawable.water
         }
         if (eventLower.contains("ice") || eventLower.contains("freezing") || eventLower.contains("freeze") || eventLower.contains("frost")
@@ -104,9 +104,6 @@ data class NWSAlert(
         }
         if (eventLower.contains("tornado")) {
             icon = R.drawable.tornado
-        }
-        if (eventLower.contains("volcano") || eventLower.contains("ashfall")) {
-            icon = R.drawable.volcano
         }
         if (eventLower.contains("heat") || eventLower.contains("temperature")) {
             icon = R.drawable.heat

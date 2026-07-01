@@ -1,6 +1,7 @@
 package net.justdave.nwsweatheralertswidget
 
 import android.appwidget.AppWidgetManager
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -107,9 +108,19 @@ class AlertDetailActivity : AppCompatActivity() {
             rawDivider.isVisible = showRawJson
         }
 
+        loadDataFromIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        loadDataFromIntent(intent)
+    }
+
+    private fun loadDataFromIntent(intent: Intent) {
         val appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
         val alertId = intent.getStringExtra("alert_id")
-        val directAlert : NWSAlert? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        val directAlert: NWSAlert? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra("alert", NWSAlert::class.java)
         } else {
             @Suppress("DEPRECATION")

@@ -11,8 +11,6 @@
     <color name="black">#000000</color>
     <color name="semigray">#55777777</color>
 
-    <!-- Material Blue -->
-
     <!-- Alert Detail Title -->
     <color name="alert_detail_title_text">@color/black</color>
     <color name="alert_detail_title_shadow">@color/white</color>

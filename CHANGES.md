@@ -2,6 +2,7 @@
 
 ## Unreleased Changes
 
+* Fixed an issue with the Alert Detail screen failing to load content from the new alert if you looked at two different alerts back to back
 * 
 
 ## Version 2.3 (Jun 30, 2026)

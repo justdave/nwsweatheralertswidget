@@ -38,7 +38,7 @@ class NWSWidgetProvider : AppWidgetProvider() {
             val alertId = intent.getStringExtra("alert_id")
             if (alertId != null) {
                 val detailIntent = Intent(context, AlertDetailActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                     putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
                     putExtra("alert_id", alertId)
                 }
@@ -214,10 +214,11 @@ internal suspend fun updateAppWidget(
     views.setRemoteAdapter(R.id.widget_parsed_events, intent)
 
     // This section makes the widget title clickable
-    val titlePendingIntent: PendingIntent = Intent(context, MainActivity::class.java)
-        .let { titleIntent ->
-            PendingIntent.getActivity(context, 0, titleIntent, PendingIntent.FLAG_IMMUTABLE)
-        }
+    val titlePendingIntent: PendingIntent = Intent(context, MainActivity::class.java).apply {
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+    }.let { titleIntent ->
+        PendingIntent.getActivity(context, 0, titleIntent, PendingIntent.FLAG_IMMUTABLE)
+    }
     views.setOnClickPendingIntent(R.id.widget_title, titlePendingIntent)
 
     // This section makes the list items clickable
