@@ -38,6 +38,8 @@ class NWSWidgetConfigureActivity : AppCompatActivity() {
     private lateinit var zoneLoadingSpinner: ProgressBar
     private lateinit var addButton: Button
     private lateinit var nwsapi: NWSAPI
+    private var isInitializing = true
+    private var lastAreaPosition = -1
 
     private var addWidgetClickListener = View.OnClickListener {
         val context = this@NWSWidgetConfigureActivity
@@ -79,6 +81,13 @@ class NWSWidgetConfigureActivity : AppCompatActivity() {
             position: Int,
             id: Long
         ) {
+            if (isInitializing) {
+                lastAreaPosition = position
+                return
+            }
+            if (position == lastAreaPosition) return
+            lastAreaPosition = position
+
             val area = parent.getItemAtPosition(position) as NWSArea
             CoroutineScope(Dispatchers.Main).launch {
                 updateZones(area)
@@ -141,19 +150,24 @@ class NWSWidgetConfigureActivity : AppCompatActivity() {
             val zoneId = prefs["zone"]
             val theme = prefs["theme"]
 
+            if (areaId != null) {
+                addButton.setText(R.string.save)
+            }
+
             // Set up the area spinner
             val areas = nwsapi.getAreas()
             appWidgetArea.adapter = ArrayAdapter(this@NWSWidgetConfigureActivity, R.layout.spinner_layout, areas)
             val areaIndex = findSpinnerIndex(appWidgetArea, areaId)
+            lastAreaPosition = areaIndex
 
-            // Disable the listener, set the selection, then fetch the zones for that area
-            appWidgetArea.onItemSelectedListener = null
+            // Set the selection, then fetch the zones for that area
             appWidgetArea.setSelection(areaIndex)
             val selectedArea = appWidgetArea.getItemAtPosition(areaIndex) as NWSArea
             updateZones(selectedArea)
 
             // Now that zones are populated, find the stored zone and select it
             val zoneIndex = findSpinnerIndex(appWidgetZone, zoneId)
+            Log.i("WidgetConfigure", "Selecting zone index $zoneIndex for zoneId $zoneId")
             appWidgetZone.setSelection(zoneIndex)
 
             // Set up the theme spinner
@@ -165,6 +179,9 @@ class NWSWidgetConfigureActivity : AppCompatActivity() {
             // Re-enable the listener for user interaction
             appWidgetArea.onItemSelectedListener = areaSelectedListener
             addButton.isEnabled = true
+            appWidgetArea.post {
+                isInitializing = false
+            }
         }
 
     }
