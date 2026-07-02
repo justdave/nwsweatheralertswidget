@@ -1,5 +1,9 @@
 # NWS Weather Alerts Widget Change History
 
+## Unreleased Changes
+
+* 
+
 ## Version 2.3.1 (Jul 2, 2026)
 
 * Fixed an issue with the Alert Detail screen failing to load content from the new alert if you looked at two different alerts back to back
